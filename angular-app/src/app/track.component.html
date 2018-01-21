@@ -1,0 +1,93 @@
+<div id='main'>
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class='fullsize color4' *ngIf="showMedicine==false">
+		<div class='container'>
+			<form id='trackform' class="form-signin"  (submit)="submitMedicine(medicine.value)">
+				<h2 class="form-signin-heading">Track Your Medicine</h2>
+				<label for="inputMedicine" class="sr-only">Medicine Barcode Number</label>
+				<a href='trackffilledin.html'><button class="btn btn-lg btn-primary btn-block buttons" type="submit">Look Up</button>
+				</a>
+				<input type="text" id="inputMedicine" class="form-control inputs" placeholder="Medicine Barcode Number" required autofocus #medicine>
+				
+				<a href='#' id='needhelp'>Need Help?</a>
+			</form>
+		</div>
+	</div>
+    <div class='fullsize color4' *ngIf="showMedicine">
+		<div class='container'>
+			<div id='trackformfinished'>
+				<h2>Medicine #{{medicine}}</h2>
+				<div class='row'>
+					<div id='medinfo' class='col-md-4'>
+						<h3 style='margin-bottom: 20px;'>Medicine Details</h3>
+						<h4 class='lessbigh4'>Active Ingredients: <span>Lorem Ipsum</span></h4>
+						<h4 class='lessbigh4'>Pills in Bottle: <span>50</span></h4>
+						<h4 class='lessbigh4'>Instructions: <span>Take 1 Tables By Mouth Daily</span></h4>
+						<h4 class='lessbigh4'>Warnings: <span>Lorem ipsum sin dolor donec id elit non mi porta gravida</span></h4>
+						
+						
+					</div>
+					<div class='col-md-8'>
+						<h3>Medicine's Path</h3>
+						<table class="table">
+						  <thead>
+							<tr>
+							  <th scope="col">#</th>
+							  <th scope="col">From</th>
+							  <th scope="col">To</th>
+							  <th scope="col">Date</th>
+							</tr>
+						  </thead>
+						  <tbody>
+							<tr>
+							  <th scope="row">1</th>
+							  <td>ABC Manufacturers</td>
+							  <td>AAA Wholesaler</td>
+							  <td>1/2/2017</td>
+							</tr>
+							<tr>
+							  <th scope="row">2</th>
+							  <td>AAA Wholesaler</td>
+							  <td>XYZ Distributor</td>
+							  <td>1/6/2017</td>
+							</tr>
+							<tr>
+							  <th scope="row">3</th>
+							  <td>XYZ Distributor</td>
+							  <td>Pharmacy</td>
+							  <td>1/12/2017</td>
+							</tr>
+						  </tbody>
+						</table>
+					</div>
+				</div>
+				<div id='trackfilledinfo' class='row'>
+					<div class='col-md-3'>
+						<i class="fa fa-flask fa-4x" aria-hidden="true"></i>
+						<h3>ABC Manufacturers</h3>
+						<p>A little bit of information about the company listed above provided by the company.</p>
+					</div>
+					<div class='col-md-3'>
+						<i class="fa fa-truck fa-4x" aria-hidden="true"></i>
+						<h3>AAA Wholesaler</h3>
+						<p>A little bit of information about the company listed above provided by the company.</p>
+					</div>
+					<div class='col-md-3'>
+						<i class="fa fa-users fa-4x" aria-hidden="true"></i>
+						<h3>XYZ Distributor</h3>
+						<p>A little bit of information about the company listed above provided by the company.</p>
+					</div>
+					<div class='col-md-3'>
+						<i class="fa fa-hospital-o fa-4x" aria-hidden="true"></i>
+						<h3>Pharmacy</h3>
+						<p>A little bit of information about the company listed above provided by the company.</p>
+					</div>
+				</div>
+				<a routerLink="/login"><button style='margin-left: 10px; width: 150px;' class="btn btn-lg btn-primary btn-block buttons2" type="submit">Log Entry</button>
+				</a><a (click)='newTrack()'>
+				<button class="btn btn-lg btn-primary btn-block buttons2 col-md-6" type="submit">Look Up Another Medicine</button>
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
