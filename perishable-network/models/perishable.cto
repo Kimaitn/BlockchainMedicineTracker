@@ -5,17 +5,13 @@
   * readings received for the cargo
   */
 
-namespace org.acme.shipping.perishable
+namespace org.mat
 
 /**
  * The type of perishable product being shipped
  */
 enum ProductType {
-  o BANANAS
-  o APPLES
-  o PEARS
-  o PEACHES
-  o COFFEE
+  o Medicine
 }
 
 /**
@@ -44,10 +40,19 @@ transaction TemperatureReading extends ShipmentTransaction {
 
 /**
  * A notification that a shipment has been received by the
- * importer and that funds should be transferred from the importer
- * to the grower to pay for the shipment.
+ * Retailer and that funds should be transferred from the Retailer
+ * to the Manufacturer to pay for the shipment.
  */
 transaction ShipmentReceived extends ShipmentTransaction {
+}
+
+transaction TransferLocation extends ShipmentTransaction {
+  o Warehouse warehouse
+  o Date arrivalDateTime
+}
+
+asset Warehouse {
+  o Address address
 }
 
 /**
@@ -59,20 +64,21 @@ asset Shipment identified by shipmentId {
   o ShipmentStatus status
   o Long unitCount
   o TemperatureReading[] temperatureReadings optional
+  o TransferLocation[] transferLocations optional
   --> Contract contract
 }
 
 /**
- * Defines a contract between a Grower and an Importer to ship using
- * a Shipper, paying a set unit price. The unit price is multiplied by
+ * Defines a contract between a Manufacturer and an Retailer to ship using
+ * a Carrier, paying a set unit price. The unit price is multiplied by
  * a penality factor proportional to the deviation from the min and max
  * negociated temperatures for the shipment.
  */
 asset Contract identified by contractId {
   o String contractId
-  --> Grower grower
-  --> Shipper shipper
-  --> Importer importer
+  --> Manufacturer Manufacturer
+  --> Carrier Carrier
+  --> Retailer Retailer
   o DateTime arrivalDateTime
   o Double unitPrice
   o Double minTemperature
@@ -85,37 +91,40 @@ asset Contract identified by contractId {
  * A concept for a simple street address
  */
 concept Address {
-  o String city optional
+  o String city
   o String country
-  o String street optional
-  o String zip optional
+  o String street
+  o String zip
 }
 
 /**
  * An abstract participant type in this business network
  */
-abstract participant Business identified by email {
+abstract participant Business identified by id {
+  o String id
+  o String name
   o String email
+  o String Contact
   o Address address
   o Double accountBalance
 }
 
 /**
- * A Grower is a type of participant in the network
+ * A Manufacturer is a type of participant in the network
  */
-participant Grower extends Business {
+participant Manufacturer extends Business {
 }
 
 /**
- * A Shipper is a type of participant in the network
+ * A Carrier is a type of participant in the network
  */
-participant Shipper extends Business {
+participant Carrier extends Business {
 }
 
 /**
- * An Importer is a type of participant in the network
+ * An Retailer is a type of participant in the network
  */
-participant Importer extends Business {
+participant Retailer extends Business {
 }
 
 /**
