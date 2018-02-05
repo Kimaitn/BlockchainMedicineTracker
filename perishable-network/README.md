@@ -1,13 +1,13 @@
 # Medicine Asset Tracking
 
-> Example business network that shows growers, shippers and importers defining contracts for the price of perishable goods, based on temperature readings received for shipping containers.
+> Business network consisting of Manfuacturers, Carriers, and Retailers.  Businesses defining contracts for the price of medicine, based on temperature readings received for shipping containers.
 
-The business network defines a contract between growers and importers. The contract stipulates that: On receipt of the shipment the importer pays the grower the unit price x the number of units in the shipment. Shipments that arrive late are free. Shipments that have breached the low temperate threshold have a penalty applied proportional to the magnitude of the breach x a penalty factor. Shipments that have breached the high temperate threshold have a penalty applied proportional to the magnitude of the breach x a penalty factor.
+The business network defines a contract between manufacturers and retailers. The contract stipulates that: On receipt of the shipment the Retailer pays the Manufacturer the unit price x the number of units in the shipment. Shipments that arrive late are free. Shipments that have breached the low temperate threshold have a penalty applied proportional to the magnitude of the breach x a penalty factor. Shipments that have breached the high temperate threshold have a penalty applied proportional to the magnitude of the breach x a penalty factor.
 
 This business network defines:
 
 **Participants**
-`Grower` `Importer` `Shipper`
+`Manufacturer` `Retailer` `Carrier`
 
 **Assets**
 `Contract` `Shipment`
@@ -21,33 +21,33 @@ Submit a `SetupDemo` transaction:
 
 ```
 {
-  "$class": "org.acme.shipping.perishable.SetupDemo"
+  "$class": "org.mat.SetupDemo"
 }
 ```
 
-This transaction populates the Participant Registries with a `Grower`, an `Importer` and a `Shipper`. The Asset Registries will have a `Contract` asset and a `Shipment` asset.
+This transaction populates the Participant Registries with a `Manufacturer`, an `Retailer` and a `Carrier`. The Asset Registries will have a `Contract` asset and a `Shipment` asset.
 
 Submit a `TemperatureReading` transaction:
 
 ```
 {
-  "$class": "org.acme.shipping.perishable.TemperatureReading",
+  "$class": "org.mat.TemperatureReading",
   "centigrade": 8,
-  "shipment": "resource:org.acme.shipping.perishable.Shipment#SHIP_001"
+  "shipment": "resource:org.mat.Shipment#SHIP_001"
 }
 ```
 
-If the temperature reading falls outside the min/max range of the contract, the price received by the grower will be reduced. You may submit several readings if you wish. Each reading will be aggregated within `SHIP_001` Shipment Asset Registry.
+If the temperature reading falls outside the min/max range of the contract, the price received by the Manufacturer will be reduced. You may submit several readings if you wish. Each reading will be aggregated within `SHIP_001` Shipment Asset Registry.
 
-Submit a `ShipmentReceived` transaction for `SHIP_001` to trigger the payout to the grower, based on the parameters of the `CON_001` contract:
+Submit a `ShipmentReceived` transaction for `SHIP_001` to trigger the payout to the Manufacturer, based on the parameters of the `CON_001` contract:
 
 ```
 {
-  "$class": "org.acme.shipping.perishable.ShipmentReceived",
-  "shipment": "resource:org.acme.shipping.perishable.Shipment#SHIP_001"
+  "$class": "org.mat.ShipmentReceived",
+  "shipment": "resource:org.mat.Shipment#SHIP_001"
 }
 ```
 
-If the date-time of the `ShipmentReceived` transaction is after the `arrivalDateTime` on `CON_001` then the grower will no receive any payment for the shipment.
+If the date-time of the `ShipmentReceived` transaction is after the `arrivalDateTime` on `CON_001` then the Manufacturer will no receive any payment for the shipment.
 
 Congratulations!
