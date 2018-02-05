@@ -2,11 +2,9 @@
   "engines": {
     "composer": "^0.16.0"
   },
-  "name": "perishable-network",
+  "name": "medicine-asset-tracking",
   "version": "0.1.14",
-  "description": "Shipping Perishable Goods Business Network",
-  "networkImage": "https://hyperledger.github.io/composer-sample-networks/packages/perishable-network/networkimage.svg",
-  "networkImageanimated": "https://hyperledger.github.io/composer-sample-networks/packages/perishable-network/networkimageanimated.svg",
+  "description": "Medicine Asset Tracking Business Network",
   "scripts": {
     "recreate": "composer archive create --sourceType dir --sourceName . -a ./dist/medicine-asset-tracking.bna",
     "prepublish": "mkdirp ./dist && composer archive create  --sourceType dir --sourceName . -a ./dist/medicine-asset-tracking.bna",
@@ -19,14 +17,10 @@
     "test": "mocha -t 0 --recursive",
     "deploy": "./scripts/deploy.sh"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/hyperledger/composer-sample-networks.git"
-  },
   "keywords": [
     "shipping",
     "goods",
-    "perishable",
+    "medicine",
     "composer",
     "composer-network"
   ],
