@@ -8,7 +8,8 @@
   "networkImage": "https://hyperledger.github.io/composer-sample-networks/packages/perishable-network/networkimage.svg",
   "networkImageanimated": "https://hyperledger.github.io/composer-sample-networks/packages/perishable-network/networkimageanimated.svg",
   "scripts": {
-    "prepublish": "mkdirp ./dist && composer archive create  --sourceType dir --sourceName . -a ./dist/perishable-network.bna",
+    "recreate": "composer archive create --sourceType dir --sourceName . -a ./dist/medicine-asset-tracking.bna",
+    "prepublish": "mkdirp ./dist && composer archive create  --sourceType dir --sourceName . -a ./dist/medicine-asset-tracking.bna",
     "pretest": "npm run lint",
     "lint": "eslint .",
     "postlint": "npm run licchk",
