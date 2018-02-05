@@ -11,7 +11,8 @@ namespace org.mat
  * The type of perishable product being shipped
  */
 enum ProductType {
-  o Medicine
+  o Adderall
+  o Tylenol
 }
 
 /**
@@ -77,9 +78,9 @@ asset Shipment identified by shipmentId {
  */
 asset Contract identified by contractId {
   o String contractId
-  --> Manufacturer Manufacturer
-  --> Carrier Carrier
-  --> Retailer Retailer
+  --> Manufacturer manufacturer
+  --> Carrier carrier
+  --> Retailer retailer
   o DateTime arrivalDateTime
   o Double unitPrice
   o Double minTemperature
@@ -105,8 +106,8 @@ abstract participant Business identified by id {
   o String id
   o String name
   o String email
-  o String Contact
-  o Address address
+  o String contact
+  o Address address optional
   o Double accountBalance
 }
 
