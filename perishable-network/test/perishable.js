@@ -24,7 +24,7 @@ const path = require('path');
 require('chai').should();
 let sinon = require('sinon');
 
-const namespace = 'org.acme.shipping.perishable';
+const namespace = 'org.mat';
 let grower_id = 'farmer@email.com';
 let importer_id = 'supermarket@email.com';
 
