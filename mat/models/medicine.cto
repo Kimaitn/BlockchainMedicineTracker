@@ -8,21 +8,150 @@
 namespace org.mat
 
 /**
- * The type of perishable product being shipped
+ * A concept for a simple street address
  */
-enum ProductType {
-  o Adderall
-  o Tylenol
+concept Address {
+  o String city
+  o String country
+  o String street
+  o String zip
 }
 
 /**
  * The status of a shipment
  */
-enum ShipmentStatus {
+enum Status {
   o CREATED
   o IN_TRANSIT
   o ARRIVED
 }
+
+enum BusinessType {
+  o Manufacturer
+  o Retailer
+  o Carrier
+}
+
+/**
+ * MAYBE
+ */
+enum UoM {
+  o mL
+  o g
+}
+
+/**
+ * The commodity is pretty much the product type that jasper had
+ * the idea is that a commodity is a drug type such as adderall and 
+ * tylenol. You would then have it's name that they call it. the UoM 
+ * mL for liquids and g for tablets/powders. THe commoditymedid is used
+ * to go into the lookup table and find the commodity name
+ * ProductType --> Commodity
+ */
+asset ItemType identified by itemTypeId {
+  o String itemTypeId
+  o String itemTypeName
+  o UoM itemTypeUoM
+  o Integer itemTypeMedId
+}
+
+/**
+ * An item is the actual product. Such as a bottle of tylenol that contains
+ * 1000 mL. The relationship to the commodity type allows us to simply send a 
+ * parameter with the commodity identifier number and fetch the data. 
+ */
+asset Item identified by itemId {
+  o String itemId
+  o Double itemAmount
+  o String packageType 
+  o Business currentOwner
+  --> ItemType itemType
+}
+/**
+ * This is an order, an order can have mulitple items in it
+ */
+asset Order identified by orderId {
+  o String orderId
+  o String requester
+  o String provider
+  o Address destinationAddress
+  o Address sourceAddress
+  o Address[] locations
+  o Address billingAddress
+  o Status status
+  o Business receiver
+  o Business sender
+  --> Contract[] itemContracts
+}
+
+/**
+ * shipments can have multiple orders since multiple orders may be going to the same
+ * place or shipped together since they are near each other
+ */
+asset Shipment identified by shipmentId {
+  o String shipmentId
+  o Status status
+  o Business sender
+  o Business receiver
+  o Address destinationAddress
+  o Address sourceAddress
+  o Address[] locations
+  --> Order[] orders
+}
+
+/**
+ * Defines a contract between a Manufacturer and an Retailer to ship using
+ * a Carrier, paying a set unit price. The unit price is multiplied by
+ * a penality factor proportional to the deviation from the min and max
+ * negociated temperatures for the shipment.
+ * A contract will be made for each itemType. This is the agreement of what price will be paid. 
+ */
+asset Contract identified by contractId {
+  o String contractId
+  --> Business business
+  --> Item[] items //these all have to be the same - in the logic file we have to ensure that all items in the contract are                     the same itemType
+  o DateTime requestedArrivalDateTime
+  o DateTime actualArrivalDateTime
+  o Double unitPrice
+  o Double estimatedPrice
+  o Double minPrice optional
+  o Double maxPrice optional
+  o Double minPenaltyFactor optional
+  o Double maxPenaltyFactor optional
+  o Double pricePaid 
+}
+
+/**
+ * An abstract participant type in this business network
+ */
+participant Business identified by businessId {
+  o String businessId
+  o String name
+  o String PoCName optional
+  o String PoCEmail optional
+  o Address address optional
+  o Double accountBalance
+  o BusinessType businessType
+  --> Item[] inventory
+}
+
+/**
+//  * A Manufacturer is a type of participant in the network
+//  */
+// participant Manufacturer extends Business {
+// }
+
+// /**
+//  * A Carrier is a type of participant in the network
+//  */
+// participant Carrier extends Business {
+// }
+
+// /**
+//  * An Retailer is a type of participant in the network
+//  */
+// participant Retailer extends Business {
+// }
 
 /**
  * An abstract transaction that is related to a Shipment
@@ -48,85 +177,12 @@ transaction ShipmentReceived extends ShipmentTransaction {
 }
 
 transaction TransferLocation extends ShipmentTransaction {
-  o Warehouse warehouse
   o DateTime arrivalDateTime
 }
 
 asset Warehouse identified by id {
   o String id
   o Address address
-}
-
-/**
- * A shipment being tracked as an asset on the ledger
- */
-asset Shipment identified by shipmentId {
-  o String shipmentId
-  o ProductType type
-  o ShipmentStatus status
-  o Long unitCount
-  o TemperatureReading[] temperatureReadings optional
-  o TransferLocation[] transferLocations optional
-  --> Contract contract
-}
-
-/**
- * Defines a contract between a Manufacturer and an Retailer to ship using
- * a Carrier, paying a set unit price. The unit price is multiplied by
- * a penality factor proportional to the deviation from the min and max
- * negociated temperatures for the shipment.
- */
-asset Contract identified by contractId {
-  o String contractId
-  --> Manufacturer manufacturer
-  --> Carrier carrier
-  --> Retailer retailer
-  o DateTime arrivalDateTime
-  o Double unitPrice
-  o Double minTemperature
-  o Double maxTemperature
-  o Double minPenaltyFactor
-  o Double maxPenaltyFactor
-}
-
-/**
- * A concept for a simple street address
- */
-concept Address {
-  o String city
-  o String country
-  o String street
-  o String zip
-}
-
-/**
- * An abstract participant type in this business network
- */
-abstract participant Business identified by id {
-  o String id
-  o String name
-  o String email
-  o String contact
-  o Address address optional
-  o Double accountBalance
-}
-
-/**
- * A Manufacturer is a type of participant in the network
- */
-participant Manufacturer extends Business {
-}
-
-/**
- * A Carrier is a type of participant in the network
- */
-participant Carrier extends Business {
-}
-
-/**
- * An Retailer is a type of participant in the network
- */
-participant Retailer extends Business {
 }
 
 /**
