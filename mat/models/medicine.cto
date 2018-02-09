@@ -177,6 +177,7 @@ transaction ShipmentReceived extends ShipmentTransaction {
 }
 
 transaction TransferLocation extends ShipmentTransaction {
+  o Warehouse warehouse
   o DateTime arrivalDateTime
 }
 
