@@ -17,7 +17,7 @@
       "dateFormat": "ddd MMM Do YYYY",
       "outputSourceFiles": true,
       "outputSourcePath": true,
-      "systemName": "Perishable Goods Network",
+      "systemName": "Medicine Asset Tracking",
       "footer": "",
       "copyright": "Released under the Apache License v2.0",
       "navType": "vertical",
