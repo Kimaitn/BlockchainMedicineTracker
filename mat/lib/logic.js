@@ -13,8 +13,8 @@
  */
 
 /**
- * A shipment has been received by an importer
- * @param {org.acme.shipping.perishable.ShipmentReceived} shipmentReceived - the ShipmentReceived transaction
+ * A shipment has been received by an retailer
+ * @param {org.mat.ShipmentReceived} shipmentReceived - the ShipmentReceived transaction
  * @transaction
  */
 function payOut(shipmentReceived) {
@@ -68,26 +68,26 @@ function payOut(shipmentReceived) {
     }
 
     console.log('Payout: ' + payOut);
-    contract.grower.accountBalance += payOut;
-    contract.importer.accountBalance -= payOut;
+    contract.manufacturer.accountBalance += payOut;
+    contract.retailer.accountBalance -= payOut;
 
-    console.log('Grower: ' + contract.grower.$identifier + ' new balance: ' + contract.grower.accountBalance);
-    console.log('Importer: ' + contract.importer.$identifier + ' new balance: ' + contract.importer.accountBalance);
+    console.log('Manufacturer: ' + contract.manufacturer.$identifier + ' new balance: ' + contract.manufacturer.accountBalance);
+    console.log('Retailer: ' + contract.retailer.$identifier + ' new balance: ' + contract.retailer.accountBalance);
 
-    return getParticipantRegistry('org.acme.shipping.perishable.Grower')
-        .then(function (growerRegistry) {
-            // update the grower's balance
-            return growerRegistry.update(contract.grower);
+    return getParticipantRegistry('org.mat.Manufacturer')
+        .then(function (manufacturerRegistry) {
+            // update the manufacturer's balance
+            return manufacturerRegistry.update(contract.manufacturer);
         })
         .then(function () {
-            return getParticipantRegistry('org.acme.shipping.perishable.Importer');
+            return getParticipantRegistry('org.mat.Retailer');
         })
-        .then(function (importerRegistry) {
-            // update the importer's balance
-            return importerRegistry.update(contract.importer);
+        .then(function (retailerRegistry) {
+            // update the retailer's balance
+            return retailerRegistry.update(contract.retailer);
         })
         .then(function () {
-            return getAssetRegistry('org.acme.shipping.perishable.Shipment');
+            return getAssetRegistry('org.mat.Shipment');
         })
         .then(function (shipmentRegistry) {
             // update the state of the shipment
@@ -97,7 +97,7 @@ function payOut(shipmentReceived) {
 
 /**
  * A temperature reading has been received for a shipment
- * @param {org.acme.shipping.perishable.TemperatureReading} temperatureReading - the TemperatureReading transaction
+ * @param {org.mat.TemperatureReading} temperatureReading - the TemperatureReading transaction
  * @transaction
  */
 function temperatureReading(temperatureReading) {
@@ -112,7 +112,7 @@ function temperatureReading(temperatureReading) {
         shipment.temperatureReadings = [temperatureReading];
     }
 
-    return getAssetRegistry('org.acme.shipping.perishable.Shipment')
+    return getAssetRegistry('org.mat.Shipment')
         .then(function (shipmentRegistry) {
             // add the temp reading to the shipment
             return shipmentRegistry.update(shipment);
@@ -121,40 +121,52 @@ function temperatureReading(temperatureReading) {
 
 /**
  * Initialize some test assets and participants useful for running a demo.
- * @param {org.acme.shipping.perishable.SetupDemo} setupDemo - the SetupDemo transaction
+ * @param {org.mat.SetupDemo} setupDemo - the SetupDemo transaction
  * @transaction
  */
 function setupDemo(setupDemo) {
 
     var factory = getFactory();
-    var NS = 'org.acme.shipping.perishable';
+    var NS = 'org.mat';
 
-    // create the grower
-    var grower = factory.newResource(NS, 'Grower', 'farmer@email.com');
-    var growerAddress = factory.newConcept(NS, 'Address');
-    growerAddress.country = 'USA';
-    grower.address = growerAddress;
-    grower.accountBalance = 0;
+    // create the manufacturer
+    var mName = 'UCF';
+    var mId = mName.toLowerCase();
+    var manufacturer = factory.newResource(NS, 'Manufacturer', mId);
+    var manufacturerAddress = factory.newConcept(NS, 'Address');
+    manufacturerAddress.country = 'USA';
+    manufacturerAddress.city = 'Orlando'
+    manufacturerAddress.street = '4000 Central Florida Blvd'
+    manufacturerAddress.zip = '32816';
+    manufacturer.address = manufacturerAddress;
+    manufacturer.name = mName;
+    manufacturer.email = 'manu@ucf.com';
+    manufacturer.contact = 'Felicia Taslk'
+    manufacturer.accountBalance = 0;
 
-    // create the importer
-    var importer = factory.newResource(NS, 'Importer', 'supermarket@email.com');
-    var importerAddress = factory.newConcept(NS, 'Address');
-    importerAddress.country = 'UK';
-    importer.address = importerAddress;
-    importer.accountBalance = 0;
+    // create the retailer
+    var rName = 'FSU';
+    var rId = rName.toLowerCase();
+    var retailer = factory.newResource(NS, 'Retailer', rId);
+    retailer.name = rName;
+    retailer.email = 'retail@fsu.com';
+    retailer.contact = 'Matthew Barnale';
+    retailer.accountBalance = 0;
 
-    // create the shipper
-    var shipper = factory.newResource(NS, 'Shipper', 'shipper@email.com');
-    var shipperAddress = factory.newConcept(NS, 'Address');
-    shipperAddress.country = 'Panama';
-    shipper.address = shipperAddress;
-    shipper.accountBalance = 0;
+    // create the carrier
+    var cName = 'Harvard';
+    var cId = cName.toLowerCase();
+    var carrier = factory.newResource(NS, 'Carrier', cId);
+    carrier.name = cName;
+    carrier.email = 'carrier@harvard.edu';
+    carrier.contact = 'Held Responsible';
+    carrier.accountBalance = 0;
 
     // create the contract
     var contract = factory.newResource(NS, 'Contract', 'CON_001');
-    contract.grower = factory.newRelationship(NS, 'Grower', 'farmer@email.com');
-    contract.importer = factory.newRelationship(NS, 'Importer', 'supermarket@email.com');
-    contract.shipper = factory.newRelationship(NS, 'Shipper', 'shipper@email.com');
+    contract.manufacturer = factory.newRelationship(NS, 'Manufacturer', mId);
+    contract.retailer = factory.newRelationship(NS, 'Retailer', rId);
+    contract.carrier = factory.newRelationship(NS, 'Carrier', cId);
     var tomorrow = setupDemo.timestamp;
     tomorrow.setDate(tomorrow.getDate() + 1);
     contract.arrivalDateTime = tomorrow; // the shipment has to arrive tomorrow
@@ -166,28 +178,28 @@ function setupDemo(setupDemo) {
 
     // create the shipment
     var shipment = factory.newResource(NS, 'Shipment', 'SHIP_001');
-    shipment.type = 'BANANAS';
+    shipment.type = 'Adderall';
     shipment.status = 'IN_TRANSIT';
     shipment.unitCount = 5000;
     shipment.contract = factory.newRelationship(NS, 'Contract', 'CON_001');
-    return getParticipantRegistry(NS + '.Grower')
-        .then(function (growerRegistry) {
-            // add the growers
-            return growerRegistry.addAll([grower]);
+    return getParticipantRegistry(NS + '.Manufacturer')
+        .then(function (manufacturerRegistry) {
+            // add the manufacturers
+            return manufacturerRegistry.addAll([manufacturer]);
         })
         .then(function() {
-            return getParticipantRegistry(NS + '.Importer');
+            return getParticipantRegistry(NS + '.Retailer');
         })
-        .then(function(importerRegistry) {
-            // add the importers
-            return importerRegistry.addAll([importer]);
+        .then(function(retailerRegistry) {
+            // add the retailers
+            return retailerRegistry.addAll([retailer]);
         })
         .then(function() {
-            return getParticipantRegistry(NS + '.Shipper');
+            return getParticipantRegistry(NS + '.Carrier');
         })
-        .then(function(shipperRegistry) {
-            // add the shippers
-            return shipperRegistry.addAll([shipper]);
+        .then(function(carrierRegistry) {
+            // add the carriers
+            return carrierRegistry.addAll([carrier]);
         })
         .then(function() {
             return getAssetRegistry(NS + '.Contract');

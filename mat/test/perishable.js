@@ -24,9 +24,9 @@ const path = require('path');
 require('chai').should();
 let sinon = require('sinon');
 
-const namespace = 'org.acme.shipping.perishable';
-let grower_id = 'farmer@email.com';
-let importer_id = 'supermarket@email.com';
+const namespace = 'org.mat';
+let manufacturer_id = 'farmer@email.com';
+let retailer_id = 'supermarket@email.com';
 
 describe('Perishable Shipping Network', () => {
     // In-memory card store for testing so cards are not persisted to the file system
@@ -122,25 +122,25 @@ describe('Perishable Shipping Network', () => {
                     return businessNetworkConnection.submitTransaction(received);
                 })
                 .then(() => {
-                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Grower');
+                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Manufacturer');
                 })
-                .then((growerRegistry) => {
-                    // check the grower's balance
-                    return growerRegistry.get(grower_id);
+                .then((manufacturerRegistry) => {
+                    // check the manufacturer's balance
+                    return manufacturerRegistry.get(manufacturer_id);
                 })
-                .then((newGrower) => {
-                    // console.log(JSON.stringify(businessNetworkConnection.getBusinessNetwork().getSerializer().toJSON(newGrower)));
-                    newGrower.accountBalance.should.equal(2500);
+                .then((newManufacturer) => {
+                    // console.log(JSON.stringify(businessNetworkConnection.getBusinessNetwork().getSerializer().toJSON(newManufacturer)));
+                    newManufacturer.accountBalance.should.equal(2500);
                 })
                 .then(() => {
-                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Importer');
+                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Retailer');
                 })
-                .then((importerRegistry) => {
-                    // check the importer's balance
-                    return importerRegistry.get(importer_id);
+                .then((retailerRegistry) => {
+                    // check the retailer's balance
+                    return retailerRegistry.get(retailer_id);
                 })
-                .then((newImporter) => {
-                    newImporter.accountBalance.should.equal(-2500);
+                .then((newRetailer) => {
+                    newRetailer.accountBalance.should.equal(-2500);
                 })
                 .then(() => {
                     return businessNetworkConnection.getAssetRegistry(namespace + '.Shipment');
@@ -169,25 +169,25 @@ describe('Perishable Shipping Network', () => {
                     return businessNetworkConnection.submitTransaction(received);
                 })
                 .then(() => {
-                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Grower');
+                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Manufacturer');
                 })
-                .then((growerRegistry) => {
-                    // check the grower's balance
-                    return growerRegistry.get(grower_id);
+                .then((manufacturerRegistry) => {
+                    // check the manufacturer's balance
+                    return manufacturerRegistry.get(manufacturer_id);
                 })
-                .then((newGrower) => {
-                    // console.log(JSON.stringify(businessNetworkConnection.getBusinessNetwork().getSerializer().toJSON(newGrower)));
-                    newGrower.accountBalance.should.equal(2500);
+                .then((newManufacturer) => {
+                    // console.log(JSON.stringify(businessNetworkConnection.getBusinessNetwork().getSerializer().toJSON(newManufacturer)));
+                    newManufacturer.accountBalance.should.equal(2500);
                 })
                 .then(() => {
-                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Importer');
+                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Retailer');
                 })
-                .then((importerRegistry) => {
-                    // check the importer's balance
-                    return importerRegistry.get(importer_id);
+                .then((retailerRegistry) => {
+                    // check the retailer's balance
+                    return retailerRegistry.get(retailer_id);
                 })
-                .then((newImporter) => {
-                    newImporter.accountBalance.should.equal(-2500);
+                .then((newRetailer) => {
+                    newRetailer.accountBalance.should.equal(-2500);
                 });
         });
 
@@ -204,25 +204,25 @@ describe('Perishable Shipping Network', () => {
                     return businessNetworkConnection.submitTransaction(received);
                 })
                 .then(() => {
-                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Grower');
+                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Manufacturer');
                 })
-                .then((growerRegistry) => {
-                    // check the grower's balance
-                    return growerRegistry.get(grower_id);
+                .then((manufacturerRegistry) => {
+                    // check the manufacturer's balance
+                    return manufacturerRegistry.get(manufacturer_id);
                 })
-                .then((newGrower) => {
-                    // console.log(JSON.stringify(businessNetworkConnection.getBusinessNetwork().getSerializer().toJSON(newGrower)));
-                    newGrower.accountBalance.should.equal(4000);
+                .then((newManufacturer) => {
+                    // console.log(JSON.stringify(businessNetworkConnection.getBusinessNetwork().getSerializer().toJSON(newManufacturer)));
+                    newManufacturer.accountBalance.should.equal(4000);
                 })
                 .then(() => {
-                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Importer');
+                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Retailer');
                 })
-                .then((importerRegistry) => {
-                    // check the importer's balance
-                    return importerRegistry.get(importer_id);
+                .then((retailerRegistry) => {
+                    // check the retailer's balance
+                    return retailerRegistry.get(retailer_id);
                 })
-                .then((newImporter) => {
-                    newImporter.accountBalance.should.equal(-4000);
+                .then((newRetailer) => {
+                    newRetailer.accountBalance.should.equal(-4000);
                 });
         });
 
@@ -239,25 +239,25 @@ describe('Perishable Shipping Network', () => {
                     return businessNetworkConnection.submitTransaction(received);
                 })
                 .then(() => {
-                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Grower');
+                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Manufacturer');
                 })
-                .then((growerRegistry) => {
-                    // check the grower's balance
-                    return growerRegistry.get(grower_id);
+                .then((manufacturerRegistry) => {
+                    // check the manufacturer's balance
+                    return manufacturerRegistry.get(manufacturer_id);
                 })
-                .then((newGrower) => {
-                    // console.log(JSON.stringify(businessNetworkConnection.getBusinessNetwork().getSerializer().toJSON(newGrower)));
-                    newGrower.accountBalance.should.equal(5000);
+                .then((newManufacturer) => {
+                    // console.log(JSON.stringify(businessNetworkConnection.getBusinessNetwork().getSerializer().toJSON(newManufacturer)));
+                    newManufacturer.accountBalance.should.equal(5000);
                 })
                 .then(() => {
-                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Importer');
+                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Retailer');
                 })
-                .then((importerRegistry) => {
-                    // check the importer's balance
-                    return importerRegistry.get(importer_id);
+                .then((retailerRegistry) => {
+                    // check the retailer's balance
+                    return retailerRegistry.get(retailer_id);
                 })
-                .then((newImporter) => {
-                    newImporter.accountBalance.should.equal(-5000);
+                .then((newRetailer) => {
+                    newRetailer.accountBalance.should.equal(-5000);
                 });
         });
     });
