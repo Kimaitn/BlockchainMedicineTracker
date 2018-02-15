@@ -10,7 +10,8 @@ namespace org.mat
 /**
  * A concept for a simple street address
  */
-concept Address {
+concept Address 
+{
   o String city
   o String country
   o String street
@@ -20,13 +21,15 @@ concept Address {
 /**
  * The status of a shipment
  */
-enum Status {
+enum Status 
+{
   o CREATED
   o IN_TRANSIT
   o ARRIVED
 }
 
-enum BusinessType {
+enum BusinessType 
+{
   o Manufacturer
   o Retailer
   o Carrier
@@ -35,7 +38,8 @@ enum BusinessType {
 /**
  * MAYBE
  */
-enum UoM {
+enum UoM 
+{
   o mL
   o g
 }
@@ -48,7 +52,8 @@ enum UoM {
  * to go into the lookup table and find the commodity name
  * ProductType --> Commodity
  */
-asset ItemType identified by itemTypeId {
+asset ItemType identified by itemTypeId 
+{
   o String itemTypeId
   o String itemTypeName
   o UoM itemTypeUoM
@@ -60,7 +65,8 @@ asset ItemType identified by itemTypeId {
  * 1000 mL. The relationship to the commodity type allows us to simply send a 
  * parameter with the commodity identifier number and fetch the data. 
  */
-asset Item identified by itemId {
+asset Item identified by itemId 
+{
   o String itemId
   o Double itemAmount
   o String packageType 
@@ -70,10 +76,11 @@ asset Item identified by itemId {
 /**
  * This is an order, an order can have mulitple items in it
  */
-asset Order identified by orderId {
+asset Order identified by orderId 
+{
   o String orderId
-  o String requester
-  o String provider
+  o Employee requester
+  o Employee provider
   o Address destinationAddress
   o Address sourceAddress
   o Address[] locations
@@ -88,11 +95,13 @@ asset Order identified by orderId {
  * shipments can have multiple orders since multiple orders may be going to the same
  * place or shipped together since they are near each other
  */
-asset Shipment identified by shipmentId {
+asset Shipment identified by shipmentId 
+{
   o String shipmentId
   o Status status
   o Business sender
   o Business receiver
+  o Business currentOwner
   o Address destinationAddress
   o Address sourceAddress
   o Address[] locations
@@ -106,25 +115,21 @@ asset Shipment identified by shipmentId {
  * negociated temperatures for the shipment.
  * A contract will be made for each itemType. This is the agreement of what price will be paid. 
  */
-asset Contract identified by contractId {
+asset Contract identified by contractId 
+{
   o String contractId
-  --> Business business
-  --> Item[] items //these all have to be the same - in the logic file we have to ensure that all items in the contract are                     the same itemType
-  o DateTime requestedArrivalDateTime
-  o DateTime actualArrivalDateTime
+  o ItemType itemToBuy
+  o Business sellingBusiness
+  o Business buyingBusiness
   o Double unitPrice
-  o Double estimatedPrice
-  o Double minPrice optional
-  o Double maxPrice optional
-  o Double minPenaltyFactor optional
-  o Double maxPenaltyFactor optional
-  o Double pricePaid 
+  o Double quantity
 }
 
 /**
  * An abstract participant type in this business network
  */
-participant Business identified by businessId {
+participant Business identified by businessId 
+{
   o String businessId
   o String name
   o String PoCName optional
@@ -133,57 +138,33 @@ participant Business identified by businessId {
   o Double accountBalance
   o BusinessType businessType
   --> Item[] inventory
+  --> Employee[] employees
 }
 
-/**
-//  * A Manufacturer is a type of participant in the network
-//  */
-// participant Manufacturer extends Business {
-// }
-
-// /**
-//  * A Carrier is a type of participant in the network
-//  */
-// participant Carrier extends Business {
-// }
-
-// /**
-//  * An Retailer is a type of participant in the network
-//  */
-// participant Retailer extends Business {
-// }
-
-/**
- * An abstract transaction that is related to a Shipment
- */
-abstract transaction ShipmentTransaction {
-    --> Shipment shipment
+participant Employee identified by employeeId
+{
+  o String employeeId
+  o String firstName
+  o String lastName
+  o String email
+  o String phoneNumber optional
+  o Business worksFor
 }
 
-/**
- * An temperature reading for a shipment. E.g. received from a
- * device within a temperature controlled shipping container
- */
-transaction TemperatureReading extends ShipmentTransaction {
-  o Double centigrade
+transaction itemTransaction
+{
+  o Integer itemTransactionID
+  o Business currentOwner
+  o Business newOwner
+  o Item item
 }
 
-/**
- * A notification that a shipment has been received by the
- * Retailer and that funds should be transferred from the Retailer
- * to the Manufacturer to pay for the shipment.
- */
-transaction ShipmentReceived extends ShipmentTransaction {
-}
-
-transaction TransferLocation extends ShipmentTransaction {
-  o Warehouse warehouse
-  o DateTime arrivalDateTime
-}
-
-asset Warehouse identified by id {
-  o String id
-  o Address address
+transaction shipmentTransaction
+{
+  o Integer shipmentTransaction
+  o Business currentOwner
+  o Business newOwner
+  o Shipment shipment
 }
 
 /**
