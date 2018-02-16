@@ -28,12 +28,12 @@ enum Status
   o ARRIVED
 }
 
-enum BusinessType 
-{
-  o Manufacturer
-  o Retailer
-  o Carrier
-}
+// enum BusinessType 
+// {
+//   o Manufacturer
+//   o Retailer
+//   o Carrier
+// }
 
 /**
  * MAYBE
@@ -128,7 +128,7 @@ asset Contract identified by contractId
 /**
  * An abstract participant type in this business network
  */
-participant Business identified by businessId 
+abstract participant Business identified by businessId 
 {
   o String businessId
   o String name
@@ -136,9 +136,22 @@ participant Business identified by businessId
   o String PoCEmail optional
   o Address address optional
   o Double accountBalance
-  o BusinessType businessType
   --> Item[] inventory
   --> Employee[] employees
+}
+
+participant Manufacturer extends Business
+{
+}
+
+
+participant Retailer extends Business
+{
+}
+
+
+participant Carrier extends Business
+{
 }
 
 participant Employee identified by employeeId
@@ -149,6 +162,16 @@ participant Employee identified by employeeId
   o String email
   o String phoneNumber optional
   o Business worksFor
+}
+
+participant Admin identified by adminId
+{
+  o String adminId
+  o String firstName
+  o String lastName
+  o String email
+  o String phoneNumber
+  o Business worksFor optional
 }
 
 transaction itemTransaction
