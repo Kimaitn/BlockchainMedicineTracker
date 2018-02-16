@@ -68,7 +68,6 @@ asset ItemType identified by itemTypeId
 asset Item identified by itemId 
 {
   o String itemId
-  o Double itemAmount
   o String packageType 
   o Business currentOwner
   --> ItemType itemType
