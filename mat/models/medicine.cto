@@ -28,6 +28,16 @@ enum Status
   o ARRIVED
 }
 
+<<<<<<< HEAD
+=======
+// enum BusinessType 
+// {
+//   o Manufacturer
+//   o Distributor
+//   o Carrier
+// }
+
+>>>>>>> origin/hassan
 /**
  * MAYBE
  */
@@ -101,7 +111,7 @@ asset Shipment identified by shipmentId
 }
 
 /**
- * Defines a contract between a Manufacturer and an Retailer to ship using
+ * Defines a contract between a Manufacturer and an Distributor to ship using
  * a Carrier, paying a set unit price. The unit price is multiplied by
  * a penality factor proportional to the deviation from the min and max
  * negociated temperatures for the shipment.
@@ -137,7 +147,7 @@ participant Manufacturer extends Business
 }
 
 
-participant Retailer extends Business
+participant Distributor extends Business
 {
 }
 
