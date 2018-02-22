@@ -28,13 +28,6 @@ enum Status
   o ARRIVED
 }
 
-// enum BusinessType 
-// {
-//   o Manufacturer
-//   o Retailer
-//   o Carrier
-// }
-
 /**
  * MAYBE
  */
