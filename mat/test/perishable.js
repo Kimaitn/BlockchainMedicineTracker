@@ -26,7 +26,7 @@ let sinon = require('sinon');
 
 const namespace = 'org.mat';
 let manufacturer_id = 'farmer@email.com';
-let retailer_id = 'supermarket@email.com';
+let distributor_id = 'supermarket@email.com';
 
 describe('Perishable Shipping Network', () => {
     // In-memory card store for testing so cards are not persisted to the file system
@@ -133,14 +133,14 @@ describe('Perishable Shipping Network', () => {
                     newManufacturer.accountBalance.should.equal(2500);
                 })
                 .then(() => {
-                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Retailer');
+                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Distributor');
                 })
-                .then((retailerRegistry) => {
-                    // check the retailer's balance
-                    return retailerRegistry.get(retailer_id);
+                .then((distributorRegistry) => {
+                    // check the distributor's balance
+                    return distributorRegistry.get(distributor_id);
                 })
-                .then((newRetailer) => {
-                    newRetailer.accountBalance.should.equal(-2500);
+                .then((newDistributor) => {
+                    newDistributor.accountBalance.should.equal(-2500);
                 })
                 .then(() => {
                     return businessNetworkConnection.getAssetRegistry(namespace + '.Shipment');
@@ -180,14 +180,14 @@ describe('Perishable Shipping Network', () => {
                     newManufacturer.accountBalance.should.equal(2500);
                 })
                 .then(() => {
-                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Retailer');
+                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Distributor');
                 })
-                .then((retailerRegistry) => {
-                    // check the retailer's balance
-                    return retailerRegistry.get(retailer_id);
+                .then((distributorRegistry) => {
+                    // check the distributor's balance
+                    return distributorRegistry.get(distributor_id);
                 })
-                .then((newRetailer) => {
-                    newRetailer.accountBalance.should.equal(-2500);
+                .then((newDistributor) => {
+                    newDistributor.accountBalance.should.equal(-2500);
                 });
         });
 
@@ -215,14 +215,14 @@ describe('Perishable Shipping Network', () => {
                     newManufacturer.accountBalance.should.equal(4000);
                 })
                 .then(() => {
-                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Retailer');
+                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Distributor');
                 })
-                .then((retailerRegistry) => {
-                    // check the retailer's balance
-                    return retailerRegistry.get(retailer_id);
+                .then((distributorRegistry) => {
+                    // check the distributor's balance
+                    return distributorRegistry.get(distributor_id);
                 })
-                .then((newRetailer) => {
-                    newRetailer.accountBalance.should.equal(-4000);
+                .then((newDistributor) => {
+                    newDistributor.accountBalance.should.equal(-4000);
                 });
         });
 
@@ -250,14 +250,14 @@ describe('Perishable Shipping Network', () => {
                     newManufacturer.accountBalance.should.equal(5000);
                 })
                 .then(() => {
-                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Retailer');
+                    return businessNetworkConnection.getParticipantRegistry(namespace + '.Distributor');
                 })
-                .then((retailerRegistry) => {
-                    // check the retailer's balance
-                    return retailerRegistry.get(retailer_id);
+                .then((distributorRegistry) => {
+                    // check the distributor's balance
+                    return distributorRegistry.get(distributor_id);
                 })
-                .then((newRetailer) => {
-                    newRetailer.accountBalance.should.equal(-5000);
+                .then((newDistributor) => {
+                    newDistributor.accountBalance.should.equal(-5000);
                 });
         });
     });
