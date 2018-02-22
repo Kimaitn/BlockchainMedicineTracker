@@ -13,7 +13,7 @@
  */
 
 /**
- * A shipment has been received by an retailer
+ * A shipment has been received by an distributor
  * @param {org.mat.ShipmentReceived} shipmentReceived - the ShipmentReceived transaction
  * @transaction
  */
@@ -69,10 +69,10 @@ function payOut(shipmentReceived) {
 
     console.log('Payout: ' + payOut);
     contract.manufacturer.accountBalance += payOut;
-    contract.retailer.accountBalance -= payOut;
+    contract.distributor.accountBalance -= payOut;
 
     console.log('Manufacturer: ' + contract.manufacturer.$identifier + ' new balance: ' + contract.manufacturer.accountBalance);
-    console.log('Retailer: ' + contract.retailer.$identifier + ' new balance: ' + contract.retailer.accountBalance);
+    console.log('Distributor: ' + contract.distributor.$identifier + ' new balance: ' + contract.distributor.accountBalance);
 
     return getParticipantRegistry('org.mat.Manufacturer')
         .then(function (manufacturerRegistry) {
@@ -80,11 +80,11 @@ function payOut(shipmentReceived) {
             return manufacturerRegistry.update(contract.manufacturer);
         })
         .then(function () {
-            return getParticipantRegistry('org.mat.Retailer');
+            return getParticipantRegistry('org.mat.Distributor');
         })
-        .then(function (retailerRegistry) {
-            // update the retailer's balance
-            return retailerRegistry.update(contract.retailer);
+        .then(function (distributorRegistry) {
+            // update the distributor's balance
+            return distributorRegistry.update(contract.distributor);
         })
         .then(function () {
             return getAssetRegistry('org.mat.Shipment');
@@ -144,14 +144,14 @@ function setupDemo(setupDemo) {
     manufacturer.contact = 'Felicia Taslk'
     manufacturer.accountBalance = 0;
 
-    // create the retailer
+    // create the distributor
     var rName = 'FSU';
     var rId = rName.toLowerCase();
-    var retailer = factory.newResource(NS, 'Retailer', rId);
-    retailer.name = rName;
-    retailer.email = 'retail@fsu.com';
-    retailer.contact = 'Matthew Barnale';
-    retailer.accountBalance = 0;
+    var distributor = factory.newResource(NS, 'Distributor', rId);
+    distributor.name = rName;
+    distributor.email = 'retail@fsu.com';
+    distributor.contact = 'Matthew Barnale';
+    distributor.accountBalance = 0;
 
     // create the carrier
     var cName = 'Harvard';
@@ -165,7 +165,7 @@ function setupDemo(setupDemo) {
     // create the contract
     var contract = factory.newResource(NS, 'Contract', 'CON_001');
     contract.manufacturer = factory.newRelationship(NS, 'Manufacturer', mId);
-    contract.retailer = factory.newRelationship(NS, 'Retailer', rId);
+    contract.distributor = factory.newRelationship(NS, 'Distributor', rId);
     contract.carrier = factory.newRelationship(NS, 'Carrier', cId);
     var tomorrow = setupDemo.timestamp;
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -188,11 +188,11 @@ function setupDemo(setupDemo) {
             return manufacturerRegistry.addAll([manufacturer]);
         })
         .then(function() {
-            return getParticipantRegistry(NS + '.Retailer');
+            return getParticipantRegistry(NS + '.Distributor');
         })
-        .then(function(retailerRegistry) {
-            // add the retailers
-            return retailerRegistry.addAll([retailer]);
+        .then(function(distributorRegistry) {
+            // add the distributors
+            return distributorRegistry.addAll([distributor]);
         })
         .then(function() {
             return getParticipantRegistry(NS + '.Carrier');
