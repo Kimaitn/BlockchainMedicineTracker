@@ -1,13 +1,13 @@
 # Medicine Asset Tracking
 
-> Business network consisting of Manfuacturers, Carriers, and Retailers.  Businesses defining contracts for the price of medicine, based on temperature readings received for shipping containers.
+> Business network consisting of Manfuacturers, Carriers, and Distributors.  Businesses defining contracts for the price of medicine, based on temperature readings received for shipping containers.
 
-The business network defines a contract between manufacturers and retailers. The contract stipulates that: On receipt of the shipment the Retailer pays the Manufacturer the unit price x the number of units in the shipment. Shipments that arrive late are free. Shipments that have breached the low temperate threshold have a penalty applied proportional to the magnitude of the breach x a penalty factor. Shipments that have breached the high temperate threshold have a penalty applied proportional to the magnitude of the breach x a penalty factor.
+The business network defines a contract between manufacturers and distributors. The contract stipulates that: On receipt of the shipment the Distributor pays the Manufacturer the unit price x the number of units in the shipment. Shipments that arrive late are free. Shipments that have breached the low temperate threshold have a penalty applied proportional to the magnitude of the breach x a penalty factor. Shipments that have breached the high temperate threshold have a penalty applied proportional to the magnitude of the breach x a penalty factor.
 
 This business network defines:
 
 **Participants**
-`Manufacturer` `Retailer` `Carrier`
+`Manufacturer` `Distributor` `Carrier`
 
 **Assets**
 `Contract` `Shipment`
@@ -25,7 +25,7 @@ Submit a `SetupDemo` transaction:
 }
 ```
 
-This transaction populates the Participant Registries with a `Manufacturer`, an `Retailer` and a `Carrier`. The Asset Registries will have a `Contract` asset and a `Shipment` asset.
+This transaction populates the Participant Registries with a `Manufacturer`, an `Distributor` and a `Carrier`. The Asset Registries will have a `Contract` asset and a `Shipment` asset.
 
 Submit a `TemperatureReading` transaction:
 
