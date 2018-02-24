@@ -17,11 +17,11 @@ rule networkControlPermission {
   action: ALLOW  
 }
 
-rule itemTypeReadOnly
-{
-  description: "allows a person to be able to read an item type "
-  participant: "org.mat.Carrier, org.mat.Retailer"
-}
+// rule itemTypeReadOnly
+// {
+//   description: "allows a person to be able to read an item type "
+//   participant: "org.mat.Carrier"
+// }
 
 rule itemTransactionPermission
 {
