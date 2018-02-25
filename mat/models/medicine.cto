@@ -28,8 +28,6 @@ enum Status
   o ARRIVED
 }
 
-<<<<<<< HEAD
-=======
 // enum BusinessType 
 // {
 //   o Manufacturer
@@ -37,7 +35,6 @@ enum Status
 //   o Carrier
 // }
 
->>>>>>> origin/hassan
 /**
  * MAYBE
  */
