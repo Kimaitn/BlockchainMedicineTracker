@@ -14,7 +14,7 @@
 
 /**
  * A shipment has been received by an distributor
- * @param {org.mat.ShipmentReceived} shipmentReceived - the ShipmentReceived transaction
+ * @param {org.mat.ShipmentReceived} shipmentTransaction - the ShipmentReceived transaction
  * @transaction
  */
 function payOut(shipmentReceived) {
@@ -97,7 +97,7 @@ function payOut(shipmentReceived) {
 
 /**
  * A temperature reading has been received for a shipment
- * @param {org.mat.TemperatureReading} temperatureReading - the TemperatureReading transaction
+ * @param {org.mat.TemperatureReading} itemTransaction - the TemperatureReading transaction
  * @transaction
  */
 function temperatureReading(temperatureReading) {
