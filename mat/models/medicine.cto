@@ -160,7 +160,7 @@ participant Employee identified by employeeId
   o String lastName
   o String email
   o String phoneNumber optional
-  o Business worksFor
+  --> Business worksFor
 }
 
 participant Admin identified by adminId
@@ -170,13 +170,12 @@ participant Admin identified by adminId
   o String lastName
   o String email
   o String phoneNumber
-  o Business worksFor optional
+  --> Business worksFor optional
 }
 
 transaction itemTransaction
 {
   o Integer itemTransactionID
-  o Business currentOwner
   o Business newOwner
   o Item item
 }
@@ -184,7 +183,6 @@ transaction itemTransaction
 transaction shipmentTransaction
 {
   o Integer shipmentTransaction
-  o Business currentOwner
   o Business newOwner
   o Shipment shipment
 }

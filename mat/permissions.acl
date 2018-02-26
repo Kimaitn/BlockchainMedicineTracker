@@ -9,13 +9,13 @@ rule Default {
     action: ALLOW
 }
 
-rule networkControlPermission {
-  description:  "networkControl can access network commands"
-  participant: "org.mat.Admin"
-  operation: ALL
-  resource: "org.hyperledger.composer.system.Network"
-  action: ALLOW  
-}
+// rule networkControlPermission {
+//   description:  "networkControl can access network commands"
+//   participant: "org.mat.Admin"
+//   operation: ALL
+//   resource: "org.hyperledger.composer.system.Network"
+//   action: ALLOW  
+// }
 
 // rule itemTypeReadOnly
 // {
@@ -23,32 +23,32 @@ rule networkControlPermission {
 //   participant: "org.mat.Carrier"
 // }
 
-rule itemTransactionPermission
-{
-  description: "verifies that user can create a transaction with the item"
-  participant(m): "org.mat.Business"
-  operation: ALL
-  resource(i): "org.mat.Item"
-  transaction: "org.mat.itemTransaction"
-  condition: (i.currentOwner.businessId==m.businessId)
-  action: ALLOW
-}
+// rule itemTransactionPermission
+// {
+//   description: "verifies that user can create a transaction with the item"
+//   participant(m): "org.mat.Business"
+//   operation: ALL
+//   resource(i): "org.mat.Item"
+//   transaction: "org.mat.itemTransaction"
+//   condition: (i.currentOwner.businessId==m.businessId)
+//   action: ALLOW
+// }
 
-rule shipmentTransactionPermission
-{
-  description: "verifies that user can create a transaction with the item"
-  participant(m): "org.mat.Business"
-  operation: ALL
-  resource(i): "org.mat.Shipment"
-  transaction: "org.mat.shipmentTransaction"
-  condition: (i.currentOwner.businessId==m.businessId)
-  action: ALLOW
-}
+// rule shipmentTransactionPermission
+// {
+//   description: "verifies that user can create a transaction with the item"
+//   participant(m): "org.mat.Business"
+//   operation: ALL
+//   resource(i): "org.mat.Shipment"
+//   transaction: "org.mat.shipmentTransaction"
+//   condition: (i.currentOwner.businessId==m.businessId)
+//   action: ALLOW
+// }
 
-rule ManufacturerPermissions {
-  description: "allows manufacturer to be able to create, update, and delete items"
-  participant: "org.mat.Manufacturer"
-  operation: ALL
-  resource: "org.mat.Item"
-  action: ALLOW
-}
+// rule ManufacturerPermissions {
+//   description: "allows manufacturer to be able to create, update, and delete items"
+//   participant: "org.mat.Manufacturer"
+//   operation: ALL
+//   resource: "org.mat.Item"
+//   action: ALLOW
+// }
