@@ -62,6 +62,93 @@ rule EmployeeUPDATEItemPermission
   action: ALLOW
 }
 
+//Allow an employee to READ a contract if they belong to the one of the business' the contract is related to
+rule EmployeeREADShipmentPermission
+{
+  description: "All employees can read a shipment"
+  participant(e): "org.mat.Employee"
+  operation: READ
+  resource(s): "org.mat.Shipment"
+  condition: ((e.worksFor == s.sender) || (e.worksFor == s.receiver) || (e.worksFor == s.currentOwner))
+  action: ALLOW
+}
+
+rule EmployeeCREATEShipmentPermission
+{
+  description: "All employees can create a shipment as long as they use the create shipment transaction"
+  participant(e): "org.mat.Employee"
+  operation: CREATE
+  resource(s): "org.mat.Shipment"
+  transaction: "org.mat.createShipment"
+  condition: (e.worksFor == s.sender)
+  action: ALLOW
+}
+
+rule EmployeeUPDATEShipmentPermission
+{
+  description: "All employees can create a shipment as long as they use the create shipment transaction"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(s): "org.mat.Shipment"
+  transaction: "org.mat.updateShipment"
+  condition: ((e.worksFor == s.sender) || (e.worksFor == s.receiver) || (e.worksFor == s.currentOwner))
+  action: ALLOW
+}
+
+rule EmployeeDELETEShipmentPermission
+{
+  description: "All employees can create a shipment as long as they use the create shipment transaction"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(s): "org.mat.Shipment"
+  transaction: "org.mat.updateShipment"
+  condition: (((e.worksFor == s.sender) || (e.worksFor == s.receiver) || (e.worksFor == s.currentOwner)) && (e.employeeType == EmployeeType.Admin))
+  action: ALLOW
+}
+
+rule EmployeeREADContractPermission
+{
+  description: "All employees can read a shipment"
+  participant(e): "org.mat.Employee"
+  operation: READ
+  resource(c): "org.mat.Contract"
+  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  action: ALLOW
+}
+
+rule EmployeeCREATEContractPermission
+{
+  description: "All employees can create a shipment as long as they use the create shipment transaction"
+  participant(e): "org.mat.Employee"
+  operation: CREATE
+  resource(c): "org.mat.Contract"
+  transaction: "org.mat.createContract"
+  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  action: ALLOW
+}
+
+rule EmployeeUPDATEContractPermission
+{
+  description: "All employees can create a shipment as long as they use the create shipment transaction"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(c): "org.mat.Contract"
+  transaction: "org.mat.updateContract"
+  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  action: ALLOW
+}
+
+rule EmployeeDELETEContractPermission
+{
+  description: "All employees can create a shipment as long as they use the create shipment transaction"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(s): "org.mat.Contract"
+  transaction: "org.mat.updateContract"
+  condition: (((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness)) && (e.employeeType == EmployeeType.Admin))
+  action: ALLOW
+}
+
 //lets business CRUD employees
 rule CreateEmployee
 {
@@ -69,16 +156,6 @@ rule CreateEmployee
   participant(b): "org.mat.Business"
   operation: ALL
   resource(e): "org.mat.Employee"
-  condition: (b == Employee.worksFor)
-  action: ALLOW
-}
-
-//lets employees READ items
-rule EmployeeItemPermission
-{
-  description: "this allows an employee to read and update an item"
-  participant: "org.mat.Employee"
-  operation: READ
-  resource: "org.mat.Item"
+  condition: (e.worksFor == b)
   action: ALLOW
 }
