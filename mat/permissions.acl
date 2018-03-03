@@ -1,54 +1,96 @@
 /**
- * Sample access control list.
- */
-rule Default {
-    description: "Allow all participants access to all resources"
-    participant: "ANY"
-    operation: ALL
-    resource: "org.mat.*"
+This is the permissions access control list 
+All the permissions are listed here
+
+The format for permissions is:
+
+rule SampleConditionalRuleWithTransaction 
+{
+    description: "Description of the ACL rule"
+    participant(m): "org.example.SampleParticipant"
+    operation: READ, CREATE, UPDATE
+    resource(v): "org.example.SampleAsset"
+    transaction(tx): "org.example.SampleTransaction"
+    condition: (v.owner.getIdentifier() == m.getIdentifier())
     action: ALLOW
 }
 
-// rule networkControlPermission {
-//   description:  "networkControl can access network commands"
-//   participant: "org.mat.Admin"
-//   operation: ALL
-//   resource: "org.hyperledger.composer.system.Network"
-//   action: ALLOW  
-// }
+*/
 
-// rule itemTypeReadOnly
-// {
-//   description: "allows a person to be able to read an item type "
-//   participant: "org.mat.Carrier"
-// }
 
-// rule itemTransactionPermission
-// {
-//   description: "verifies that user can create a transaction with the item"
-//   participant(m): "org.mat.Business"
-//   operation: ALL
-//   resource(i): "org.mat.Item"
-//   transaction: "org.mat.itemTransaction"
-//   condition: (i.currentOwner.businessId==m.businessId)
-//   action: ALLOW
-// }
+//gives network control and business control to the 
+//admin of the hyperledger fabric network 
+rule NetworkControlPermission
+{
+  description:  "Network admin is given business and network permissions"
+  participant: "org.hyperledger.composer.system.NetworkAdmin"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW  
+}
 
-// rule shipmentTransactionPermission
-// {
-//   description: "verifies that user can create a transaction with the item"
-//   participant(m): "org.mat.Business"
-//   operation: ALL
-//   resource(i): "org.mat.Shipment"
-//   transaction: "org.mat.shipmentTransaction"
-//   condition: (i.currentOwner.businessId==m.businessId)
-//   action: ALLOW
-// }
+//Allows admin to create items as long as the item belongs
+//to that admin's business
+rule AdminEmployeeItemPermission
+{
+  description: "Admin Employee is given CRUD permissions for Items"
+  participant(a): "org.mat.Employee"
+  operation: ALL
+  resource(i): "org.mat.Item"
+  condition: ((a.worksFor == i.currentOwner) && (a.employeeType == EmployeeType.Admin))
+  action: ALLOW
+}
 
-// rule ManufacturerPermissions {
-//   description: "allows manufacturer to be able to create, update, and delete items"
-//   participant: "org.mat.Manufacturer"
-//   operation: ALL
-//   resource: "org.mat.Item"
-//   action: ALLOW
-// }
+//Allows regular employee the ability to read items 
+rule EmployeeREADItemPermission
+{
+  description: "All Employees is given READ permissions for items"
+  participant(a): "org.mat.Employee"
+  operation: READ
+  resource(i): "org.mat.Item"
+  condition: (a.worksFor == i.currentOwner)
+  action: ALLOW
+}
+
+//Allows regular employee the ability to read items 
+rule EmployeeUPDATEItemPermission
+{
+  description: "All Employees is given READ permissions for items"
+  participant(a): "org.mat.Employee"
+  operation: UPDATE
+  resource(i): "org.mat.Item"
+  transaction: "org.mat.itemTransaction"
+  condition: (a.worksFor == i.currentOwner)
+  action: ALLOW
+}
+
+rule EmployeeCREATEREADOrderPermission
+{
+  description: "All employees can CREATE and READ Orders"
+  participant(e): "org.mat.Employee"
+  operation: CREATE, READ
+  resource(o): "org.mat.Order"
+  condition: (e == o.requester)  
+  action: ALLOW
+}
+
+//lets business CRUD employees
+rule CreateEmployee
+{
+  description: "lets businesses create employees"
+  participant(b): "org.mat.Business"
+  operation: ALL
+  resource(e): "org.mat.Employee"
+  condition: (b == Employee.worksFor)
+  action: ALLOW
+}
+
+//lets employees READ items
+rule EmployeeItemPermission
+{
+  description: "this allows an employee to read and update an item"
+  participant: "org.mat.Employee"
+  operation: READ
+  resource: "org.mat.Item"
+  action: ALLOW
+}
