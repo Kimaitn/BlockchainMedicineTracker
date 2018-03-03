@@ -1,15 +1,6 @@
-/**
-  * A business network for shipping perishable goods
-  * The cargo is temperature controlled and contracts
-  * can be negociated based on the temperature
-  * readings received for the cargo
-  */
-
 namespace org.mat
 
-/**
- * A concept for a simple street address
- */
+//Address concept for locations
 concept Address 
 {
   o String city
@@ -18,9 +9,7 @@ concept Address
   o String zip
 }
 
-/**
- * The status of a shipment
- */
+//Status of shipment and order
 enum Status 
 {
   o CREATED
@@ -28,16 +17,22 @@ enum Status
   o ARRIVED
 }
 
-// enum BusinessType 
-// {
-//   o Manufacturer
-//   o Distributor
-//   o Carrier
-// }
+//Business type
+enum BusinessType
+{
+  o Manufacturer
+  o Carrier
+  o Distributor
+}
 
-/**
- * MAYBE
- */
+//Employee type
+enum EmployeeType
+{
+  o Admin
+  o Regular
+}
+
+//Unit of Measure for ItemType
 enum UoM 
 {
   o mL
@@ -52,6 +47,7 @@ enum UoM
  * to go into the lookup table and find the commodity name
  * ProductType --> Commodity
  */
+ //Network Admin - CRUD
 asset ItemType identified by itemTypeId 
 {
   o String itemTypeId
@@ -65,6 +61,9 @@ asset ItemType identified by itemTypeId
  * 1000 mL. The relationship to the commodity type allows us to simply send a 
  * parameter with the commodity identifier number and fetch the data. 
  */
+ //Admin - CRUD - FINISHED
+ //Employee - READ - FINISHED
+ //Employee - UPDATE using ItemTransaction - FINISHED
 asset Item identified by itemId 
 {
   o String itemId
@@ -72,9 +71,16 @@ asset Item identified by itemId
   o Business currentOwner
   --> ItemType itemType
 }
+
 /**
  * This is an order, an order can have mulitple items in it
  */
+ //Admin - CREATE, READ
+ //Admin - UPDATE using updateOrder Transaction
+ //Admin - DELETE using deleteOrder Transaction
+ //Employee - CREATE, READ
+ //Employee - UPDATE using updateOrder Transaction
+ //Employee - DELETE using deleteOrder Transaction
 asset Order identified by orderId 
 {
   o String orderId
@@ -91,9 +97,15 @@ asset Order identified by orderId
 }
 
 /**
- * shipments can have multiple orders since multiple orders may be going to the same
+ * shipments can have multiple orders since multiple orders may be     * going to the same
  * place or shipped together since they are near each other
  */
+ //Admin - CREATE, READ
+ //Admin - UPDATE using updateShipment Transaction
+ //Admin - DELETE using deleteShipment Transaction
+ //Employee - CREATE, READ
+ //Employee - UPDATE using updateShipment Transaction
+ //Employee - DELETE using deleteShipment Transaction
 asset Shipment identified by shipmentId 
 {
   o String shipmentId
@@ -104,16 +116,22 @@ asset Shipment identified by shipmentId
   o Address destinationAddress
   o Address sourceAddress
   o Address[] locations
-  --> Order[] orders
+  --> Order order
 }
 
 /**
- * Defines a contract between a Manufacturer and an Distributor to ship using
+ * Defines a contract between a Manufacturer and an Distributor to ship * using
  * a Carrier, paying a set unit price. The unit price is multiplied by
  * a penality factor proportional to the deviation from the min and max
  * negociated temperatures for the shipment.
- * A contract will be made for each itemType. This is the agreement of what price will be paid. 
+ * A contract will be made for each itemType. This is the agreement of * what price will be paid. 
  */
+ //Admin - CREATE, READ
+ //Admin - UPDATE using updateContract Transaction
+ //Admin - DELETE using deleteContract Transaction
+ //Employee - CREATE, READ
+ //Employee - UPDATE using updateContract Transaction
+ //Employee - DELETE using deleteContract Transaction
 asset Contract identified by contractId 
 {
   o String contractId
@@ -127,10 +145,12 @@ asset Contract identified by contractId
 /**
  * An abstract participant type in this business network
  */
-abstract participant Business identified by businessId 
+ //NetworkAdmin - CRUD
+participant Business identified by businessId 
 {
   o String businessId
   o String name
+  o BusinessType businessType
   o String PoCName optional
   o String PoCEmail optional
   o Address address optional
@@ -139,40 +159,20 @@ abstract participant Business identified by businessId
   --> Employee[] employees
 }
 
-participant Manufacturer extends Business
-{
-}
 
-
-participant Distributor extends Business
-{
-}
-
-
-participant Carrier extends Business
-{
-}
-
+//Business - CRUD
 participant Employee identified by employeeId
 {
   o String employeeId
   o String firstName
   o String lastName
   o String email
+  o EmployeeType employeeType
   o String phoneNumber optional
   --> Business worksFor
 }
 
-participant Admin identified by adminId
-{
-  o String adminId
-  o String firstName
-  o String lastName
-  o String email
-  o String phoneNumber
-  --> Business worksFor optional
-}
-
+//Item Transaction to allow the owner of the item to be changed
 transaction itemTransaction
 {
   o Integer itemTransactionID
@@ -180,6 +180,7 @@ transaction itemTransaction
   o Item item
 }
 
+//Shipment Transaction to allow the owner of a shipment to to be changed
 transaction shipmentTransaction
 {
   o Integer shipmentTransaction
@@ -187,8 +188,45 @@ transaction shipmentTransaction
   o Shipment shipment
 }
 
+//call to bulk load invenotory in
+transaction bulkLoad
+{
+}
+
+//Updates an already created order
+transaction updateOrder
+{
+}
+
+//Delete an already deleted order
+transaction deleteOrder
+{
+}
+
+//Updates an already created contract
+transaction updateContract
+{
+}
+
+//Delete an already deleted contract
+transaction deleteContract
+{
+}
+
+//Updates an already created shipment
+transaction updateShipment
+{
+}
+
+//Delete an already deleted shipment
+transaction deleteShipment
+{
+}
+
+
 /**
  * JUST FOR INITIALIZING A DEMO
  */
-transaction SetupDemo {
+transaction SetupDemo 
+{
 }
