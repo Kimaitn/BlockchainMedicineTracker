@@ -69,6 +69,7 @@ asset Item identified by itemId
   o String itemId
   o String packageType 
   o Business currentOwner
+  o Address[] previousLocations
   --> ItemType itemType
 }
 
@@ -81,23 +82,23 @@ asset Item identified by itemId
  //Employee - CREATE, READ
  //Employee - UPDATE using updateOrder Transaction
  //Employee - DELETE using deleteOrder Transaction
-asset Order identified by orderId 
-{
-  o String orderId
-  o Employee requester
-  o Employee provider
-  o Address destinationAddress
-  o Address sourceAddress
-  o Address[] locations
-  o Address billingAddress
-  o Status status
-  o Business receiver
-  o Business sender
-  --> Contract[] itemContracts
-}
+// asset Order identified by orderId 
+// {
+//   o String orderId
+//   o Employee requester
+//   o Employee provider
+//   o Address destinationAddress
+//   o Address sourceAddress
+//   o Address[] locations
+//   o Address billingAddress
+//   o Status status
+//   o Business receiver
+//   o Business sender
+//   --> Contract[] itemContracts
+// }
 
 /**
- * shipments can have multiple orders since multiple orders may be     * going to the same
+ * shipments can have multiple orders since multiple orders may be going to the same
  * place or shipped together since they are near each other
  */
  //Admin - CREATE, READ
@@ -116,11 +117,12 @@ asset Shipment identified by shipmentId
   o Address destinationAddress
   o Address sourceAddress
   o Address[] locations
-  --> Order order
+  --> Contract contract
+  --> Item[] items
 }
 
 /**
- * Defines a contract between a Manufacturer and an Distributor to ship * using
+ * Defines a contract between a Manufacturer and an Distributor to ship using
  * a Carrier, paying a set unit price. The unit price is multiplied by
  * a penality factor proportional to the deviation from the min and max
  * negociated temperatures for the shipment.
@@ -139,7 +141,7 @@ asset Contract identified by contractId
   o Business sellingBusiness
   o Business buyingBusiness
   o Double unitPrice
-  o Double quantity
+  o Double quantity 
 }
 
 /**
