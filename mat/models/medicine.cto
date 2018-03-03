@@ -101,10 +101,8 @@ asset Item identified by itemId
  * shipments can have multiple orders since multiple orders may be going to the same
  * place or shipped together since they are near each other
  */
- //Admin - CREATE, READ
- //Admin - UPDATE using updateShipment Transaction
- //Admin - DELETE using deleteShipment Transaction
- //Employee - CREATE, READ
+ //Employee - READ
+ //Employee - CREATE using createShipment Transaction
  //Employee - UPDATE using updateShipment Transaction
  //Employee - DELETE using deleteShipment Transaction
 asset Shipment identified by shipmentId 
@@ -128,10 +126,8 @@ asset Shipment identified by shipmentId
  * negociated temperatures for the shipment.
  * A contract will be made for each itemType. This is the agreement of * what price will be paid. 
  */
- //Admin - CREATE, READ
- //Admin - UPDATE using updateContract Transaction
- //Admin - DELETE using deleteContract Transaction
- //Employee - CREATE, READ
+ //Employee - READ
+ //Employee - CREATE using createContract Transaction
  //Employee - UPDATE using updateContract Transaction
  //Employee - DELETE using deleteContract Transaction
 asset Contract identified by contractId 
@@ -195,13 +191,8 @@ transaction bulkLoad
 {
 }
 
-//Updates an already created order
-transaction updateOrder
-{
-}
-
-//Delete an already deleted order
-transaction deleteOrder
+//Creates a contract
+transaction createContract
 {
 }
 
@@ -212,6 +203,11 @@ transaction updateContract
 
 //Delete an already deleted contract
 transaction deleteContract
+{
+}
+
+//Creates a shipment
+transaction createShipment
 {
 }
 
