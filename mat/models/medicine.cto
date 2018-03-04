@@ -12,9 +12,11 @@ concept Address
 //Status of shipment and order
 enum Status 
 {
-  o CREATED
   o IN_TRANSIT
   o ARRIVED
+  o CANCELLED
+  o WAITING_CONFIRMATION
+  o CONFIRMED
 }
 
 //Business type
@@ -69,7 +71,6 @@ asset Item identified by itemId
   o String itemId
   o String packageType 
   o Business currentOwner
-  o Address[] previousLocations
   --> ItemType itemType
 }
 
@@ -115,7 +116,7 @@ asset Shipment identified by shipmentId
   o Address destinationAddress
   o Address sourceAddress
   o Address[] locations
-  --> Contract contract
+  --> Contract[] contract
   --> Item[] items
 }
 
@@ -133,11 +134,13 @@ asset Shipment identified by shipmentId
 asset Contract identified by contractId 
 {
   o String contractId
+  o Status status
   o ItemType itemToBuy
   o Business sellingBusiness
   o Business buyingBusiness
   o Double unitPrice
   o Double quantity 
+  --> Shipment[] shipments
 }
 
 /**
@@ -220,7 +223,6 @@ transaction updateShipment
 transaction deleteShipment
 {
 }
-
 
 /**
  * JUST FOR INITIALIZING A DEMO
