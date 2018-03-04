@@ -116,7 +116,7 @@ asset Shipment identified by shipmentId
   o Address destinationAddress
   o Address sourceAddress
   o Address[] locations
-  --> Contract[] contract
+  --> Contract contract
   --> Item[] items
 }
 
@@ -140,7 +140,7 @@ asset Contract identified by contractId
   o Business buyingBusiness
   o Double unitPrice
   o Double quantity 
-  --> Shipment[] shipments
+  --> Shipment shipments
 }
 
 /**
