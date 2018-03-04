@@ -99,7 +99,7 @@ rule EmployeeDELETEShipmentPermission
 {
   description: "All employees can create a shipment as long as they use the create shipment transaction"
   participant(e): "org.mat.Employee"
-  operation: UPDATE
+  operation: DELETE
   resource(s): "org.mat.Shipment"
   transaction: "org.mat.updateShipment"
   condition: (((e.worksFor == s.sender) || (e.worksFor == s.receiver) || (e.worksFor == s.currentOwner)) && (e.employeeType == EmployeeType.Admin))
@@ -142,7 +142,7 @@ rule EmployeeDELETEContractPermission
 {
   description: "All employees can create a shipment as long as they use the create shipment transaction"
   participant(e): "org.mat.Employee"
-  operation: UPDATE
+  operation: DELETE
   resource(s): "org.mat.Contract"
   transaction: "org.mat.updateContract"
   condition: (((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness)) && (e.employeeType == EmployeeType.Admin))
