@@ -155,7 +155,7 @@ export class LoginComponent implements AfterViewInit  {
 					localStorage.setItem('id', user.businessId);
 					localStorage.setItem('name', user.name);
 					localStorage.setItem('type', user.BusinessType);
-					this.router.navigate(['/dashboard'])
+					this.router.navigate(['/dashboard']);
 					
 					break;
 				} else {
