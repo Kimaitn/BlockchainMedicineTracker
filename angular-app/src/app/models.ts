@@ -6,7 +6,7 @@ export class Users {
 }
 
 export class Business {
-	businessId: number;
+	id: number;
 	PoCEmail: string;
 	PoCPassword: string;
 	name: string;
