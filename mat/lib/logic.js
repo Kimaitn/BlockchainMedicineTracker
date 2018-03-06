@@ -219,7 +219,7 @@
 
 /**
  * Track the trade of a commodity from one trader to another
- * @param {org.mat.itemTransaction} itemTransaction - the trade to be processed
+ * @param {org.mat.ItemTransaction} itemTransaction - the trade to be processed
  * @transaction
  */
 function tradeCommodity(itemTransaction) {
