@@ -133,7 +133,7 @@ export class LoginComponent implements AfterViewInit  {
     
     //retrieve all residents
 		let usersList = [];
-		return this.serviceLogin.getAllUsers()
+		return this.serviceLogin.getAllBusinesses()
 		.toPromise()
 		.then((result) => {
 				this.errorMessage = null;
@@ -146,14 +146,15 @@ export class LoginComponent implements AfterViewInit  {
 		  //console.log("Is there a user");
 		  var foundany = false;
 		  for (let user of usersList) {
-			if(user.email==_email){
+			if(user.PoCEmail==_email){
 				//console.log("FOUND THE SAME USER");
 				foundany = true;
-				if(user.password==_password){
+				if(user.PoCPassword==_password){
 					//console.log("FOUND THE SAME PASSWORD");
-					localStorage.setItem('email', user.email);
-					localStorage.setItem('id', user.id);
-					localStorage.setItem('type', user.type);
+					localStorage.setItem('email', user.PoCEmail);
+					localStorage.setItem('id', user.businessId);
+					localStorage.setItem('name', user.name);
+					localStorage.setItem('type', user.BusinessType);
 					this.router.navigate(['/dashboard'])
 					
 					break;
