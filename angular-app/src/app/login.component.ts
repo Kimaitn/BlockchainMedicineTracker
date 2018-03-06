@@ -1,4 +1,9 @@
 import { Component, AfterViewInit } from '@angular/core';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { Md5 } from 'ts-md5/dist/md5';
+import { LoginService } from './Login.service';
+import { Router } from "@angular/router";
+import 'rxjs/add/operator/toPromise';
 //declare var toload.index.init:any;
 
 	
@@ -10,13 +15,33 @@ import { Component, AfterViewInit } from '@angular/core';
   './css/style.css',
   './css/jqueryui1.css',
   './css/jqueryui2.css',
-  './css/fontawesome.css']
+  './css/fontawesome.css'],
+  providers: [LoginService]
 })
 export class LoginComponent implements AfterViewInit  {
     signup: boolean;
- 
-    constructor(){
+	myForm: FormGroup;
+	id = new FormControl("", Validators.required);
+    email = new FormControl("", Validators.required);
+    password = new FormControl("", Validators.required);
+    type = new FormControl("", Validators.required);
+    private allUsers;
+	private errorMessage;
+	incorrect: boolean;
+	
+	constructor(private serviceLogin:LoginService, fb: FormBuilder,private router: Router){
 		this.signup = false;
+		
+		this.myForm = fb.group({
+         
+			id:this.id,
+			email:this.email,      
+			password:this.password,
+			type:this.type
+			  
+		});
+		
+		this.incorrect = false;
     }
 	
 	ngAfterViewInit() {
@@ -29,6 +54,18 @@ export class LoginComponent implements AfterViewInit  {
 		var bheight = (height/2) - (document.getElementById("signin").clientHeight/2);
 		document.getElementById("signin").style.marginTop = bheight+"px";
 		document.getElementById("signinleft").style.height = document.getElementById("signinform").clientHeight+"px";
+		//this.loadAll();
+	}
+	
+	signIn(){
+		
+		var inputemail = (<HTMLInputElement>document.getElementById("inputEmail")).value;
+		var inputpassword = (<HTMLInputElement>document.getElementById("inputPassword")).value;
+		console.log(inputemail+" "+inputpassword);
+		var inputpassword2 = Md5.hashStr(inputpassword);
+		console.log(inputpassword2);
+		this.isUser(inputemail, inputpassword2);
+		
 	}
 	
 	toggleSignup(signupq: boolean){
@@ -56,4 +93,91 @@ export class LoginComponent implements AfterViewInit  {
 			}
 		}, 0);
 	}
+	
+	//this was a test
+	loadAll(): Promise<any>  {
+    
+    //retrieve all residents
+		let usersList = [];
+		return this.serviceLogin.getAllUsers()
+		.toPromise()
+		.then((result) => {
+				this.errorMessage = null;
+			  result.forEach(user => {
+				usersList.push(user);
+			  });     
+		})
+		.then(() => {
+
+		  for (let user of usersList) {
+			//console.log("in for loop")
+			//console.log(user.email)
+		  }
+
+		  this.allUsers = usersList;
+		}).catch((error) => {
+			if(error == 'Server error'){
+				this.errorMessage = "Could not connect to REST server. Please check your configuration details";
+			}
+			else if (error == '500 - Internal Server Error') {
+			  this.errorMessage = "Input error";
+			}
+			else{
+				this.errorMessage = error;
+			}
+		});
+
+	  }
+	  
+	isUser(_email, _password): Promise<any>  {
+    
+    //retrieve all residents
+		let usersList = [];
+		return this.serviceLogin.getAllUsers()
+		.toPromise()
+		.then((result) => {
+				this.errorMessage = null;
+			  result.forEach(user => {
+				usersList.push(user);
+			  });     
+		})
+		.then(() => {
+			
+		  //console.log("Is there a user");
+		  var foundany = false;
+		  for (let user of usersList) {
+			if(user.email==_email){
+				//console.log("FOUND THE SAME USER");
+				foundany = true;
+				if(user.password==_password){
+					//console.log("FOUND THE SAME PASSWORD");
+					localStorage.setItem('email', user.email);
+					localStorage.setItem('id', user.id);
+					localStorage.setItem('type', user.type);
+					this.router.navigate(['/dashboard'])
+					
+					break;
+				} else {
+					//console.log("Different Password now");
+					this.incorrect = true;
+				}
+			}
+		  }
+		  if(!foundany)
+			this.incorrect = true;
+
+		  this.allUsers = usersList;
+		}).catch((error) => {
+			if(error == 'Server error'){
+				this.errorMessage = "Could not connect to REST server. Please check your configuration details";
+			}
+			else if (error == '500 - Internal Server Error') {
+			  this.errorMessage = "Input error";
+			}
+			else{
+				this.errorMessage = error;
+			}
+		});
+
+	  }
  }
