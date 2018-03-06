@@ -174,7 +174,7 @@ participant Employee identified by employeeId
 }
 
 //Item Transaction to allow the owner of the item to be changed
-transaction itemTransaction
+transaction ItemTransaction
 {
   o Integer itemTransactionID
   o Business newOwner
@@ -182,7 +182,7 @@ transaction itemTransaction
 }
 
 //Shipment Transaction to allow the owner of a shipment to to be changed
-transaction shipmentTransaction
+transaction ShipmentTransaction
 {
   o Integer shipmentTransaction
   o Business newOwner
@@ -190,37 +190,37 @@ transaction shipmentTransaction
 }
 
 //call to bulk load invenotory in
-transaction bulkLoad
+transaction BulkLoad
 {
 }
 
 //Creates a contract
-transaction createContract
+transaction CreateContract
 {
 }
 
 //Updates an already created contract
-transaction updateContract
+transaction UpdateContract
 {
 }
 
 //Delete an already deleted contract
-transaction deleteContract
+transaction DeleteContract
 {
 }
 
 //Creates a shipment
-transaction createShipment
+transaction CreateShipment
 {
 }
 
 //Updates an already created shipment
-transaction updateShipment
+transaction UpdateShipment
 {
 }
 
 //Delete an already deleted shipment
-transaction deleteShipment
+transaction DeleteShipment
 {
 }
 
