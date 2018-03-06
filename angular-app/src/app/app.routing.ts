@@ -4,6 +4,7 @@ import {Routes, RouterModule} from '@angular/router';
 import {HomeComponent} from './home.component';
 import {LoginComponent} from './login.component';
 import {TrackComponent} from './track.component';
+import {DashboardComponent} from './dashboard.component';
 
 const appRoutes: Routes = [
     {
@@ -17,6 +18,10 @@ const appRoutes: Routes = [
 	{
         path:'track',
         component: TrackComponent
+    },
+    {
+        path:'dashboard',
+        component: DashboardComponent
     }
 ];
 
