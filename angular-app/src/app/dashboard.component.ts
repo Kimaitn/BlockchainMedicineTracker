@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { LoginService } from './Login.service';
 import 'rxjs/add/operator/toPromise';
 import { Contract } from './models';
@@ -16,7 +16,7 @@ import { Router } from "@angular/router";
   providers: [LoginService]
 })
 
-export class DashboardComponent implements AfterViewInit  {
+export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 	medicine: string;
     business: string;
 	private allContracts;
@@ -24,19 +24,44 @@ export class DashboardComponent implements AfterViewInit  {
 	private errorMessage;
 	contracts;
 	items;
+	itemtypes;
 	allbusinesses;
+	type: string;
+	isManufacturer: boolean;
 	
 	constructor(private serviceLogin:LoginService,private router: Router){
 	  this.business = localStorage.getItem("name");
 	  this.contracts = new Array();
 	  this.items = new Array();
+	  this.itemtypes = new Array();
+	  this.type = localStorage.getItem('type');
+	  if(this.type=="Manufacturer")
+		  this.isManufacturer = true;
+	  else
+		  this.isManufacturer = false;
 	  this.loadContracts(this.business);
 	  this.loadItems(this.business);
 	  this.loadBusinesses();
+	  
     }
 	
 	ngAfterViewInit() {
 	
+		document.getElementById("topnav").style.display = "none";
+
+		var height = window.innerHeight-80;
+		var fullsize = document.getElementsByClassName("fullsize");
+		
+		for(var i = 0; i<fullsize.length; i++){
+			(<HTMLElement>fullsize[i]).style.height = height+"px";
+		}
+	}
+	
+	ngAfterViewChecked(){
+		this.resize();
+	}
+	
+	resize(){
 		document.getElementById("topnav").style.display = "none";
 
 		var height = window.innerHeight-80;
@@ -128,7 +153,7 @@ export class DashboardComponent implements AfterViewInit  {
 		.then((result) => {
 				this.errorMessage = null;
 			  result.forEach(item => {
-				item.str = JSON.stringify(item);
+				item.str = JSON.stringify(item.ItemType);
 				itemsList.push(item);
 				
 			  });     
@@ -145,6 +170,47 @@ export class DashboardComponent implements AfterViewInit  {
 		  }
 		  //console.log(this.items);
 		  this.allItems = itemsList;
+		  
+		  //console.log(this.contracts);
+		  for(var i = 0; i<this.contracts.length; i++){
+				var temp = this.contracts[i].ItemType;
+				//console.log("temp");
+				//console.log(i);
+				//console.log(temp);
+				//console.log(this.contracts[i].ItemType);
+				temp.itemTypeAmount = this.contracts[i].quantity;
+				var foundmatch = null;
+				for(var y = 0; y<this.items.length; y++){
+					//console.log(this.items[y].ItemType);
+					//console.log(this.items[y].ItemType.id+" "+temp.id);
+					//console.log(temp);
+					if(this.items[y].ItemType.id==temp.id){
+						foundmatch = this.items[y].ItemType;
+						break;
+					}
+				}
+				if(foundmatch==null){
+					for(var y = 0; y<this.itemtypes.length; y++){
+						console.log(this.itemtypes[y].id+" "+temp.id);
+						if(this.itemtypes[y].id==temp.id){
+							foundmatch = this.itemtypes[y];
+							break
+						}
+					}
+				}
+				if(foundmatch!=null){
+					var tempamountchange = this.contracts[i].sellingBusiness.name==this.business?-1:1;
+					foundmatch.itemTypeAmount = ""+(parseInt(foundmatch.itemTypeAmount)+parseInt(temp.itemTypeAmount)*tempamountchange);
+					
+					//console.log("1");
+					//console.log(foundmatch);
+				} else {
+					//console.log("2");
+					//console.log(temp);
+					this.itemtypes.push(temp);
+				}
+		  }
+		  //console.log(this.items);
 		}).catch((error) => {
 			if(error == 'Server error'){
 				this.errorMessage = "Could not connect to REST server. Please check your configuration details";
