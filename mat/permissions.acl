@@ -57,7 +57,7 @@ rule EmployeeUPDATEItemPermission
   participant(a): "org.mat.Employee"
   operation: UPDATE
   resource(i): "org.mat.Item"
-  transaction: "org.mat.itemTransaction"
+  transaction: "org.mat.ItemTransaction"
   condition: (a.worksFor == i.currentOwner)
   action: ALLOW
 }
@@ -79,7 +79,7 @@ rule EmployeeCREATEShipmentPermission
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(s): "org.mat.Shipment"
-  transaction: "org.mat.createShipment"
+  transaction: "org.mat.CreateShipment"
   condition: (e.worksFor == s.sender)
   action: ALLOW
 }
@@ -90,7 +90,7 @@ rule EmployeeUPDATEShipmentPermission
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(s): "org.mat.Shipment"
-  transaction: "org.mat.updateShipment"
+  transaction: "org.mat.UpdateShipment"
   condition: ((e.worksFor == s.sender) || (e.worksFor == s.receiver) || (e.worksFor == s.currentOwner))
   action: ALLOW
 }
@@ -101,7 +101,7 @@ rule EmployeeDELETEShipmentPermission
   participant(e): "org.mat.Employee"
   operation: DELETE
   resource(s): "org.mat.Shipment"
-  transaction: "org.mat.updateShipment"
+  transaction: "org.mat.UpdateShipment"
   condition: (((e.worksFor == s.sender) || (e.worksFor == s.receiver) || (e.worksFor == s.currentOwner)) && (e.employeeType == EmployeeType.Admin))
   action: ALLOW
 }
@@ -122,7 +122,7 @@ rule EmployeeCREATEContractPermission
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(c): "org.mat.Contract"
-  transaction: "org.mat.createContract"
+  transaction: "org.mat.CreateContract"
   condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
   action: ALLOW
 }
@@ -133,7 +133,7 @@ rule EmployeeUPDATEContractPermission
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(c): "org.mat.Contract"
-  transaction: "org.mat.updateContract"
+  transaction: "org.mat.UpdateContract"
   condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
   action: ALLOW
 }
@@ -144,7 +144,7 @@ rule EmployeeDELETEContractPermission
   participant(e): "org.mat.Employee"
   operation: DELETE
   resource(s): "org.mat.Contract"
-  transaction: "org.mat.updateContract"
+  transaction: "org.mat.UpdateContract"
   condition: (((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness)) && (e.employeeType == EmployeeType.Admin))
   action: ALLOW
 }
