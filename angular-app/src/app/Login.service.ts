@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DataService } from './data.service';
 import { Observable } from 'rxjs/Observable';
-import { Users, Business, Item, Contract } from './models';
+import { Users, Business, Item, ItemType, Contract } from './models';
 
 
 import 'rxjs/Rx';
@@ -14,6 +14,7 @@ export class LoginService {
 	private USERS: string = 'users';  
 	private BUSINESS: string = 'Business';  
 	private ITEM: string = 'Item';  
+	private ITEMTYPE: string = 'ItemType';  
 	private CONTRACT: string = 'Contract';  
 	
     constructor(private residentService: DataService<any>) {
@@ -61,7 +62,7 @@ export class LoginService {
       return this.residentService.update(this.BUSINESS, id, itemToUpdate);
     }
 	
-	//Business functions
+	//Item functions
     public getAllItems(): Observable<Item[]> {
         return this.residentService.getAll(this.ITEM);
     }
@@ -80,6 +81,27 @@ export class LoginService {
 
     public updateItem(id: any, itemToUpdate: any): Observable<Item> {
       return this.residentService.update(this.ITEM, id, itemToUpdate);
+    }
+	
+	//ItemType functions
+    public getAllItemTypes(): Observable<ItemType[]> {
+        return this.residentService.getAll(this.ITEMTYPE);
+    }
+
+    public getItemType(id: any): Observable<ItemType> {
+      return this.residentService.getSingle(this.ITEMTYPE, id);
+    }
+
+    public addItemType(itemToAdd: any): Observable<ItemType> {
+      return this.residentService.add(this.ITEMTYPE, itemToAdd);
+    }
+
+    public deleteItemType(id: any): Observable<ItemType> {
+      return this.residentService.delete(this.ITEMTYPE, id);
+    }
+
+    public updateItemType(id: any, itemToUpdate: any): Observable<ItemType> {
+      return this.residentService.update(this.ITEMTYPE, id, itemToUpdate);
     }
 	
 	// Contract functions
