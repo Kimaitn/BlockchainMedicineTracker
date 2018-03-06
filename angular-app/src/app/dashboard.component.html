@@ -39,6 +39,12 @@
 							  <td>{{item.ItemType.itemTypeAmount}}{{item.ItemType.itemTypeUoM}}</td>
 							  <td>{{item.packageType}}</td>
 							</tr>
+							<tr *ngFor="let itemt of itemtypes">
+							  <th scope="row">{{itemt.itemTypeMedId}}</th>
+							  <td>{{itemt.itemTypeName}}</td>
+							  <td>{{itemt.itemTypeAmount}}{{itemt.itemTypeUoM}}</td>
+							  <td>Normal</td>
+							</tr>
 						  </tbody>
 						</table>
 						
@@ -52,6 +58,7 @@
 							  <th scope="col">Status</th>
 							  <th scope="col">Seller</th>
 							  <th scope="col">Buyer</th>
+							  <th scope="col">Medicine</th>
 							  <th scope="col">UnitPrice</th>
 							  <th scope="col">Quantity</th>
 							</tr>
@@ -62,6 +69,7 @@
 							  <td>{{contract.status}}</td>
 							  <td>{{contract.sellingBusiness.name}}</td>
 							  <td>{{contract.buyingBusiness.name}}</td>
+							  <td>{{contract.ItemType.itemTypeName}}</td>
 							  <td>{{contract.unitPrice}}</td>
 							  <td>{{contract.quantity}}</td>
 							</tr>
@@ -71,10 +79,9 @@
 				</div>
 				<div class='row'>
 					<div class='col-md-6'>
-						<button data-toggle="modal" href="#myModal" class="btn btn-lg btn-block btn-primary buttons2">Add New Item</button>
+						<button *ngIf="isManufacturer" data-toggle="modal" href="#myModal" class="btn btn-lg btn-block btn-primary buttons2">Add New Item</button>
 					</div>
 					<div class='col-md-6'>
-					<!--<button data-toggle="modal" href="#myModal2" class="btn btn-lg btn-block btn-primary buttons2">Add New Item</button>-->
 						<button data-toggle="modal" href="#myModal3" class="btn btn-lg btn-block btn-primary buttons2">New Contract</button>
 					</div>
 				</div>
@@ -88,7 +95,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button style='background-color: transparent !important;' type="button" class="close" data-dismiss="modal" aria-hidden="true"><!--×-->&times;</button>
+          <button style='background-color: transparent !important;' type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
           <h4 class="modal-title">Add New Medicine:</h4>
         </div>
         <div class="modal-body">
@@ -118,29 +125,6 @@
       </div>
     </div>
 </div>
-
-<!--Item-->
-<!--
-<div class="modal fade" id="myModal2">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">--><!--×--><!--&times;</button>
-          <h4 class="modal-title">Add New Medicine To Inventory:</h4>
-        </div>
-        <div class="modal-body">
-            <form>
-        		<input id='nmtype' type='text' placeholder='What type of medicine?'/>
-        		<input id='nmpackage' type='number' placeholder='Package Type'/>
-        	</form>
-        </div>
-        <div class="modal-footer">
-          <button href="#" data-dismiss="modal" class="btn btn-primary" >Close</button>
-          <button href="#" class="btn btn-primary" (click)='addNewMedicine()'>Add</button>
-        </div>
-      </div>
-    </div>
-</div>-->
 
 <!--Contract-->
 <div class="modal fade" id="myModal3">
