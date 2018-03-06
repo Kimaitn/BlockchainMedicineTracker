@@ -61,10 +61,73 @@ export class LoginComponent implements AfterViewInit  {
 		
 		var inputemail = (<HTMLInputElement>document.getElementById("inputEmail")).value;
 		var inputpassword = (<HTMLInputElement>document.getElementById("inputPassword")).value;
-		console.log(inputemail+" "+inputpassword);
+		//console.log(inputemail+" "+inputpassword);
 		var inputpassword2 = Md5.hashStr(inputpassword);
-		console.log(inputpassword2);
+		//console.log(inputpassword2);
 		this.isUser(inputemail, inputpassword2);
+		
+	}
+	
+	signUp(){
+		
+
+		var inputemail = (<HTMLInputElement>document.getElementById("signupinputEmail")).value;
+		var inputpassword = (<HTMLInputElement>document.getElementById("signupinputPassword")).value;
+		var inputpasswordR = (<HTMLInputElement>document.getElementById("signupinputRPassword")).value;
+		var inputname = (<HTMLInputElement>document.getElementById("signupinputCompany")).value;
+		var inputtype = (<HTMLInputElement>document.getElementById("signupinputRole")).value;
+		
+		
+		if(inputpassword == ""){
+			(<HTMLInputElement>document.getElementById("signupinputPassword")).style.borderBottomColor = "Red";
+			return;
+		} else {
+			(<HTMLInputElement>document.getElementById("signupinputPassword")).style.borderBottomColor = "";
+		}
+		if(inputpasswordR == ""){
+			(<HTMLInputElement>document.getElementById("signupinputRPassword")).style.borderBottomColor = "Red";
+			return;
+		} else {
+			(<HTMLInputElement>document.getElementById("signupinputRPassword")).style.borderBottomColor = "";
+		}
+		if(inputname == ""){
+			(<HTMLInputElement>document.getElementById("signupinputCompany")).style.borderBottomColor = "Red";
+			return;
+		} else {
+			(<HTMLInputElement>document.getElementById("signupinputCompany")).style.borderBottomColor = "";
+		}
+		
+		if(inputemail.indexOf("@")==-1||inputemail.indexOf(".")==-1||inputemail == ""){
+			(<HTMLInputElement>document.getElementById("signupinputEmail")).style.borderBottomColor = "Red";
+			return;
+		} else {
+			(<HTMLInputElement>document.getElementById("signupinputEmail")).style.borderBottomColor = "";
+		}
+		
+		if(inputpasswordR !== inputpassword){
+			(<HTMLInputElement>document.getElementById("signupinputPassword")).style.borderBottomColor = "Red";
+			(<HTMLInputElement>document.getElementById("signupinputRPassword")).style.borderBottomColor = "Red";
+			return;
+		} else {
+			(<HTMLInputElement>document.getElementById("signupinputPassword")).style.borderBottomColor = "";
+			(<HTMLInputElement>document.getElementById("signupinputRPassword")).style.borderBottomColor = "";
+		}
+		
+		
+		//console.log(inputemail+" "+inputpassword);
+		var inputpassword2 = Md5.hashStr(inputpassword);
+		
+		var business = new Object();
+		business.PoCEmail = inputemail;
+		business.PoCPassword = inputpassword2;
+		business.name = inputname;
+		business.BusinessType = inputtype;
+		
+		//console.log(business);
+		//console.log(inputpassword2);
+		//this.isUser(inputemail, inputpassword2);
+		this.addBusiness(business);
+		this.toggleSignup(false);
 		
 	}
 	
@@ -128,7 +191,28 @@ export class LoginComponent implements AfterViewInit  {
 		});
 
 	  }
-	  
+	
+	addBusiness(business): Promise<any>  {
+		return this.serviceLogin.addBusiness(business)
+		.toPromise()
+		.then((result) => {
+				this.errorMessage = null;
+		})
+		.then(() => {
+		}).catch((error) => {
+			if(error == 'Server error'){
+				this.errorMessage = "Could not connect to REST server. Please check your configuration details";
+			}
+			else if (error == '500 - Internal Server Error') {
+			  this.errorMessage = "Input error";
+			}
+			else{
+				this.errorMessage = error;
+			}
+		});
+
+	  }
+	
 	isUser(_email, _password): Promise<any>  {
     
     //retrieve all residents
@@ -146,7 +230,7 @@ export class LoginComponent implements AfterViewInit  {
 		  //console.log("Is there a user");
 		  var foundany = false;
 		  for (let user of usersList) {
-			if(user.PoCEmail==_email){
+			if(user.PoCEmail==_email.toLowerCase()){
 				//console.log("FOUND THE SAME USER");
 				foundany = true;
 				if(user.PoCPassword==_password){
