@@ -13,14 +13,14 @@ export class Business {
 	BusinessType: string;
 }
 export class Item {
-	itemId: number;
+	id: number;
 	packageType: string;
 	Business: string;
 	ItemType: ItemType;
 }
 
 export class ItemType {
-	itemTypeId: number;
+	id: number;
 	itemTypeName: string;
 	itemTypeAmount: number; //added this
 	itemTypeUoM: string;
@@ -28,7 +28,7 @@ export class ItemType {
 }
 
 export class Contract {
-	contractId: string;
+	id: string;
 	status: string;
 	date: string;
 	ItemType: ItemType;
