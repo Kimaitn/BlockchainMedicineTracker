@@ -110,17 +110,23 @@ asset Shipment identified by shipmentId
 {
   o String shipmentId
   o Status status
-  o Business sender
-  o Business receiver
+  o ItemType itemType
   o Business currentOwner
   o Address destinationAddress
   o Address sourceAddress
-  o Address[] locations
   --> Contract contract
   --> Item[] items
 }
 
-/**
+asset ItemRequest identified by itemRequestId 
+{
+  o String itemRequestId
+  o ItemType itemType
+  o Double unitPrice
+  o Integer quantity
+}
+
+/*
  * Defines a contract between a Manufacturer and an Distributor to ship using
  * a Carrier, paying a set unit price. The unit price is multiplied by
  * a penality factor proportional to the deviation from the min and max
@@ -135,12 +141,10 @@ asset Contract identified by contractId
 {
   o String contractId
   o Status status
-  o ItemType itemToBuy
+  o ItemRequest[] requestedItems
   o Business sellingBusiness
   o Business buyingBusiness
-  o Double unitPrice
-  o Double quantity 
-  --> Shipment shipments
+  --> Shipment[] shipments
 }
 
 /**
