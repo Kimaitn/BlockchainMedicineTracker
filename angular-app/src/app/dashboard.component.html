@@ -13,22 +13,23 @@
 						
 						
 					</div>
-					<div class='col-md-8'>
+					<div class='col-md-8' style='padding-left: 50px; padding-right: 50px;'>
 						<h3 style='margin:none;'>Item's Owned</h3>
 						<table class="table">
 						  <thead>
 							<tr>
-							  <th scope="col">ID</th>
-							  <th scope="col">PackageType</th>
-							  <th scope="col">Item Type</th>
+							  <th scope="col">Medicine ID</th>
+							  <th scope="col">Medicine Name</th>
+							  <th scope="col">Medicine Amount</th>
+							  <th scope="col">Package Type</th>
 							</tr>
 						  </thead>
 						  <tbody>
-							<tr>
-							  <th scope="row">1</th>
-							  <td>4531</td>
-							  <td>Packaged</td>
-							  <td>Ibuprofin</td>
+							<tr *ngFor="let item of items">
+							  <th scope="row">{{item.ItemType.itemTypeId}}</th>
+							  <td>{{item.ItemType.itemTypeName}}</td>
+							  <td>{{item.ItemType.itemTypeAmount}}{{item.ItemType.itemTypeUoM}}</td>
+							  <td>{{item.packageType}}</td>
 							</tr>
 						  </tbody>
 						</table>
@@ -38,21 +39,20 @@
 							<tr>
 							  <th scope="col">ID</th>
 							  <th scope="col">Status</th>
-							  <th scope="col">Buyer</th>
 							  <th scope="col">Seller</th>
+							  <th scope="col">Buyer</th>
 							  <th scope="col">UnitPrice</th>
 							  <th scope="col">Quantity</th>
 							</tr>
 						  </thead>
 						  <tbody>
-							<tr>
-							  <th scope="row">1</th>
-							  <td>4531</td>
-							  <td>IN_TRANSIT</td>
-							  <td>BusinessName1</td>
-							  <td>BusinessName2</td>
-							  <td>40</td>
-							  <td>4</td>
+							<tr *ngFor="let contract of contracts">
+							  <th scope="row">{{contract.contractId}}</th>
+							  <td>{{contract.status}}</td>
+							  <td>{{contract.sellingBusiness.name}}</td>
+							  <td>{{contract.buyingBusiness.name}}</td>
+							  <td>{{contract.unitPrice}}</td>
+							  <td>{{contract.quantity}}</td>
 							</tr>
 						  </tbody>
 						</table>
