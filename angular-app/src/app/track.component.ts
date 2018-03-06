@@ -19,6 +19,7 @@ export class TrackComponent implements AfterViewInit  {
 	showMedicine: boolean;
     medicine: string;
 	medamount: number;
+	medname: string;
 	UoM: string;
 	private allItems;
 	private allContracts;
@@ -85,9 +86,11 @@ export class TrackComponent implements AfterViewInit  {
 			//console.log("in for loop")
 			if(item.ItemType.itemTypeMedId==medicine){
 				console.log(item.ItemType.itemTypeMedId);
+				this.medname = item.ItemType.itemTypeName;
 				this.medamount = item.ItemType.itemTypeAmount;
 				this.UoM = item.ItemType.itemTypeUoM;
 				this.loadContracts(medicine);
+				//todo remove old data from table
 				this.showMedicine = true;
 				break;
 			}
