@@ -12,88 +12,87 @@
 //  * limitations under the License.
 //  */
 
-// /**
-//  * A shipment has been received by an distributor
-//  * @param {org.mat.shipmentTransaction} shipmentTransaction - the ShipmentReceived transaction
-//  * @transaction
-//  */
-// function payOut(shipmentReceived) {
+/**
+ * A shipment has been received by an distributor
+ * @param {org.mat.ShipmentTransaction} ShipmentTransaction - the ShipmentReceived transaction
+ * @transaction
+ */
+function payOut(shipmentReceived) {
 
-//     var contract = shipmentReceived.shipment.contract;
-//     var shipment = shipmentReceived.shipment;
-//     var payOut = contract.unitPrice * shipment.unitCount;
+    var contract = shipmentReceived.shipment.contract;
+    var shipment = shipmentReceived.shipment;
 
-//     console.log('Received at: ' + shipmentReceived.timestamp);
-//     console.log('Contract arrivalDateTime: ' + contract.arrivalDateTime);
+    console.log('Received at: ' + shipmentReceived.timestamp);
+    console.log('Contract arrivalDateTime: ' + contract.arrivalDateTime);
 
-//     // set the status of the shipment
-//     shipment.status = 'ARRIVED';
+    // set the status of the shipment
+    shipment.status = 'ARRIVED';
 
-//     // if the shipment did not arrive on time the payout is zero
-//     if (shipmentReceived.timestamp > contract.arrivalDateTime) {
-//         payOut = 0;
-//         console.log('Late shipment');
-//     } else {
-//         // find the lowest temperature reading
-//         if (shipment.temperatureReadings) {
-//             // sort the temperatureReadings by centigrade
-//             shipment.temperatureReadings.sort(function (a, b) {
-//                 return (a.centigrade - b.centigrade);
-//             });
-//             var lowestReading = shipment.temperatureReadings[0];
-//             var highestReading = shipment.temperatureReadings[shipment.temperatureReadings.length - 1];
-//             var penalty = 0;
-//             console.log('Lowest temp reading: ' + lowestReading.centigrade);
-//             console.log('Highest temp reading: ' + highestReading.centigrade);
+    // if the shipment did not arrive on time the payout is zero
+    if (shipmentReceived.timestamp > contract.arrivalDateTime) {
+        payOut = 0;
+        console.log('Late shipment');
+    } else {
+        // find the lowest temperature reading
+        if (shipment.temperatureReadings) {
+            // sort the temperatureReadings by centigrade
+            shipment.temperatureReadings.sort(function (a, b) {
+                return (a.centigrade - b.centigrade);
+            });
+            var lowestReading = shipment.temperatureReadings[0];
+            var highestReading = shipment.temperatureReadings[shipment.temperatureReadings.length - 1];
+            var penalty = 0;
+            console.log('Lowest temp reading: ' + lowestReading.centigrade);
+            console.log('Highest temp reading: ' + highestReading.centigrade);
 
-//             // does the lowest temperature violate the contract?
-//             if (lowestReading.centigrade < contract.minTemperature) {
-//                 penalty += (contract.minTemperature - lowestReading.centigrade) * contract.minPenaltyFactor;
-//                 console.log('Min temp penalty: ' + penalty);
-//             }
+            // does the lowest temperature violate the contract?
+            if (lowestReading.centigrade < contract.minTemperature) {
+                penalty += (contract.minTemperature - lowestReading.centigrade) * contract.minPenaltyFactor;
+                console.log('Min temp penalty: ' + penalty);
+            }
 
-//             // does the highest temperature violate the contract?
-//             if (highestReading.centigrade > contract.maxTemperature) {
-//                 penalty += (highestReading.centigrade - contract.maxTemperature) * contract.maxPenaltyFactor;
-//                 console.log('Max temp penalty: ' + penalty);
-//             }
+            // does the highest temperature violate the contract?
+            if (highestReading.centigrade > contract.maxTemperature) {
+                penalty += (highestReading.centigrade - contract.maxTemperature) * contract.maxPenaltyFactor;
+                console.log('Max temp penalty: ' + penalty);
+            }
 
-//             // apply any penalities
-//             payOut -= (penalty * shipment.unitCount);
+            // apply any penalities
+            payOut -= (penalty * shipment.unitCount);
 
-//             if (payOut < 0) {
-//                 payOut = 0;
-//             }
-//         }
-//     }
+            if (payOut < 0) {
+                payOut = 0;
+            }
+        }
+    }
 
-//     console.log('Payout: ' + payOut);
-//     contract.manufacturer.accountBalance += payOut;
-//     contract.distributor.accountBalance -= payOut;
+    console.log('Payout: ' + payOut);
+    contract.manufacturer.accountBalance += payOut;
+    contract.distributor.accountBalance -= payOut;
 
-//     console.log('Manufacturer: ' + contract.manufacturer.$identifier + ' new balance: ' + contract.manufacturer.accountBalance);
-//     console.log('Distributor: ' + contract.distributor.$identifier + ' new balance: ' + contract.distributor.accountBalance);
+    console.log('Manufacturer: ' + contract.manufacturer.$identifier + ' new balance: ' + contract.manufacturer.accountBalance);
+    console.log('Distributor: ' + contract.distributor.$identifier + ' new balance: ' + contract.distributor.accountBalance);
 
-//     return getParticipantRegistry('org.mat.Manufacturer')
-//         .then(function (manufacturerRegistry) {
-//             // update the manufacturer's balance
-//             return manufacturerRegistry.update(contract.manufacturer);
-//         })
-//         .then(function () {
-//             return getParticipantRegistry('org.mat.Distributor');
-//         })
-//         .then(function (distributorRegistry) {
-//             // update the distributor's balance
-//             return distributorRegistry.update(contract.distributor);
-//         })
-//         .then(function () {
-//             return getAssetRegistry('org.mat.Shipment');
-//         })
-//         .then(function (shipmentRegistry) {
-//             // update the state of the shipment
-//             return shipmentRegistry.update(shipment);
-//         });
-// }
+    return getParticipantRegistry('org.mat.Manufacturer')
+        .then(function (manufacturerRegistry) {
+            // update the manufacturer's balance
+            return manufacturerRegistry.update(contract.manufacturer);
+        })
+        .then(function () {
+            return getParticipantRegistry('org.mat.Distributor');
+        })
+        .then(function (distributorRegistry) {
+            // update the distributor's balance
+            return distributorRegistry.update(contract.distributor);
+        })
+        .then(function () {
+            return getAssetRegistry('org.mat.Shipment');
+        })
+        .then(function (shipmentRegistry) {
+            // update the state of the shipment
+            return shipmentRegistry.update(shipment);
+        });
+}
 
 // /**
 //  * A temperature reading has been received for a shipment
