@@ -73,6 +73,17 @@
 							  <td>{{contract.unitPrice}}</td>
 							  <td>{{contract.quantity}}</td>
 							</tr>
+							<tr *ngFor="let contract of pendingcontracts">
+							  <th scope="row">{{contract.id}}</th>
+							  <td>{{contract.status}}
+							  <button type="button" class="btn btn-success" style='background-color: #8bc34a !important; border: none;' (click)='updateContract(contract.str, true)'>&#10004;</button>
+							  <button type="button" class="btn btn-danger" style='background-color: #f44336 !important; border: none;' (click)='updateContract(contract.str, false)'>&#10005;</button></td>
+							  <td>{{contract.sellingBusiness.name}}</td>
+							  <td>{{contract.buyingBusiness.name}}</td>
+							  <td>{{contract.ItemType.itemTypeName}}</td>
+							  <td>{{contract.unitPrice}}</td>
+							  <td>{{contract.quantity}}</td>
+							</tr>
 						  </tbody>
 						</table>
 					</div>
@@ -138,7 +149,7 @@
             <form>
 				<div class="form-group">
 					<label for="SellingBusiness">Selling Business:</label>
-					<select class="form-control" id='SellingBusiness'>
+					<select class="form-control" id='SellingBusiness' disabled="true">
 					  <option *ngFor="let b of allbusinesses" value='{{b.str}}'>{{b.name}}</option>
 					</select>
 					<!--<input class="form-control" id='SellingBusiness' type='text' placeholder='Selling Business'/>-->
