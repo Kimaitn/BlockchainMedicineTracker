@@ -23,6 +23,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 	allItems;
 	private errorMessage;
 	contracts;
+	pendingcontracts;
 	items;
 	itemtypes;
 	allbusinesses;
@@ -32,6 +33,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 	constructor(private serviceLogin:LoginService,private router: Router){
 	  this.business = localStorage.getItem("name");
 	  this.contracts = new Array();
+	  this.pendingcontracts = new Array();
 	  this.items = new Array();
 	  this.itemtypes = new Array();
 	  this.type = localStorage.getItem('type');
@@ -39,9 +41,10 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		  this.isManufacturer = true;
 	  else
 		  this.isManufacturer = false;
+	  
+	  this.loadBusinesses();
 	  this.loadContracts(this.business);
 	  this.loadItems(this.business);
-	  this.loadBusinesses();
 	  
     }
 	
@@ -59,6 +62,21 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 	
 	ngAfterViewChecked(){
 		this.resize();
+	}
+	
+	updateContract(contract, bool){
+		contract = JSON.parse(contract);
+		//console.log(contract);
+		
+		if(bool){
+			//console.log("add");
+			contract.status="Accepted";
+			this.updateContractS(contract);
+		} else {
+			//console.log("delete");
+			this.deleteContract(contract.id);
+		}
+		location.reload();
 	}
 	
 	resize(){
@@ -174,6 +192,8 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		  //console.log(this.contracts);
 		  for(var i = 0; i<this.contracts.length; i++){
 				var temp = this.contracts[i].ItemType;
+				if(this.contracts[i].status=="Pending")
+					continue;
 				//console.log("temp");
 				//console.log(i);
 				//console.log(temp);
@@ -191,7 +211,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 				}
 				if(foundmatch==null){
 					for(var y = 0; y<this.itemtypes.length; y++){
-						console.log(this.itemtypes[y].id+" "+temp.id);
+						//console.log(this.itemtypes[y].id+" "+temp.id);
 						if(this.itemtypes[y].id==temp.id){
 							foundmatch = this.itemtypes[y];
 							break
@@ -270,8 +290,12 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 
 		  for (let contract of contractsList) {
 			if(contract.sellingBusiness.name==name||contract.buyingBusiness.name==name){
-				this.contracts.push(contract);
-				
+				if(contract.status=="Pending"&&contract.buyingBusiness.name==name){
+					contract.str = JSON.stringify(contract);
+					this.pendingcontracts.push(contract);
+				} else {
+					this.contracts.push(contract);
+				}
 			}
 		  }
 		  //console.log(this.contracts);
@@ -332,6 +356,46 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 	
 	addContract(item): Promise<any>  {
 		return this.serviceLogin.addContract(item)
+		.toPromise()
+		.then(() => {
+				this.errorMessage = null;
+		})
+		.then(() => {
+		}).catch((error) => {
+			if(error == 'Server error'){
+				this.errorMessage = "Could not connect to REST server. Please check your configuration details";
+			}
+			else if (error == '500 - Internal Server Error') {
+			  this.errorMessage = "Input error";
+			}
+			else{
+				this.errorMessage = error;
+			}
+		});
+	}
+	
+	updateContractS(item): Promise<any>  {
+		return this.serviceLogin.updateContract(item.id, item)
+		.toPromise()
+		.then(() => {
+				this.errorMessage = null;
+		})
+		.then(() => {
+		}).catch((error) => {
+			if(error == 'Server error'){
+				this.errorMessage = "Could not connect to REST server. Please check your configuration details";
+			}
+			else if (error == '500 - Internal Server Error') {
+			  this.errorMessage = "Input error";
+			}
+			else{
+				this.errorMessage = error;
+			}
+		});
+	}
+	
+	deleteContract(id): Promise<any>  {
+		return this.serviceLogin.deleteContract(id)
 		.toPromise()
 		.then(() => {
 				this.errorMessage = null;
