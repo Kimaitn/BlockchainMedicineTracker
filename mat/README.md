@@ -53,31 +53,31 @@ Generate a template with Yo
 ```
 yo hyperledger-composer:businessnetwork
 
-> Business network name: perishable-network
-> Description: A perishable tracking network
+> Business network name: mat-network
+> Description: A mat tracking network
 > Author name:  zach
 > Author email: zach@email.com
 > License: Apache-2.0
-> Namespace: org.acme.shipping.perishable
+> Namespace: org.acme.shipping.mat
 ```
 
-This is based off of perishable sample network [found here](https://github.com/hyperledger/composer-sample-networks/tree/master/packages/perishable-network).
+This is based off of mat sample network [found here](https://github.com/hyperledger/composer-sample-networks/tree/master/packages/mat-network).
 
 Create your `.bna` file
 
 ```
 mkdir dist
-composer archive create --sourceType dir --sourceName . -a ./dist/perishable-network.bna
+composer archive create --sourceType dir --sourceName . -a ./dist/mat-network.bna
 ```
 
 Deploy the network
 
 ```
-composer runtime install --card PeerAdmin@hlfv1 --businessNetworkName perishable-network
-composer network start --card PeerAdmin@hlfv1 -A admin -S adminpw -a perishable-network.bna -f networkadmin.card
+composer runtime install --card PeerAdmin@hlfv1 --businessNetworkName mat-network
+composer network start --card PeerAdmin@hlfv1 -A admin -S adminpw -a mat-network.bna -f networkadmin.card
 composer card import networkadmin.card
 composer card list
-composer network ping --card admin@perishable-network
+composer network ping --card admin@mat-network
 ```
 
 ## The REST server
@@ -110,7 +110,7 @@ export COMPOSER_PROVIDERS='{
 Now, run the REST server with authentication
 
 ```
-composer-rest-server -n perishable-network --card admin@perishable-network -a true -m true
+composer-rest-server -n mat-network --card admin@mat-network -a true -m true
 ```
 
 You will need to import your identity card to use the REST server.
