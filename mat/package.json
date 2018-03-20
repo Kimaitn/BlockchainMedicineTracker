@@ -8,7 +8,15 @@
   "scripts": {
     "pretest": "npm run lint",
     "lint": "eslint .",
-    "test": "mocha -t 0 --recursive"
+    "test": "mocha -t 0 --recursive",
+    "composerCreate": "composer archive create --sourceType dir --sourceName . -a ./dist/mat-network.bna",
+    "composerInstall": "composer runtime install --card PeerAdmin@hlfv1 --businessNetworkName mat-network",
+    "composerStart": "composer network start --card PeerAdmin@hlfv1 -A admin -S adminpw -a ./dist/mat-network.bna -f ./dist/networkadmin.card",
+    "composerImport": "composer card import -f ./dist/networkadmin.card",
+    "deployFabric": "npm run composerCreate && npm run composerInstall && npm run composerStart && npm run composerImport",
+    "pingNetwork": "composer network ping --card admin@mat-network",
+    "deployServer": "composer-rest-server --card admin@mat-network -m true",
+    "deploy": "npm run deployFabric && npm run deployServer"
   },
   "author": "jasper",
   "email": "jasper@email.com",
