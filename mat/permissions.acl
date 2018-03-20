@@ -1,4 +1,4 @@
-/**
+/*
 This is the permissions access control list 
 All the permissions are listed here
 
@@ -18,12 +18,12 @@ rule SampleConditionalRuleWithTransaction
 
 //gives network control and business control to the 
 //admin of the hyperledger fabric network 
-rule NetworkControlPermission
+rule NetworkAdminUser
 {
   description:  "Network admin is given business and network permissions"
   participant: "org.hyperledger.composer.system.NetworkAdmin"
   operation: ALL
-  resource: "org.hyperledger.composer.system.**"
+  resource: "**"
   action: ALLOW  
 }
 
