@@ -1,53 +1,65 @@
-# Medicine Asset Tracking
+# Hyperledger Composer Development
 
-> Business network consisting of Manfuacturers, Carriers, and Distributors.  Businesses defining contracts for the price of medicine, based on temperature readings received for shipping containers.
+You will need to setup your entire Hyperledger Fabric first before 
+firing up your personal network
 
-The business network defines a contract between manufacturers and distributors. The contract stipulates that: On receipt of the shipment the Distributor pays the Manufacturer the unit price x the number of units in the shipment. Shipments that arrive late are free. Shipments that have breached the low temperate threshold have a penalty applied proportional to the magnitude of the breach x a penalty factor. Shipments that have breached the high temperate threshold have a penalty applied proportional to the magnitude of the breach x a penalty factor.
+## Environment Setup Commands (First Time Deployment)
 
-This business network defines:
-
-**Participants**
-`Manufacturer` `Distributor` `Carrier`
-
-**Assets**
-`Contract` `Shipment`
-
-**Transactions**
-`TemperatureReading` `ShipmentReceived` `SetupDemo`
-
-To test this Business Network Definition in the **Test** tab:
-
-Submit a `SetupDemo` transaction:
+Download hyperledger client and tools (or `npm update` if you have already installed)
+The `fabric-tools` folder should be outside of the current project directory
 
 ```
-{
-  "$class": "org.mat.SetupDemo"
-}
+npm install -g composer-cli
+npm install -g generator-hyperledger-composer
+npm install -g composer-rest-server
+
+mkdir fabric-tools
+cd fabric-tools
+curl -O https://raw.githubusercontent.com/hyperledger/composer-tools/master/packages/fabric-dev-servers/fabric-dev-servers.zip
+unzip fabric-dev-servers.zip
 ```
 
-This transaction populates the Participant Registries with a `Manufacturer`, an `Distributor` and a `Carrier`. The Asset Registries will have a `Contract` asset and a `Shipment` asset.
-
-Submit a `TemperatureReading` transaction:
+## Pre-Deployment Procedures
 
 ```
-{
-  "$class": "org.mat.TemperatureReading",
-  "centigrade": 8,
-  "shipment": "resource:org.mat.Shipment#SHIP_001"
-}
+docker kill $(docker ps -q)
+docker rm $(docker ps -aq)
+docker rmi $(docker images dev-* -q)
 ```
 
-If the temperature reading falls outside the min/max range of the contract, the price received by the Manufacturer will be reduced. You may submit several readings if you wish. Each reading will be aggregated within `SHIP_001` Shipment Asset Registry.
+## Deployment 
 
-Submit a `ShipmentReceived` transaction for `SHIP_001` to trigger the payout to the Manufacturer, based on the parameters of the `CON_001` contract:
+Start Hyperledger Fabric
+
+within the `fabric-tools` folder:
+```
+./downloadFabric.sh
+./startFabric.sh
+./createPeerAdminCard.sh
+```
+
+## Project Setup/Deployment Commands
+
+Create your `.bna` file within $(PROJECT FOLDER).
+In this case, it'll be within `mat`
 
 ```
-{
-  "$class": "org.mat.ShipmentReceived",
-  "shipment": "resource:org.mat.Shipment#SHIP_001"
-}
+mkdir dist
+composer archive create --sourceType dir --sourceName . -a ./dist/mat-network.bna
 ```
 
-If the date-time of the `ShipmentReceived` transaction is after the `arrivalDateTime` on `CON_001` then the Manufacturer will no receive any payment for the shipment.
+Deploy the network
 
-Congratulations!
+```
+composer runtime install --card PeerAdmin@hlfv1 --businessNetworkName mat-network
+composer network start --card PeerAdmin@hlfv1 -A admin -S adminpw -a mat-network.bna -f networkadmin.card
+composer card import -f networkadmin.card
+composer card list
+composer network ping --card admin@mat-network
+```
+
+## The REST server
+
+`composer-rest-server --card admin@mat-network -m true`
+
+You will need to import your identity card to use the REST server.
