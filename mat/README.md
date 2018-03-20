@@ -21,13 +21,21 @@ unzip fabric-dev-servers.zip
 
 ## Pre-Deployment Procedures
 
+Kill all current docker processes and all old connection profiles and cards from other/past Fabric projects
+
 ```
 docker kill $(docker ps -q)
 docker rm $(docker ps -aq)
 docker rmi $(docker images dev-* -q)
+
+`rm -rf ~/.composer`
 ```
 
-## Deployment 
+Ensure that your current project directory has a `dist` folder (in this case, the `mat` folder:
+`mkdir dist`
+
+
+## Fabric Deployment 
 
 Start Hyperledger Fabric
 
@@ -38,13 +46,19 @@ within the `fabric-tools` folder:
 ./createPeerAdminCard.sh
 ```
 
+## Sparknotes Project Deployment
+
+You can skip the rest of this README if you run the following command in the `mat` folder:
+`npm run deploy`
+
+You will have to wait a minute a two, as this will launch all of the commands below.
+
 ## Project Setup/Deployment Commands
 
 Create your `.bna` file within $(PROJECT FOLDER).
 In this case, it'll be within `mat`
 
 ```
-mkdir dist
 composer archive create --sourceType dir --sourceName . -a ./dist/mat-network.bna
 ```
 
