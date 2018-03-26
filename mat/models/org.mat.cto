@@ -50,12 +50,9 @@ enum UoM
  * ProductType --> Commodity
  */
  //Network Admin - CRUD
-asset ItemType identified by itemTypeId 
+asset ItemType identified by itemTypeName 
 {
-  o String itemTypeId
   o String itemTypeName
-  o UoM itemTypeUoM
-  o Integer itemTypeMedId
 }
 
 /**
@@ -66,13 +63,24 @@ asset ItemType identified by itemTypeId
  //Admin - CRUD - FINISHED
  //Employee - READ - FINISHED
  //Employee - UPDATE using ItemTransaction - FINISHED
-asset Item identified by itemId 
+// asset Item identified by itemId 
+// {
+//   o String itemId
+//   o String packageType 
+//   --> Business currentOwner
+//   --> ItemType itemType
+// }
+
+asset Item identified by itemId
 {
   o String itemId
-  o String packageType 
+  o UoM itemTypeUoM
+  o Double amountOfMedication
   --> Business currentOwner
   --> ItemType itemType
 }
+
+
 
 /**
  * This is an order, an order can have mulitple items in it
@@ -110,10 +118,9 @@ asset Shipment identified by shipmentId
 {
   o String shipmentId
   o Status status
-  --> ItemType itemType
-  --> Business currentOwner
   o Address destinationAddress
   o Address sourceAddress
+  --> Business currentOwner
   --> Contract contract
   --> Item[] items
 }
@@ -121,7 +128,7 @@ asset Shipment identified by shipmentId
 asset ItemRequest identified by itemRequestId 
 {
   o String itemRequestId
-  --> ItemType itemType
+  --> Item requestedItem
   o Double unitPrice
   o Integer quantity
 }
@@ -188,7 +195,7 @@ transaction ItemTransaction
 //Shipment Transaction to allow the owner of a shipment to to be changed
 transaction ShipmentTransaction
 {
-  o Integer shipmentTransaction
+  o Integer shipmentTransactionId
   --> Business newOwner
   --> Shipment shipment
 }
