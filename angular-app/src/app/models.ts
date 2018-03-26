@@ -22,15 +22,13 @@ export class UoM {
 }
 
 export class ItemType {
-	itemTypeId: string;
 	itemTypeName: string;
-	uom: UoM;
-	itemTypeMedId: number;
 }
 
 export class Item {
 	itemId: string;
-	packageType: string;
+	itemTypeUoM: UoM;
+	amountOfMedication: number;
 	currentOwner: string;
 	itemType: string;
 }
@@ -38,7 +36,6 @@ export class Item {
 export class Shipment {
 	shipmentId: string;
 	status: Status;
-	itemType: string;
 	currentOwner: string;
 	destination: Address;
 	source: Address;
@@ -48,7 +45,7 @@ export class Shipment {
 
 export class ItemRequest {
 	itemRequestId: string;
-	itemType: string;
+	item: string;
 	unitPrice: number;
 	quantity: number;
 }
