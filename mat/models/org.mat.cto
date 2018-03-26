@@ -180,7 +180,7 @@ participant Employee identified by employeeId
 //Item Transaction to allow the owner of the item to be changed
 transaction ItemTransaction
 {
-  o Integer itemTransactionID
+  o Integer itemTransactionId
   --> Business newOwner
   --> Item item
 }
