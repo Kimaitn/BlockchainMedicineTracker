@@ -159,3 +159,13 @@ rule CreateEmployee
   condition: (e.worksFor == b)
   action: ALLOW
 }
+
+//lets only the loginchecker verify the email
+rule LogInCheckerREADUser
+{
+  description: "lets the login checker verify the user"
+  participant: "org.mat.LogInChecker"
+  operation: READ
+  resource: "org.mat.User"
+  action: ALLOW
+}
