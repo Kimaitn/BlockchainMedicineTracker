@@ -179,8 +179,8 @@ participant Business identified by businessId
   o String PoCEmail optional
   o Address address optional
   o Double accountBalance
-  --> Item[] inventory
-  --> Employee[] employees
+  --> Item[] inventory optional
+  --> Employee[] employees optional
 }
 
 //Business - CRUD
