@@ -13,7 +13,7 @@ export class LoginService {
 	
 	private USERS: string = 'users';  
 	private BUSINESS: string = 'Business';  
-	private ITEM: string = 'Item';  
+	private ITEM: string = 'org.mat.Item';  
 	private ITEMTYPE: string = 'ItemType';  
 	private CONTRACT: string = 'Contract';  
 	
