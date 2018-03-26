@@ -154,6 +154,18 @@ asset Contract identified by contractId
   --> Shipment[] shipments
 }
 
+asset User identified by userEmail 
+{
+  o String userEmail
+  o String password
+  o String employeeId
+}
+
+participant LogInChecker identified by LogInCheckerId
+{
+  o String LogInCheckerId
+}
+
 /**
  * An abstract participant type in this business network
  */
@@ -170,7 +182,6 @@ participant Business identified by businessId
   --> Item[] inventory
   --> Employee[] employees
 }
-
 
 //Business - CRUD
 participant Employee identified by employeeId
