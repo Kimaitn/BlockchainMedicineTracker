@@ -30,7 +30,7 @@ export class Item {
 	itemTypeUoM: UoM;
 	amountOfMedication: number;
 	currentOwner: string;
-	itemType: string;
+	itemType: ItemType;
 }
 
 export class Shipment {
@@ -57,6 +57,16 @@ export class Contract {
 	sellingBusiness: string;
 	buyBusiness: string;
 	shipments: string[];
+}
+
+export class User {
+	userEmail: string;
+	password: string;
+	employeeId: string;
+}
+
+export class LogInChecker {
+	LogInCheckerId: string;
 }
 
 export class Business {
@@ -93,9 +103,3 @@ export class ShipmentTransaction {
 	shipment: string;
 }
 
-export class Users {
-	id: number;
-	email: string;
-	password: string;
-	type: string;
-}
