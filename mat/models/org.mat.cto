@@ -6,6 +6,8 @@ concept Address
   o String city
   o String country
   o String street
+  o String street2 optional
+  o String state optional
   o String zip
 }
 
@@ -114,18 +116,17 @@ asset Item identified by itemId
  //Employee - CREATE using createShipment Transaction
  //Employee - UPDATE using updateShipment Transaction
  //Employee - DELETE using deleteShipment Transaction
-asset Shipment identified by shipmentId 
+concept Shipment
 {
-  o String shipmentId
   o Status status
   o Address destinationAddress
   o Address sourceAddress
   --> Business currentOwner
-  --> Contract contract
+  --> Business carryingBusiness
   --> Item[] items
 }
 
-asset ItemRequest identified by itemRequestId 
+concept ItemRequest 
 {
   o String itemRequestId
   --> Item requestedItem
@@ -148,10 +149,11 @@ asset Contract identified by contractId
 {
   o String contractId
   o Status status
-  --> ItemRequest[] requestedItems
+  o DateTime arrivalDateTime
+  o Shipment[] shipments optional
+  o ItemRequest[] requestedItems
   --> Business sellingBusiness
   --> Business buyingBusiness
-  --> Shipment[] shipments
 }
 
 asset User identified by userEmail 
@@ -170,7 +172,7 @@ participant LogInChecker identified by LogInCheckerId
  * An abstract participant type in this business network
  */
  //NetworkAdmin - CRUD
-participant Business identified by businessId 
+asset Business identified by businessId 
 {
   o String businessId
   o String name
