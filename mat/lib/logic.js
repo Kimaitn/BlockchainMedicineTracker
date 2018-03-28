@@ -1,15 +1,97 @@
 /**
  * Track the trade of a commodity from one trader to another
- * @param {org.mat.ItemTransaction} itemTransaction - the trade to be processed
+ * @param {org.mat.UpdateItemOwner} updateItemOwner - the trade to be processed
  * @transaction
  */
-function tradeCommodity(itemTransaction) {
-    itemTransaction.item.currentOwner = itemTransaction.newOwner;
+function updateItemOwner(updateItemOwner) {
+    updateItemOwner.item.currentOwner = updateItemOwner.newOwner;
     return getAssetRegistry('org.mat.Item')
         .then(function (assetRegistry) {
-            return assetRegistry.update(itemTransaction.item);
+            return assetRegistry.update(updateItemOwner.item);
         });
 }
+
+/**
+ * Track the trade of a commodity from one trader to another
+ * @param {org.mat.UpdateShipment} updateShipment - the trade to be processed
+ * @transaction
+ */
+function updateShipment(updateShipment) {
+    updateShipment.contract.shipments[shipmentIndex].carryingBusiness = updateShipment.newCarryingBusiness;
+    updateShipment.contract.shipments[shipmentIndex].status = updateShipment.newStatus;
+    updateShipment.contract.status = 'WAITING_CONFIRMATION';
+    return getAssetRegistry('org.mat.Contract')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateShipment.contract);
+        });
+}
+
+/**
+ * Track the trade of a commodity from one trader to another
+ * @param {org.mat.UpdateItemRequest} updateItemRequest - the trade to be processed
+ * @transaction
+ */
+function updateItemRequest(updateItemRequest) {
+    updateItemRequest.contract.requestedItems[itemRequestIndex].unitPrice = updateItemRequest.newUnitPrice;
+    updateItemRequest.contract.requestedItems[itemRequestIndex].quantity = updateItemRequest.newQuantity;
+    updateShipment.contract.status = 'WAITING_CONFIRMATION';
+    return getAssetRegistry('org.mat.Contract')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateItemRequest.contract);
+        });
+}
+
+/**
+ * Track the trade of a commodity from one trader to another
+ * @param {org.mat.UpdateContractStatus} updateContractStatus - the trade to be processed
+ * @transaction
+ */
+function updateContractStatus(updateContractStatus) {
+    updateContractStatus.contract.status = updateContractStatus.newStatus;
+    return getAssetRegistry('org.mat.Contract')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateContractStatus.contract);
+        });
+}
+
+/**
+ * Track the trade of a commodity from one trader to another
+ * @param {org.mat.UpdateContractArrivalDateTime} updateContractArrivalDateTime - the trade to be processed
+ * @transaction
+ */
+function updateContractArrivalDateTime(updateContractArrivalDateTime) {
+    updateContractArrivalDateTime.contract.arrivalDateTime = updateContractArrivalDateTime.newArrivalDateTime;
+    return getAssetRegistry('org.mat.Contract')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateContractArrivalDateTime.contract);
+        });
+}
+
+/** Track the trade of a commodity from one trader to another
+* @param {org.mat.UpdateContractShipmentList} updateContractShipmentList - the trade to be processed
+* @transaction
+*/
+function updateContractShipmentList(updateContractShipmentList) {
+   updateContractShipmentList.contract.shipments = updateContractShipmentList.newShipmentList;
+   updateContractShipmentList.contract.status = 'WAITING_CONFIRMATION';
+   return getAssetRegistry('org.mat.Contract')
+       .then(function (assetRegistry) {
+           return assetRegistry.update(updateContractShipmentList.contract);
+       });
+}
+
+/** Track the trade of a commodity from one trader to another
+* @param {org.mat.UpdateContractItemRequestedItems} updateContractItemRequestedItems - the trade to be processed
+* @transaction
+*/
+function updateContractItemRequestedItems(updateContractItemRequestedItems) {
+    updateContractItemRequestedItems.contract.requestedItems = updateContractItemRequestedItems.newRequestedItems;
+    updateContractItemRequestedItems.contract.status = 'WAITING_CONFIRMATION';
+    return getAssetRegistry('org.mat.Contract')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateContractItemRequestedItems.contract);
+        });
+ }
 
 /**
  * Initialize some test assets and participants useful for running a demo.
