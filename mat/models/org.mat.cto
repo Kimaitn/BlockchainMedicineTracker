@@ -43,35 +43,10 @@ enum UoM
   o g
 }
 
-/**
- * The commodity is pretty much the product type that jasper had
- * the idea is that a commodity is a drug type such as adderall and 
- * tylenol. You would then have it's name that they call it. the UoM 
- * mL for liquids and g for tablets/powders. THe commoditymedid is used
- * to go into the lookup table and find the commodity name
- * ProductType --> Commodity
- */
- //Network Admin - CRUD
 asset ItemType identified by itemTypeName 
 {
   o String itemTypeName
 }
-
-/**
- * An item is the actual product. Such as a bottle of tylenol that contains
- * 1000 mL. The relationship to the commodity type allows us to simply send a 
- * parameter with the commodity identifier number and fetch the data. 
- */
- //Admin - CRUD - FINISHED
- //Employee - READ - FINISHED
- //Employee - UPDATE using ItemTransaction - FINISHED
-// asset Item identified by itemId 
-// {
-//   o String itemId
-//   o String packageType 
-//   --> Business currentOwner
-//   --> ItemType itemType
-// }
 
 asset Item identified by itemId
 {
@@ -82,40 +57,6 @@ asset Item identified by itemId
   --> ItemType itemType
 }
 
-
-
-/**
- * This is an order, an order can have mulitple items in it
- */
- //Admin - CREATE, READ
- //Admin - UPDATE using updateOrder Transaction
- //Admin - DELETE using deleteOrder Transaction
- //Employee - CREATE, READ
- //Employee - UPDATE using updateOrder Transaction
- //Employee - DELETE using deleteOrder Transaction
-// asset Order identified by orderId 
-// {
-//   o String orderId
-//   o Employee requester
-//   o Employee provider
-//   o Address destinationAddress
-//   o Address sourceAddress
-//   o Address[] locations
-//   o Address billingAddress
-//   o Status status
-//   o Business receiver
-//   o Business sender
-//   --> Contract[] itemContracts
-// }
-
-/**
- * shipments can have multiple orders since multiple orders may be going to the same
- * place or shipped together since they are near each other
- */
- //Employee - READ
- //Employee - CREATE using createShipment Transaction
- //Employee - UPDATE using updateShipment Transaction
- //Employee - DELETE using deleteShipment Transaction
 concept Shipment
 {
   o Status status
@@ -134,17 +75,6 @@ concept ItemRequest
   o Integer quantity
 }
 
-/*
- * Defines a contract between a Manufacturer and an Distributor to ship using
- * a Carrier, paying a set unit price. The unit price is multiplied by
- * a penality factor proportional to the deviation from the min and max
- * negociated temperatures for the shipment.
- * A contract will be made for each itemType. This is the agreement of * what price will be paid. 
- */
- //Employee - READ
- //Employee - CREATE using createContract Transaction
- //Employee - UPDATE using updateContract Transaction
- //Employee - DELETE using deleteContract Transaction
 asset Contract identified by contractId 
 {
   o String contractId
@@ -168,10 +98,6 @@ participant LogInChecker identified by LogInCheckerId
   o String LogInCheckerId
 }
 
-/**
- * An abstract participant type in this business network
- */
- //NetworkAdmin - CRUD
 asset Business identified by businessId 
 {
   o String businessId
@@ -185,7 +111,6 @@ asset Business identified by businessId
   --> Employee[] employees optional
 }
 
-//Business - CRUD
 participant Employee identified by employeeId
 {
   o String employeeId
@@ -209,8 +134,8 @@ transaction ItemTransaction
 transaction ShipmentTransaction
 {
   o Integer shipmentTransactionId
+  o Shipment shipment
   --> Business newOwner
-  --> Shipment shipment
 }
 
 //call to bulk load invenotory in
