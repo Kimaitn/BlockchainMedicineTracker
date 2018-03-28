@@ -123,6 +123,7 @@ asset Shipment identified by shipmentId
   o Address destinationAddress
   o Address sourceAddress
   --> Business currentOwner
+  --> Business carryingBusiness
   --> Item[] items
 }
 
@@ -153,7 +154,6 @@ asset Contract identified by contractId
   --> ItemRequest[] requestedItems
   --> Business sellingBusiness
   --> Business buyingBusiness
-  --> Business carryingBusiness
   --> Shipment[] shipments
 }
 
