@@ -116,9 +116,8 @@ asset Item identified by itemId
  //Employee - CREATE using createShipment Transaction
  //Employee - UPDATE using updateShipment Transaction
  //Employee - DELETE using deleteShipment Transaction
-asset Shipment identified by shipmentId 
+concept Shipment
 {
-  o String shipmentId
   o Status status
   o Address destinationAddress
   o Address sourceAddress
