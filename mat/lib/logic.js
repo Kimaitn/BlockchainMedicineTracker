@@ -85,9 +85,8 @@ async function setupDemo(setupDemo) {
     const contract = factory.newResource(org, 'Contract', 'C001');
     contract.requestedItems = itemRequest;
     contract.status = CONFIRMED;
-    contract.sellingBusiness = factory.newRelationship(org, 'Manufacturer', 'BobRoss@gmail.com');
-    contract.carryingBusiness = factory.newRelationship(org, 'Carrier', 'BobLoss@gmail.com');
-    contract.buyingBusiness = factory.newRelationship(org, 'Distributor', 'BobDDos@gmail.com');
+    contract.sellingBusiness = manufacturer;
+    contract.buyingBusiness = distributor;
     const tomorrow = setupDemo.timestamp;
     tomorrow.setDate(tomorrow.getDate() + 1);
     contract.arrivalDateTime = tomorrow; // the shipment has to arrive tomorrow
@@ -97,8 +96,8 @@ async function setupDemo(setupDemo) {
     shipment.status = 'IN_TRANSIT';
     shipment.destinationAddress = dAddress;
     shipment.sourceAddress = mAddress;
-    shipment.business = manufacturer;
-    shipment.contract = contract;
+    shipment.currentOwner = manufacturer;
+    shipment.carryingBusiness = carrier;
     shipment.items = [item];
 
     contract.shipments = [shipment];
