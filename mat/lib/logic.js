@@ -22,16 +22,25 @@ function MEDS(h1, h2, h3, h4, h5, h6){
 
 }
 
-function BulkLoad(file){
+function Parser(bulkLoad){
     var data = file.split("\n");
     
     return data.map(function (data) {
         return data.split(",");
     });
 
+}
+
+function ToArray(data){
+    var DataStore= [];
+
     for(var i =0; i< data.length; i++){
         DataStore.push(new MEDS(data[i][0], data[i][1], data[i][2], data[i][3], data[i][4], data[i][5]));
     }
 }
+
+
+
+
 
 
