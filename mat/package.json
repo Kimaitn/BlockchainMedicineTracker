@@ -1,0 +1,50 @@
+{
+  "engines": {
+    "composer": "^0.19.0"
+  },
+  "name": "mat-network",
+  "version": "0.0.1",
+  "description": "nework",
+  "scripts": {
+    "pretest": "npm run lint",
+    "lint": "eslint .",
+    "test": "mocha -t 0 --recursive",
+    "composerCreate": "composer archive create --sourceType dir --sourceName . -a ./dist/mat-network.bna",
+    "composerInstall": "composer runtime install --card PeerAdmin@hlfv1 --businessNetworkName mat-network",
+    "composerStart": "composer network start --card PeerAdmin@hlfv1 -A admin -S adminpw -a ./dist/mat-network.bna -f ./dist/networkadmin.card",
+    "composerImport": "composer card import -f ./dist/networkadmin.card",
+    "deployFabric": "npm run composerCreate && npm run composerInstall && npm run composerStart && npm run composerImport",
+    "pingNetwork": "composer network ping --card admin@mat-network",
+    "deployServer": "composer-rest-server --card admin@mat-network -m true",
+    "deploy": "npm run deployFabric && npm run deployServer"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Kimaitn/BlockchainMedicineTracker"
+  },
+  "keywords": [
+    "medicine",
+    "blockchain",
+    "asset",
+    "tracking",
+    "composer"
+  ],
+  "author": "jasper",
+  "email": "jasper@email.com",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "composer-admin": "latest",
+    "composer-cli": "latest",
+    "composer-client": "latest",
+    "composer-common": "latest",
+    "composer-connector-embedded": "latest",
+    "chai": "latest",
+    "eslint": "latest",
+    "jsdoc": "^3.5.5",
+    "istanbul": "latest",
+    "mkdirp": "latest",
+    "mocha": "latest",
+    "moment": "^2.17.1",
+    "sinon": "latest"
+  }
+}
