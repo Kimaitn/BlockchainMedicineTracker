@@ -59,7 +59,7 @@ export class Contract {
 	shipments: string[];
 }
 
-export class User {
+export class Users {
 	userEmail: string;
 	password: string;
 	employeeId: string;
