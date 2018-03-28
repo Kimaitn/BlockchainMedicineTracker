@@ -12,10 +12,10 @@ export class LoginService {
 
 	
 	private USERS: string = 'users';  
-	private BUSINESS: string = 'Business';  
+	private BUSINESS: string = 'org.mat.Business';  
 	private ITEM: string = 'org.mat.Item';  
-	private ITEMTYPE: string = 'ItemType';  
-	private CONTRACT: string = 'Contract';  
+	private ITEMTYPE: string = 'org.mat.ItemType';  
+	private CONTRACT: string = 'org.mat.Contract';  
 	
     constructor(private residentService: DataService<any>) {
     };
