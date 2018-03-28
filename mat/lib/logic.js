@@ -81,15 +81,6 @@ async function setupDemo(setupDemo) {
     itemRequest.unitPrice = 14.2;
     itemRequest.quantity = 2;
 
-    // create the shipment
-    const shipment = factory.newResource(org, 'Shipment', 'S001');
-    shipment.status = 'IN_TRANSIT';
-    shipment.destinationAddress = dAddress;
-    shipment.sourceAddress = mAddress;
-    shipment.business = manufacturer;
-    shipment.contract = contract;
-    shipment.items = [item];
-    
     // create the contract
     const contract = factory.newResource(org, 'Contract', 'C001');
     contract.requestedItems = itemRequest;
@@ -100,6 +91,16 @@ async function setupDemo(setupDemo) {
     const tomorrow = setupDemo.timestamp;
     tomorrow.setDate(tomorrow.getDate() + 1);
     contract.arrivalDateTime = tomorrow; // the shipment has to arrive tomorrow
+    
+    // create the shipment concept
+    const shipment = factory.newConcept(org, 'Shipment', 'S001');
+    shipment.status = 'IN_TRANSIT';
+    shipment.destinationAddress = dAddress;
+    shipment.sourceAddress = mAddress;
+    shipment.business = manufacturer;
+    shipment.contract = contract;
+    shipment.items = [item];
+
     contract.shipments = [shipment];
     
     // add the manufacturer
@@ -127,8 +128,8 @@ async function setupDemo(setupDemo) {
     await itemRequestRegistry.addAll([itemRequest]);
 
     // add the shipments
-    const shipmentRegistry = await getAssetRegistry(org + '.Shipment');
-    await shipmentRegistry.addAll([shipment]);
+    //const shipmentRegistry = await getAssetRegistry(org + '.Shipment');
+    //await shipmentRegistry.addAll([shipment]);
 
     // add the contracts
     const contractRegistry = await getAssetRegistry(org + '.Contract');
