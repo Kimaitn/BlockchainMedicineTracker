@@ -123,7 +123,6 @@ asset Shipment identified by shipmentId
   o Address destinationAddress
   o Address sourceAddress
   --> Business currentOwner
-  --> Contract contract
   --> Item[] items
 }
 
@@ -150,9 +149,11 @@ asset Contract identified by contractId
 {
   o String contractId
   o Status status
+  o DateTime arrivalDateTime
   --> ItemRequest[] requestedItems
   --> Business sellingBusiness
   --> Business buyingBusiness
+  --> Business carryingBusiness
   --> Shipment[] shipments
 }
 

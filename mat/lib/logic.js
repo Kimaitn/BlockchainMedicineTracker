@@ -37,96 +37,100 @@ async function setupDemo(setupDemo) {
 
     // create the carrier
     const carrier = factory.newResource(org, 'Business', 'B002');
-    const mAddress = factory.newConcept(org, 'Address');
+    const cAddress = factory.newConcept(org, 'Address');
     carrier.name = 'McKesson';
     carrier.businessType = 'Carrier';
     carrier.PoCName = 'Bob Loss';
     carrier.PoCEmail = 'BobLoss@gmail.com';
-    mAddress.street = 'One Post Street';
-    mAddress.city = 'San Francisco';
-    mAddress.state = 'CA';
-    mAddress.country = 'USA';
-    mAddress.zip = '94104';
-    carrier.address = mAddress;
+    cAddress.street = 'One Post Street';
+    cAddress.city = 'San Francisco';
+    cAddress.state = 'CA';
+    cAddress.country = 'USA';
+    cAddress.zip = '94104';
+    carrier.address = cAddress;
     carrier.accountBalance = 55.54;
 
     // create the distributor
     const distributor = factory.newResource(org, 'Business', 'B003');
-    const mAddress = factory.newConcept(org, 'Address');
-    carrier.name = 'CVS Pharmacy';
-    carrier.businessType = 'Distributor';
-    carrier.PoCName = 'Bob DDos';
-    carrier.PoCEmail = 'BobDDos@gmail.com';
-    mAddress.street = 'One CVS Drive';
-    mAddress.city = 'Woonsocket';
-    mAddress.state = 'RI';
-    mAddress.country = 'USA';
-    mAddress.zip = '02895';
-    carrier.address = mAddress;
-    carrier.accountBalance = 645.64;
+    const dAddress = factory.newConcept(org, 'Address');
+    distributor.name = 'CVS Pharmacy';
+    distributor.businessType = 'Distributor';
+    distributor.PoCName = 'Bob DDos';
+    distributor.PoCEmail = 'BobDDos@gmail.com';
+    dAddress.street = 'One CVS Drive';
+    dAddress.city = 'Woonsocket';
+    dAddress.state = 'RI';
+    dAddress.country = 'USA';
+    dAddress.zip = '02895';
+    distributor.address = dAddress;
+    distributor.accountBalance = 645.64;
 
+    // create itemType
+    const itemType = factory.newResource(org, 'ItemType', 'Adderall');
+
+    // create item
+    const item = factory.newResource(org, 'Item', 'I00001');
+    item.itemeTypeUoM = g;
+    item.amountOfMedication = 400;
+    item.currentOwner = manufacturer;
+    item.itemType = itemType;
+
+    // create itemRequest
+    const itemRequest = factory.newResource(org, 'ItemRequest', 'R001');
+    itemRequest.requestedItem = item;
+    itemRequest.unitPrice = 14.2;
+    itemRequest.quantity = 2;
+
+    // create the shipment
+    const shipment = factory.newResource(org, 'Shipment', 'S001');
+    shipment.status = 'IN_TRANSIT';
+    shipment.destinationAddress = dAddress;
+    shipment.sourceAddress = mAddress;
+    shipment.business = manufacturer;
+    shipment.contract = contract;
+    shipment.items = [item];
+    
     // create the contract
-    /*
-    const contract = factory.newResource(org, 'Contract', 'CON_001');
-    contract.grower = factory.newRelationship(org, 'Grower', 'farmer@email.com');
-    contract.importer = factory.newRelationship(org, 'Importer', 'supermarket@email.com');
-    contract.shipper = factory.newRelationship(org, 'Shipper', 'shipper@email.com');
+    const contract = factory.newResource(org, 'Contract', 'C001');
+    contract.requestedItems = itemRequest;
+    contract.status = CONFIRMED;
+    contract.sellingBusiness = factory.newRelationship(org, 'Manufacturer', 'BobRoss@gmail.com');
+    contract.carryingBusiness = factory.newRelationship(org, 'Carrier', 'BobLoss@gmail.com');
+    contract.buyingBusiness = factory.newRelationship(org, 'Distributor', 'BobDDos@gmail.com');
     const tomorrow = setupDemo.timestamp;
     tomorrow.setDate(tomorrow.getDate() + 1);
     contract.arrivalDateTime = tomorrow; // the shipment has to arrive tomorrow
-    contract.unitPrice = 0.5; // pay 50 cents per unit
-    */
-
-    // create ItemType
-    const itemType = factory.newResource(org, 'ItemType', 'Adderall');
-
-   o String shipmentId
-   o Status status
-   o ItemType itemType
-   o Business currentOwner
-   o Address destinationAddress
-   o Address sourceAddress
-   --> Contract contract
-   --> Item[] items
-
-    // create Item
-    const item = factory.newResource(org, 'Item', 'I001');
-    carrier.name = 'CVS Pharmacy';
-    carrier.businessType = 'Distributor';
-    carrier.PoCName = 'Bob DDos';
-    carrier.PoCEmail = 'BobDDos@gmail.com';
-    mAddress.street = 'One CVS Drive';
-    mAddress.city = 'Woonsocket';
-    mAddress.state = 'RI';
-    mAddress.country = 'USA';
-    mAddress.zip = '02895';
-    carrier.address = mAddress;
-    carrier.accountBalance = 645.64;
-
-    /*// create the shipment
-    const shipment = factory.newResource(org, 'Shipment', 'S001');
-    shipment.status = 'IN_TRANSIT';
-    shipment.unitCount = 5000;
-    shipment.contract = factory.newRelationship(org, 'Contract', 'CON_001');
-    */
-
+    contract.shipments = [shipment];
+    
     // add the manufacturer
-    const growerRegistry = await getParticipantRegistry(org + '.Grower');
-    await growerRegistry.addAll([grower]);
+    const manufacturerRegistry = await getParticipantRegistry(org + '.Manufacturer');
+    await manufacturerRegistry.addAll([manufacturer]);
 
     // add the carrier
-    const importerRegistry = await getParticipantRegistry(org + '.Importer');
-    await importerRegistry.addAll([importer]);
+    const carrierRegistry = await getParticipantRegistry(org + '.Carrier');
+    await carrierRegistry.addAll([carrier]);
 
     // add the distributor
-    const shipperRegistry = await getParticipantRegistry(org + '.Shipper');
-    await shipperRegistry.addAll([shipper]);
+    const distributorRegistry = await getParticipantRegistry(org + '.Distributor');
+    await distributorRegistry.addAll([distributor]);
 
-    /*// add the contracts
-    const contractRegistry = await getAssetRegistry(org + '.Contract');
-    await contractRegistry.addAll([contract]);*/
+    // add the itemType
+    const itemTypeRegistry = await getAssetRegistry(org + '.ItemType');
+    await itemTypeRegistry.addAll([itemType]);
+
+    // add the item
+    const itemRegistry = await getAssetRegistry(org + '.Item');
+    await itemRegistry.addAll([item]);
+
+    // add the itemRequest
+    const itemRequestRegistry = await getAssetRegistry(org + '.ItemRequest');
+    await itemRequestRegistry.addAll([itemRequest]);
 
     // add the shipments
     const shipmentRegistry = await getAssetRegistry(org + '.Shipment');
     await shipmentRegistry.addAll([shipment]);
+
+    // add the contracts
+    const contractRegistry = await getAssetRegistry(org + '.Contract');
+    await contractRegistry.addAll([contract]);
 }
