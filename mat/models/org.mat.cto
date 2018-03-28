@@ -121,14 +121,12 @@ concept Shipment
   o Status status
   o Address destinationAddress
   o Address sourceAddress
-  --> Business currentOwner
   --> Business carryingBusiness
   --> Item[] items
 }
 
 concept ItemRequest 
 {
-  o String itemRequestId
   --> Item requestedItem
   o Double unitPrice
   o Integer quantity
@@ -198,33 +196,63 @@ participant Employee identified by employeeId
 }
 
 //Item Transaction to allow the owner of the item to be changed
-transaction ItemTransaction
+transaction UpdateItemOwner
 {
-  o Integer itemTransactionId
   --> Business newOwner
   --> Item item
 }
 
 //Shipment Transaction to allow the owner of a shipment to to be changed
-transaction ShipmentTransaction
+transaction UpdateShipment
 {
-  o Integer shipmentTransactionId
-  --> Business newOwner
-  --> Shipment shipment
+  --> Business newCarryingBusiness
+  --> Contract contract
+  o Status newStatus
+  o Integer shipmentIndex
 }
 
 //call to bulk load invenotory in
-transaction BulkLoad
+transaction UpdateItemRequest
 {
+  --> Contract contract
+  o Integer itemRequestIndex
+  o Double newUnitPrice
+  o Integer newQuantity
+}
+
+abstract transaction UpdateContract
+{
+  --> Contract contract
+}
+
+transaction UpdateContractStatus extends UpdateContract 
+{
+  o Status newStatus
+}
+
+transaction UpdateContractArrivalDateTime extends UpdateContract 
+{
+  o DateTime newArrivalDateTime
+}
+
+transaction UpdateContractShipmentList extends UpdateContract 
+{
+  o Shipment[] newShipmentList
+}
+
+transaction UpdateContractItemRequestedItems extends UpdateContract 
+{
+  o ItemRequest[] newRequestedItems
+}
+
+transaction UpdateUserEmail
+{
+  --> User user
+  o String newUserEmail
 }
 
 //Creates a contract
 transaction CreateContract
-{
-}
-
-//Updates an already created contract
-transaction UpdateContract
 {
 }
 
@@ -235,11 +263,6 @@ transaction DeleteContract
 
 //Creates a shipment
 transaction CreateShipment
-{
-}
-
-//Updates an already created shipment
-transaction UpdateShipment
 {
 }
 
