@@ -126,7 +126,7 @@ concept Shipment
   --> Item[] items
 }
 
-asset ItemRequest identified by itemRequestId 
+concept ItemRequest 
 {
   o String itemRequestId
   --> Item requestedItem
@@ -150,10 +150,10 @@ asset Contract identified by contractId
   o String contractId
   o Status status
   o DateTime arrivalDateTime
-  --> ItemRequest[] requestedItems
+  o Shipment[] shipments optional
+  o ItemRequest[] requestedItems
   --> Business sellingBusiness
   --> Business buyingBusiness
-  --> Shipment[] shipments
 }
 
 asset User identified by userEmail 
