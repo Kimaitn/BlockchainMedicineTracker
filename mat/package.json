@@ -15,7 +15,7 @@
     "composerImport": "composer card import -f ./dist/networkadmin.card",
     "deployFabric": "npm run composerCreate && npm run composerInstall && npm run composerStart && npm run composerImport",
     "pingNetwork": "composer network ping --card admin@mat-network",
-    "deployServer": "composer-rest-server --card admin@mat-network -m true",
+    "deployServer": "composer-rest-server --card admin@mat-network",
     "deploy": "npm run deployFabric && npm run deployServer"
   },
   "repository": {
