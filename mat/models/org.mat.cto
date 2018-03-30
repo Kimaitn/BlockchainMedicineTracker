@@ -8,7 +8,7 @@ concept Address
   o String street
   o String street2 optional
   o String state optional
-  o String zip
+  o String zip optional
 }
 
 //Status of shipment and order
@@ -245,30 +245,75 @@ transaction UpdateContractItemRequestedItems extends UpdateContract
   o ItemRequest[] newRequestedItems
 }
 
-transaction UpdateUserEmail
+abstract transaction UpdateUser
 {
   --> User user
+}
+
+transaction UpdateUserEmail extends UpdateUser
+{
   o String newUserEmail
 }
 
-//Creates a contract
-transaction CreateContract
+transaction UpdateUserPassword extends UpdateUser
 {
+  o String newUserPass
 }
 
-//Delete an already deleted contract
-transaction DeleteContract
+abstract transaction UpdateBusiness
 {
+  -->Business business
 }
 
-//Creates a shipment
-transaction CreateShipment
+transaction UpdateBusinessInfo extends UpdateBusiness 
 {
+  o String newBusinessName
+  o String newPoCName optional
+  o String newPoCEmail optional
+  o Address newAddress optional
 }
 
-//Delete an already deleted shipment
-transaction DeleteShipment
+transaction UpdateBusinessAccBalance extends UpdateBusiness
 {
+  o Double newAccBalance
+}
+
+transaction RemoveItemFromInventory extends UpdateBusiness
+{
+  -->Item removeItem
+}
+
+transaction AddItemToInventory extends UpdateBusiness
+{
+  -->Item addItem
+}
+
+transaction RemoveEmployeeFromBusiness extends UpdateBusiness
+{
+  -->Employee removeEmployee
+}
+
+transaction AddEmployeeToBusiness extends UpdateBusiness
+{
+  -->Employee addEmployee
+}
+
+abstract transaction UpdateEmployee
+{
+  -->Employee employee
+}
+
+transaction UpdateEmployeeInfo extends UpdateEmployee
+{
+  o String newFirstName
+  o String newLastName
+  o String newEmail
+  o String newPhoneNumber optional
+}
+
+transaction UpdateEmployeeType extends UpdateEmployeeInfo
+{
+  o EmployeeType newEmployeeType
 }
 
 /**
