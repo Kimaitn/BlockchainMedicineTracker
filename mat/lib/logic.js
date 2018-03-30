@@ -5,13 +5,8 @@
  * @param {org.mat.UpdateItemOwner} updateItemOwner - the trade to be processed
  * @transaction
  */
-<<<<<<< HEAD
 function updateItemOwner(updateItemOwner) {
     updateItemOwner.item.currentOwner = updateItemOwner.newOwner;
-=======
-async function tradeCommodity(itemTransaction) {
-    itemTransaction.item.currentOwner = itemTransaction.newOwner;
->>>>>>> master
     return getAssetRegistry('org.mat.Item')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateItemOwner.item);
