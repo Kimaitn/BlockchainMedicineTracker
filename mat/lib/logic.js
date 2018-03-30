@@ -1,10 +1,17 @@
+'use strict';
+
 /**
  * Track the trade of a commodity from one trader to another
  * @param {org.mat.UpdateItemOwner} updateItemOwner - the trade to be processed
  * @transaction
  */
+<<<<<<< HEAD
 function updateItemOwner(updateItemOwner) {
     updateItemOwner.item.currentOwner = updateItemOwner.newOwner;
+=======
+async function tradeCommodity(itemTransaction) {
+    itemTransaction.item.currentOwner = itemTransaction.newOwner;
+>>>>>>> master
     return getAssetRegistry('org.mat.Item')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateItemOwner.item);
@@ -288,7 +295,7 @@ async function setupDemo(setupDemo) {
 
     // create item
     const item = factory.newResource(org, 'Item', 'I00001');
-    item.itemeTypeUoM = g;
+    item.itemTypeUoM = 'g';
     item.amountOfMedication = 400;
     item.currentOwner = manufacturer;
     item.itemType = itemType;
@@ -302,13 +309,13 @@ async function setupDemo(setupDemo) {
     // create the contract
     const contract = factory.newResource(org, 'Contract', 'C001');
     contract.requestedItems = itemRequest;
-    contract.status = CONFIRMED;
+    contract.status = 'CONFIRMED';
     contract.sellingBusiness = manufacturer;
     contract.buyingBusiness = distributor;
     const tomorrow = setupDemo.timestamp;
     tomorrow.setDate(tomorrow.getDate() + 1);
     contract.arrivalDateTime = tomorrow; // the shipment has to arrive tomorrow
-    
+
     // create the shipment concept
     const shipment = factory.newConcept(org, 'Shipment', 'S001');
     shipment.status = 'IN_TRANSIT';
@@ -319,7 +326,7 @@ async function setupDemo(setupDemo) {
     shipment.items = [item];
 
     contract.shipments = [shipment];
-    
+
     // add the manufacturer
     const manufacturerRegistry = await getParticipantRegistry(org + '.Manufacturer');
     await manufacturerRegistry.addAll([manufacturer]);
