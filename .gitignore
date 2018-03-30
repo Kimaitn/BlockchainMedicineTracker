@@ -1,0 +1,18 @@
+# Logs
+composer-logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules
+
+# Optional npm cache directory
+.npm
+
+# Mac files.
+**/.DS_Store
+
+mat/dist
+mat/package-lock.json
+fabric-tools

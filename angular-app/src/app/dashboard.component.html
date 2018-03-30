@@ -1,0 +1,183 @@
+<style>
+	#logout {
+		text-align: right; 
+		margin-right: 20px; 
+		margin-top: -35px;
+	}
+	#logout:hover {
+		cursor: pointer;
+		text-decoration: underline;
+	}
+</style>
+
+<div id='top' class='container'>
+	<h1 style='margin-left: 20px; text-align: left;'><em>BLOCKCHAIN</em><span>TRACKING</span></h1>
+	<p id='logout' (click)='logout()'>Log Out</p>
+</div>
+<div id='main' style='margin-top: 80px !important;'>
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class='fullsize color4' >
+		<div class='container'>
+			<div id='trackformfinished'>
+				<h2>Hello {{business}}</h2>
+				<div class='row'>
+					<div class='col-md-6'> <!--make this only show up for manufacturers-->
+						<h3 style='margin:none;'>Item's Owned:</h3>
+						<table class="table">
+						  <thead>
+							<tr>
+							  <th scope="col">Medicine ID</th>
+							  <th scope="col">Medicine Name</th>
+							  <th scope="col">Medicine Amount</th>
+							  <th scope="col">Package Type</th>
+							</tr>
+						  </thead>
+						  <tbody>
+							<tr *ngFor="let item of items">
+							  <th scope="row">{{item.ItemType.itemTypeMedId}}</th>
+							  <td>{{item.ItemType.itemTypeName}}</td>
+							  <td>{{item.ItemType.itemTypeAmount}}{{item.ItemType.itemTypeUoM}}</td>
+							  <td>{{item.packageType}}</td>
+							</tr>
+							<tr *ngFor="let itemt of itemtypes">
+							  <th scope="row">{{itemt.itemTypeMedId}}</th>
+							  <td>{{itemt.itemTypeName}}</td>
+							  <td>{{itemt.itemTypeAmount}}{{itemt.itemTypeUoM}}</td>
+							  <td>Normal</td>
+							</tr>
+						  </tbody>
+						</table>
+						
+					</div>
+					<div class='col-md-6'>
+						<h3>Contracts:</h3>
+						<table class="table">
+						  <thead>
+							<tr>
+							  <th scope="col">ID</th>
+							  <th scope="col">Status</th>
+							  <th scope="col">Seller</th>
+							  <th scope="col">Buyer</th>
+							  <th scope="col">Medicine</th>
+							  <th scope="col">UnitPrice</th>
+							  <th scope="col">Quantity</th>
+							</tr>
+						  </thead>
+						  <tbody>
+							<tr *ngFor="let contract of contracts">
+							  <th scope="row">{{contract.id}}</th>
+							  <td>{{contract.status}}</td>
+							  <td>{{contract.sellingBusiness.name}}</td>
+							  <td>{{contract.buyingBusiness.name}}</td>
+							  <td>{{contract.ItemType.itemTypeName}}</td>
+							  <td>{{contract.unitPrice}}</td>
+							  <td>{{contract.quantity}}</td>
+							</tr>
+							<tr *ngFor="let contract of pendingcontracts">
+							  <th scope="row">{{contract.id}}</th>
+							  <td>{{contract.status}}
+							  <button type="button" class="btn btn-success" style='background-color: #8bc34a !important; border: none;' (click)='updateContract(contract.str, true)'>&#10004;</button>
+							  <button type="button" class="btn btn-danger" style='background-color: #f44336 !important; border: none;' (click)='updateContract(contract.str, false)'>&#10005;</button></td>
+							  <td>{{contract.sellingBusiness.name}}</td>
+							  <td>{{contract.buyingBusiness.name}}</td>
+							  <td>{{contract.ItemType.itemTypeName}}</td>
+							  <td>{{contract.unitPrice}}</td>
+							  <td>{{contract.quantity}}</td>
+							</tr>
+						  </tbody>
+						</table>
+					</div>
+				</div>
+				<div class='row'>
+					<div class='col-md-6'>
+						<button *ngIf="isManufacturer" data-toggle="modal" href="#myModal" class="btn btn-lg btn-block btn-primary buttons2">Add New Item</button>
+					</div>
+					<div class='col-md-6'>
+						<button data-toggle="modal" href="#myModal3" class="btn btn-lg btn-block btn-primary buttons2">New Contract</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--Item Type-->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button style='background-color: transparent !important;' type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Add New Medicine:</h4>
+        </div>
+        <div class="modal-body">
+            <form>
+				<div class="form-group">
+					<label for="nmtname">New Medicine Name:</label>
+					<input class="form-control" id='nmtname' type='text' placeholder='New Medicine Name'/>
+				</div><div class="form-group">
+					<label for="nmamount">Amount:</label>
+					<input class="form-control" id='nmtamount' type='amount' placeholder='2000'/>
+				</div><div class="form-group">
+					<label for="nmtuom">Measured mL or g:</label>
+					<input class="form-control" id='nmtuom' type='text' placeholder='mL or g'/>
+				</div><div class="form-group">
+					<label for="nmid">Medical ID:</label>
+					<input class="form-control" id='nmtid' type='number' placeholder='Medical ID'/>
+				</div><div class="form-group">
+					<label for="nmpackage">Package Type:</label>
+					<input class="form-control" id='nmpackage' type='test' placeholder='Package Type'/>
+				</div>
+			</form>
+        </div>
+        <div class="modal-footer">
+          <button href="#" data-dismiss="modal" class="btn btn-primary" >Close</button>
+          <button href="#" class="btn btn-primary" (click)='addNewMedicine()' data-dismiss="modal">Add</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!--Contract-->
+<div class="modal fade" id="myModal3">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button style='background-color: transparent !important;' type="button" class="close" data-dismiss="modal" aria-hidden="true"><!--×-->&times;</button>
+          <h4 class="modal-title">New Contract:</h4>
+        </div>
+        <div class="modal-body">
+            <form>
+				<div class="form-group">
+					<label for="SellingBusiness">Selling Business:</label>
+					<select class="form-control" id='SellingBusiness' disabled="true">
+					  <option *ngFor="let b of allbusinesses" value='{{b.str}}'>{{b.name}}</option>
+					</select>
+					<!--<input class="form-control" id='SellingBusiness' type='text' placeholder='Selling Business'/>-->
+				</div><div class="form-group">
+					<label for="BuyingBusiness">Buying Business:</label>
+					<!--<input class="form-control" id='BuyingBusiness' type='text' placeholder='Buying Business'/>-->
+					<select class="form-control" id='BuyingBusiness'>
+					  <option *ngFor="let b of allbusinesses" value='{{b.str}}'>{{b.name}}</option>
+					</select>
+				</div><div class="form-group">
+					<label for="ItemBuy">What Item:</label>
+					<!--<input class="form-control" id='ItemBuy' type='text' placeholder='Item'/>-->
+					<select class="form-control" id='ItemBuy'>
+					  <option *ngFor="let i of allItems" value='{{i.str}}'>{{i.ItemType.itemTypeName}}</option>
+					</select>
+				</div><div class="form-group">
+					<label for="UnitPrice">Unit Price:</label>
+					<input class="form-control" id='UnitPrice' type='number' placeholder='Unit Price'/>
+				</div><div class="form-group">
+					<label for="Quantity">Quantity:</label>
+					<input class="form-control" id='Quantity' type='number' placeholder='Quantity'/>
+				</div>
+        	</form>
+        </div>
+        <div class="modal-footer">
+          <button href="#" data-dismiss="modal" class="btn btn-primary" >Close</button>
+          <button href="#" class="btn btn-primary" (click)='addNewContract()' data-dismiss="modal">Add</button>
+        </div>
+      </div>
+    </div>
+</div>
