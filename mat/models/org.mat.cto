@@ -21,6 +21,12 @@ enum Status
   o CONFIRMED
 }
 
+enum contractConfirmation
+{
+  o WAITING_CONFIRMATION
+  o CONFIRMED
+}
+
 //Business type
 enum BusinessType
 {
@@ -77,6 +83,7 @@ asset Contract identified by contractId
 {
   o String contractId
   o Status status
+  o contractConfirmation approvalStatus
   o DateTime arrivalDateTime
   o Shipment[] shipments optional
   o ItemRequest[] requestedItems
@@ -150,9 +157,8 @@ abstract transaction UpdateContract
   --> Contract contract
 }
 
-transaction UpdateContractStatus extends UpdateContract 
+transaction ApproveContractChanges extends UpdateContract 
 {
-  o Status newStatus
 }
 
 transaction UpdateContractArrivalDateTime extends UpdateContract 
