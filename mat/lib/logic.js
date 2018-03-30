@@ -1,8 +1,8 @@
 'use strict';
 
 /**
- * Track the trade of a commodity from one trader to another
- * @param {org.mat.UpdateItemOwner} updateItemOwner - the trade to be processed
+ * Change owners of a particular item
+ * @param {org.mat.UpdateItemOwner} updateItemOwner - the itemTransaction to be updated
  * @transaction
  */
 function updateItemOwner(updateItemOwner) {
@@ -14,14 +14,15 @@ function updateItemOwner(updateItemOwner) {
 }
 
 /**
- * Track the trade of a commodity from one trader to another
- * @param {org.mat.UpdateShipment} updateShipment - the trade to be processed
+ * Updates a shipment's carrier
+ * This will need approval from all participants of the contract
+ * @param {org.mat.UpdateShipment} updateShipment - the shipmentTransaction to be edited
  * @transaction
  */
-function updateShipment(updateShipment) {
+function updateShipmentCarrier(updateShipment) {
     updateShipment.contract.shipments[shipmentIndex].carryingBusiness = updateShipment.newCarryingBusiness;
     updateShipment.contract.shipments[shipmentIndex].status = updateShipment.newStatus;
-    updateShipment.contract.status = 'WAITING_CONFIRMATION';
+    updateShipment.contract.approvalStatus = 'WAITING_CONFIRMATION';
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateShipment.contract);
@@ -29,14 +30,15 @@ function updateShipment(updateShipment) {
 }
 
 /**
- * Track the trade of a commodity from one trader to another
- * @param {org.mat.UpdateItemRequest} updateItemRequest - the trade to be processed
+ * Change the quantity or unit price of an item request
+ * This will need approval from all participants of the contract
+ * @param {org.mat.UpdateItemRequest} updateItemRequest - the itemRequestTransaction to be edited
  * @transaction
  */
 function updateItemRequest(updateItemRequest) {
     updateItemRequest.contract.requestedItems[itemRequestIndex].unitPrice = updateItemRequest.newUnitPrice;
     updateItemRequest.contract.requestedItems[itemRequestIndex].quantity = updateItemRequest.newQuantity;
-    updateShipment.contract.status = 'WAITING_CONFIRMATION';
+    updateShipment.contract.approvalStatus = 'WAITING_CONFIRMATION';
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateItemRequest.contract);
@@ -44,61 +46,66 @@ function updateItemRequest(updateItemRequest) {
 }
 
 /**
- * Track the trade of a commodity from one trader to another
- * @param {org.mat.UpdateContractStatus} updateContractStatus - the trade to be processed
+ * Confirm the contract's changes
+ * @param {org.mat.ApproveContractChanges} approveContractChanges - the contractTransaction to be approved
  * @transaction
  */
-function updateContractStatus(updateContractStatus) {
-    updateContractStatus.contract.status = updateContractStatus.newStatus;
+function approveContractChanges(approveContractChanges) {
+    approveContractChanges.contract.approvalStatus = 'CONFIRMED';
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
-            return assetRegistry.update(updateContractStatus.contract);
+            return assetRegistry.update(approveContractChanges.contract);
         });
 }
 
 /**
- * Track the trade of a commodity from one trader to another
- * @param {org.mat.UpdateContractArrivalDateTime} updateContractArrivalDateTime - the trade to be processed
+ * Update the absolute arrival time of the shipments specified within the contract
+ * This will need approval from all participants of the contract
+ * @param {org.mat.UpdateContractArrivalDateTime} updateContractArrivalDateTime - the contractTransaction to be updated
  * @transaction
  */
 function updateContractArrivalDateTime(updateContractArrivalDateTime) {
     updateContractArrivalDateTime.contract.arrivalDateTime = updateContractArrivalDateTime.newArrivalDateTime;
+    updateContractArrivalDateTime.contract.status = 'WAITING_CONFIRMATION';
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateContractArrivalDateTime.contract);
         });
 }
 
-/** Track the trade of a commodity from one trader to another
-* @param {org.mat.UpdateContractShipmentList} updateContractShipmentList - the trade to be processed
-* @transaction
-*/
+/** 
+ * Update which shipments are being specified in the contract
+ * @param {org.mat.UpdateContractShipmentList} updateContractShipmentList - the contractTransaction to be updated
+ * @transaction
+ */
 function updateContractShipmentList(updateContractShipmentList) {
    updateContractShipmentList.contract.shipments = updateContractShipmentList.newShipmentList;
-   updateContractShipmentList.contract.status = 'WAITING_CONFIRMATION';
+   updateContractShipmentList.contract.approvalStatus = 'WAITING_CONFIRMATION';
    return getAssetRegistry('org.mat.Contract')
        .then(function (assetRegistry) {
            return assetRegistry.update(updateContractShipmentList.contract);
        });
 }
 
-/** Track the trade of a commodity from one trader to another
-* @param {org.mat.UpdateContractItemRequestedItems} updateContractItemRequestedItems - the trade to be processed
-* @transaction
-*/
+/**
+ * Track the trade of a commodity from one trader to another
+ * @param {org.mat.UpdateContractItemRequestedItems} updateContractItemRequestedItems - the contractTransaction to be processed
+ * @transaction
+ */
 function updateContractItemRequestedItems(updateContractItemRequestedItems) {
     updateContractItemRequestedItems.contract.requestedItems = updateContractItemRequestedItems.newRequestedItems;
-    updateContractItemRequestedItems.contract.status = 'WAITING_CONFIRMATION';
+    updateContractItemRequestedItems.contract.approvalStatus = 'WAITING_CONFIRMATION';
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateContractItemRequestedItems.contract);
         });
  }
 
-/** Track the trade of a commodity from one trader to another
-* @param {org.mat.UpdateUserEmail} updateUserEmail - the trade to be processed
-* @transaction
-*/
+/**
+ * Update a user's email
+ * @param {org.mat.UpdateUserEmail} updateUserEmail - the userTransaction to be changed
+ * @transaction
+ */
 function updateUserEmail(updateUserEmail) {
     updateUserEmail.user.userEmail = updateUserEmail.newUserEmail;
     return getAssetRegistry('org.mat.User')
@@ -107,10 +114,11 @@ function updateUserEmail(updateUserEmail) {
         });
  }
 
-/** Track the trade of a commodity from one trader to another
-* @param {org.mat.UpdateUserPassword} updateUserPassword - the trade to be processed
-* @transaction
-*/
+/** 
+ * Update a user's password
+ * @param {org.mat.UpdateUserPassword} updateUserPassword - the userTransaction to be processed
+ * @transaction
+ */
 function updateUserPassword(updateUserPassword) {
     updateUserPassword.user.password = updateUserPassword.newUserPass;
     return getAssetRegistry('org.mat.User')
@@ -119,10 +127,11 @@ function updateUserPassword(updateUserPassword) {
         });
  }
 
- /** Track the trade of a commodity from one trader to another
-* @param {org.mat.UpdateBusinessInfo} updateBusinessInfo - the trade to be processed
-* @transaction
-*/
+ /** 
+  * Update Business's information
+ * @param {org.mat.UpdateBusinessInfo} updateBusinessInfo - the businessTransaction to be processed
+ * @transaction
+ */
 function updateBusinessInfo(updateBusinessInfo) {
     updateBusinessInfo.business.name = updateBusinessInfo.newBusinessName;
     if(updateBusinessInfo.hasOwnProperty(newPoCName))
@@ -137,10 +146,11 @@ function updateBusinessInfo(updateBusinessInfo) {
         });
  }
 
-/** Track the trade of a commodity from one trader to another
-* @param {org.mat.UpdateBusinessAccBalance} updateBusinessAccBalance - the trade to be processed
-* @transaction
-*/
+/** 
+ * Update a business's account balance
+ * @param {org.mat.UpdateBusinessAccBalance} updateBusinessAccBalance - the businessTransaction to be processed
+ * @transaction
+ */
 function updateBusinessAccBalance(updateBusinessAccBalance) {
     updateBusinessAccBalance.business.accountBalance = updateBusinessAccBalance.newAccBalance;
     return getAssetRegistry('org.mat.Business')
@@ -149,8 +159,8 @@ function updateBusinessAccBalance(updateBusinessAccBalance) {
         });
  }
 
-/** Track the trade of a commodity from one trader to another
-* @param {org.mat.RemoveItemFromInventory} removeItemFromInventory - the trade to be processed
+/** Remove an item from the inventory of a business
+* @param {org.mat.RemoveItemFromInventory} removeItemFromInventory - the businessTransaction to be processed
 * @transaction
 */
 function removeItemFromInventory(removeItemFromInventory) {
@@ -163,10 +173,11 @@ function removeItemFromInventory(removeItemFromInventory) {
         });
  }
 
-/** Track the trade of a commodity from one trader to another
-* @param {org.mat.AddItemToInventory} addItemToInventory - the trade to be processed
-* @transaction
-*/
+/** 
+ * Add an item to the inventory of a business
+ * @param {org.mat.AddItemToInventory} addItemToInventory - the businessTransaction to be processed
+ * @transaction
+ */
 function addItemToInventory(addItemToInventory) {
     addItemToInventory.business.inventory.push(addItemToInventory.addItem);
     return getAssetRegistry('org.mat.Business')
@@ -175,10 +186,11 @@ function addItemToInventory(addItemToInventory) {
         });
  }
 
-/** Track the trade of a commodity from one trader to another
-* @param {org.mat.RemoveEmployeeFromBusiness} removeEmployeeFromBusiness - the trade to be processed
-* @transaction
-*/
+/**
+ * Remove an employee from a business
+ * @param {org.mat.RemoveEmployeeFromBusiness} removeEmployeeFromBusiness - the businessTransaction to be processed
+ * @transaction
+ */
 function removeEmployeeFromBusiness(removeEmployeeFromBusiness) {
     var index = removeEmployeeFromBusiness.business.employees.indexOf(removeEmployeeFromBusiness.removeEmployee);
     if(index>-1)
@@ -189,10 +201,11 @@ function removeEmployeeFromBusiness(removeEmployeeFromBusiness) {
         });
  }
 
-/** Track the trade of a commodity from one trader to another
-* @param {org.mat.AddEmployeeToBusiness} addEmployeeToBusiness - the trade to be processed
-* @transaction
-*/
+/**
+ * Add an employee to a business
+ * @param {org.mat.AddEmployeeToBusiness} addEmployeeToBusiness - the businessTransaction to be processed
+ * @transaction
+ */
 function addEmployeeToBusiness(addEmployeeToBusiness) {
     addEmployeeToBusiness.business.employees.push(addEmployeeToBusiness.addEmployee);
     return getAssetRegistry('org.mat.Business')
@@ -201,8 +214,8 @@ function addEmployeeToBusiness(addEmployeeToBusiness) {
         });
  }
 
- /** Track the trade of a commodity from one trader to another
-* @param {org.mat.UpdateEmployeeInfo} updateEmployeeInfo - the trade to be processed
+ /** Updates employee's information
+* @param {org.mat.UpdateEmployeeInfo} updateEmployeeInfo - the employeeTransaction to be processed
 * @transaction
 */
 function updateEmployeeInfo(updateEmployeeInfo) {
@@ -217,8 +230,8 @@ function updateEmployeeInfo(updateEmployeeInfo) {
         });
  }
 
-  /** Track the trade of a commodity from one trader to another
-* @param {org.mat.UpdateEmployeeType} updateEmployeeType - the trade to be processed
+  /** Update the employee's type of a business
+* @param {org.mat.UpdateEmployeeType} updateEmployeeType - the employeeTransaction to be processed
 * @transaction
 */
 function updateEmployeeType(updateEmployeeType) {
