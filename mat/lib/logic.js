@@ -93,6 +93,142 @@ function updateContractItemRequestedItems(updateContractItemRequestedItems) {
         });
  }
 
+/** Track the trade of a commodity from one trader to another
+* @param {org.mat.UpdateUserEmail} updateUserEmail - the trade to be processed
+* @transaction
+*/
+function updateUserEmail(updateUserEmail) {
+    updateUserEmail.user.userEmail = updateUserEmail.newUserEmail;
+    return getAssetRegistry('org.mat.User')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateUserEmail.user);
+        });
+ }
+
+/** Track the trade of a commodity from one trader to another
+* @param {org.mat.UpdateUserPassword} updateUserPassword - the trade to be processed
+* @transaction
+*/
+function updateUserPassword(updateUserPassword) {
+    updateUserPassword.user.password = updateUserPassword.newUserPass;
+    return getAssetRegistry('org.mat.User')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateUserPassword.user);
+        });
+ }
+
+ /** Track the trade of a commodity from one trader to another
+* @param {org.mat.UpdateBusinessInfo} updateBusinessInfo - the trade to be processed
+* @transaction
+*/
+function updateBusinessInfo(updateBusinessInfo) {
+    updateBusinessInfo.business.name = updateBusinessInfo.newBusinessName;
+    if(updateBusinessInfo.hasOwnProperty(newPoCName))
+        updateBusinessInfo.business.PoCName = updateBusinessInfo.newPoCName;
+    if(updateBusinessInfo.hasOwnProperty(newPoCEmail))
+        updateBusinessInfo.business.PoCEmail = updateBusinessInfo.newPoCEmail;
+    if(updateBusinessInfo.hasOwnProperty(newAddress))
+        updateBusinessInfo.business.address = updateBusinessInfo.newAddress;
+    return getAssetRegistry('org.mat.Business')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateBusinessInfo.business);
+        });
+ }
+
+/** Track the trade of a commodity from one trader to another
+* @param {org.mat.UpdateBusinessAccBalance} updateBusinessAccBalance - the trade to be processed
+* @transaction
+*/
+function updateBusinessAccBalance(updateBusinessAccBalance) {
+    updateBusinessAccBalance.business.accountBalance = updateBusinessAccBalance.newAccBalance;
+    return getAssetRegistry('org.mat.Business')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateBusinessAccBalance.business);
+        });
+ }
+
+/** Track the trade of a commodity from one trader to another
+* @param {org.mat.RemoveItemFromInventory} removeItemFromInventory - the trade to be processed
+* @transaction
+*/
+function removeItemFromInventory(removeItemFromInventory) {
+    var index = removeItemFromInventory.business.inventory.indexOf(removeItemFromInventory.removeItem);
+    if(index>-1)
+        removeItemFromInventory.business.inventory.splice(index, 1);
+    return getAssetRegistry('org.mat.Business')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(removeItemFromInventory.business);
+        });
+ }
+
+/** Track the trade of a commodity from one trader to another
+* @param {org.mat.AddItemToInventory} addItemToInventory - the trade to be processed
+* @transaction
+*/
+function addItemToInventory(addItemToInventory) {
+    addItemToInventory.business.inventory.push(addItemToInventory.addItem);
+    return getAssetRegistry('org.mat.Business')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(addItemToInventory.business);
+        });
+ }
+
+/** Track the trade of a commodity from one trader to another
+* @param {org.mat.RemoveEmployeeFromBusiness} removeEmployeeFromBusiness - the trade to be processed
+* @transaction
+*/
+function removeEmployeeFromBusiness(removeEmployeeFromBusiness) {
+    var index = removeEmployeeFromBusiness.business.employees.indexOf(removeEmployeeFromBusiness.removeEmployee);
+    if(index>-1)
+        removeEmployeeFromBusiness.business.employees.splice(index, 1);
+    return getAssetRegistry('org.mat.Business')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(removeEmployeeFromBusiness.business);
+        });
+ }
+
+/** Track the trade of a commodity from one trader to another
+* @param {org.mat.AddEmployeeToBusiness} addEmployeeToBusiness - the trade to be processed
+* @transaction
+*/
+function addEmployeeToBusiness(addEmployeeToBusiness) {
+    addEmployeeToBusiness.business.employees.push(addEmployeeToBusiness.addEmployee);
+    return getAssetRegistry('org.mat.Business')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(addEmployeeToBusiness.business);
+        });
+ }
+
+ /** Track the trade of a commodity from one trader to another
+* @param {org.mat.UpdateEmployeeInfo} updateEmployeeInfo - the trade to be processed
+* @transaction
+*/
+function updateEmployeeInfo(updateEmployeeInfo) {
+    updateEmployeeInfo.employee.firstName = updateEmployeeInfo.employee.newFirstName;
+    updateEmployeeInfo.employee.lastName = updateEmployeeInfo.employee.newLastName;
+    updateEmployeeInfo.employee.email = updateEmployeeInfo.employee.newEmail;
+    if(udpateEmployeeInfo.hasOwnProperty(newPhoneNumber))
+        updateEmployeeInfo.employee.phoneNumber = updateEmployeeInfo.employee.newPhoneNumber;
+    return getParticipantRegistry('org.mat.Employee')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateEmployeeInfo.employee);
+        });
+ }
+
+  /** Track the trade of a commodity from one trader to another
+* @param {org.mat.UpdateEmployeeType} updateEmployeeType - the trade to be processed
+* @transaction
+*/
+function updateEmployeeType(updateEmployeeType) {
+    updateEmployeeType.employee.employeeType = updateEmployeeType.employee.newEmployeeType;
+    return getParticipantRegistry('org.mat.Employee')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateEmployeeType.employee);
+        });
+ }
+
+
+
 /**
  * Initialize some test assets and participants useful for running a demo.
  * @param {org.mat.SetupDemo} setupDemo - the SetupDemo transaction
