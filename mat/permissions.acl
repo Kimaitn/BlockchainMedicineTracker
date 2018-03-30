@@ -1,0 +1,171 @@
+/*
+This is the permissions access control list 
+All the permissions are listed here
+
+The format for permissions is:
+
+rule SampleConditionalRuleWithTransaction 
+{
+    description: "Description of the ACL rule"
+    participant(m): "org.example.SampleParticipant"
+    operation: READ, CREATE, UPDATE
+    resource(v): "org.example.SampleAsset"
+    transaction(tx): "org.example.SampleTransaction"
+    condition: (v.owner.getIdentifier() == m.getIdentifier())
+    action: ALLOW
+}
+*/
+
+//gives network control and business control to the 
+//admin of the hyperledger fabric network 
+rule NetworkAdminUser
+{
+  description:  "Network admin is given business and network permissions"
+  participant: "org.hyperledger.composer.system.NetworkAdmin"
+  operation: ALL
+  resource: "**"
+  action: ALLOW  
+}
+
+//Allows admin to create items as long as the item belongs
+//to that admin's business
+rule AdminEmployeeItemPermission
+{
+  description: "Admin Employee is given CRUD permissions for Items"
+  participant(a): "org.mat.Employee"
+  operation: ALL
+  resource(i): "org.mat.Item"
+  condition: ((a.worksFor == i.currentOwner) && (a.employeeType == EmployeeType.Admin))
+  action: ALLOW
+}
+
+//Allows regular employee the ability to read items 
+rule EmployeeREADItemPermission
+{
+  description: "All Employees is given READ permissions for items"
+  participant(a): "org.mat.Employee"
+  operation: READ
+  resource(i): "org.mat.Item"
+  condition: (a.worksFor == i.currentOwner)
+  action: ALLOW
+}
+
+//Allows regular employee the ability to read items 
+rule EmployeeUPDATEItemPermission
+{
+  description: "All Employees is given READ permissions for items"
+  participant(a): "org.mat.Employee"
+  operation: UPDATE
+  resource(i): "org.mat.Item"
+  transaction: "org.mat.ItemTransaction"
+  condition: (a.worksFor == i.currentOwner)
+  action: ALLOW
+}
+
+//Allow an employee to READ a contract if they belong to the one of the business' the contract is related to
+rule EmployeeREADShipmentPermission
+{
+  description: "All employees can read a shipment"
+  participant(e): "org.mat.Employee"
+  operation: READ
+  resource(s): "org.mat.Shipment"
+  condition: ((e.worksFor == s.sender) || (e.worksFor == s.receiver) || (e.worksFor == s.currentOwner))
+  action: ALLOW
+}
+
+rule EmployeeCREATEShipmentPermission
+{
+  description: "All employees can create a shipment as long as they use the create shipment transaction"
+  participant(e): "org.mat.Employee"
+  operation: CREATE
+  resource(s): "org.mat.Shipment"
+  transaction: "org.mat.CreateShipment"
+  condition: (e.worksFor == s.sender)
+  action: ALLOW
+}
+
+rule EmployeeUPDATEShipmentPermission
+{
+  description: "All employees can create a shipment as long as they use the create shipment transaction"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(s): "org.mat.Shipment"
+  transaction: "org.mat.UpdateShipment"
+  condition: ((e.worksFor == s.sender) || (e.worksFor == s.receiver) || (e.worksFor == s.currentOwner))
+  action: ALLOW
+}
+
+rule EmployeeDELETEShipmentPermission
+{
+  description: "All employees can create a shipment as long as they use the create shipment transaction"
+  participant(e): "org.mat.Employee"
+  operation: DELETE
+  resource(s): "org.mat.Shipment"
+  transaction: "org.mat.UpdateShipment"
+  condition: (((e.worksFor == s.sender) || (e.worksFor == s.receiver) || (e.worksFor == s.currentOwner)) && (e.employeeType == EmployeeType.Admin))
+  action: ALLOW
+}
+
+rule EmployeeREADContractPermission
+{
+  description: "All employees can read a shipment"
+  participant(e): "org.mat.Employee"
+  operation: READ
+  resource(c): "org.mat.Contract"
+  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  action: ALLOW
+}
+
+rule EmployeeCREATEContractPermission
+{
+  description: "All employees can create a shipment as long as they use the create shipment transaction"
+  participant(e): "org.mat.Employee"
+  operation: CREATE
+  resource(c): "org.mat.Contract"
+  transaction: "org.mat.CreateContract"
+  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  action: ALLOW
+}
+
+rule EmployeeUPDATEContractPermission
+{
+  description: "All employees can create a shipment as long as they use the create shipment transaction"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(c): "org.mat.Contract"
+  transaction: "org.mat.UpdateContract"
+  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  action: ALLOW
+}
+
+rule EmployeeDELETEContractPermission
+{
+  description: "All employees can create a shipment as long as they use the create shipment transaction"
+  participant(e): "org.mat.Employee"
+  operation: DELETE
+  resource(s): "org.mat.Contract"
+  transaction: "org.mat.UpdateContract"
+  condition: (((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness)) && (e.employeeType == EmployeeType.Admin))
+  action: ALLOW
+}
+
+//lets business CRUD employees
+rule CreateEmployee
+{
+  description: "lets businesses create employees"
+  participant(b): "org.mat.Employee"
+  operation: ALL
+  resource(e): "org.mat.Employee"
+  condition: (e.worksFor == b)
+  action: ALLOW
+}
+
+//lets only the loginchecker verify the email
+rule LogInCheckerREADUser
+{
+  description: "lets the login checker verify the user"
+  participant: "org.mat.LogInChecker"
+  operation: READ
+  resource: "org.mat.User"
+  action: ALLOW
+}

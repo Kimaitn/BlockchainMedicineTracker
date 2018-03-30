@@ -1,0 +1,249 @@
+namespace org.mat
+
+//Address concept for locations
+concept Address 
+{
+  o String city
+  o String country
+  o String street
+  o String street2 optional
+  o String state optional
+  o String zip optional
+}
+
+//Status of shipment and order
+enum Status 
+{
+  o IN_TRANSIT
+  o ARRIVED
+  o CANCELLED
+  o WAITING_CONFIRMATION
+  o CONFIRMED
+}
+
+//Business type
+enum BusinessType
+{
+  o Manufacturer
+  o Carrier
+  o Distributor
+}
+
+//Employee type
+enum EmployeeType
+{
+  o Admin
+  o Regular
+}
+
+//Unit of Measure for ItemType
+enum UoM 
+{
+  o mL
+  o g
+}
+
+asset ItemType identified by itemTypeName 
+{
+  o String itemTypeName
+}
+
+asset Item identified by itemId
+{
+  o String itemId
+  o UoM itemTypeUoM
+  o Double amountOfMedication
+  --> Business currentOwner
+  --> ItemType itemType
+}
+
+concept Shipment
+{
+  o Status status
+  o Address destinationAddress
+  o Address sourceAddress
+  --> Business carryingBusiness
+  --> Item[] items
+}
+
+concept ItemRequest 
+{
+  --> Item requestedItem
+  o Double unitPrice
+  o Integer quantity
+}
+
+asset Contract identified by contractId 
+{
+  o String contractId
+  o Status status
+  o DateTime arrivalDateTime
+  o Shipment[] shipments optional
+  o ItemRequest[] requestedItems
+  --> Business sellingBusiness
+  --> Business buyingBusiness
+}
+
+asset User identified by userEmail 
+{
+  o String userEmail
+  o String password
+  o String employeeId
+}
+
+participant LogInChecker identified by LogInCheckerId
+{
+  o String LogInCheckerId
+}
+
+asset Business identified by businessId 
+{
+  o String businessId
+  o String name
+  o BusinessType businessType
+  o String PoCName optional
+  o String PoCEmail optional
+  o Address address optional
+  o Double accountBalance
+  --> Item[] inventory optional
+  --> Employee[] employees optional
+}
+
+participant Employee identified by employeeId
+{
+  o String employeeId
+  o String firstName
+  o String lastName
+  o String email
+  o EmployeeType employeeType
+  o String phoneNumber optional
+  --> Business worksFor
+}
+
+//Item Transaction to allow the owner of the item to be changed
+transaction UpdateItemOwner
+{
+  --> Business newOwner
+  --> Item item
+}
+
+//Shipment Transaction to allow the owner of a shipment to to be changed
+transaction UpdateShipment
+{
+  --> Business newCarryingBusiness
+  --> Contract contract
+  o Status newStatus
+  o Integer shipmentIndex
+}
+
+//call to bulk load invenotory in
+transaction UpdateItemRequest
+{
+  --> Contract contract
+  o Integer itemRequestIndex
+  o Double newUnitPrice
+  o Integer newQuantity
+}
+
+abstract transaction UpdateContract
+{
+  --> Contract contract
+}
+
+transaction UpdateContractStatus extends UpdateContract 
+{
+  o Status newStatus
+}
+
+transaction UpdateContractArrivalDateTime extends UpdateContract 
+{
+  o DateTime newArrivalDateTime
+}
+
+transaction UpdateContractShipmentList extends UpdateContract 
+{
+  o Shipment[] newShipmentList
+}
+
+transaction UpdateContractItemRequestedItems extends UpdateContract 
+{
+  o ItemRequest[] newRequestedItems
+}
+
+abstract transaction UpdateUser
+{
+  --> User user
+}
+
+transaction UpdateUserEmail extends UpdateUser
+{
+  o String newUserEmail
+}
+
+transaction UpdateUserPassword extends UpdateUser
+{
+  o String newUserPass
+}
+
+abstract transaction UpdateBusiness
+{
+  -->Business business
+}
+
+transaction UpdateBusinessInfo extends UpdateBusiness 
+{
+  o String newBusinessName
+  o String newPoCName optional
+  o String newPoCEmail optional
+  o Address newAddress optional
+}
+
+transaction UpdateBusinessAccBalance extends UpdateBusiness
+{
+  o Double newAccBalance
+}
+
+transaction RemoveItemFromInventory extends UpdateBusiness
+{
+  -->Item removeItem
+}
+
+transaction AddItemToInventory extends UpdateBusiness
+{
+  -->Item addItem
+}
+
+transaction RemoveEmployeeFromBusiness extends UpdateBusiness
+{
+  -->Employee removeEmployee
+}
+
+transaction AddEmployeeToBusiness extends UpdateBusiness
+{
+  -->Employee addEmployee
+}
+
+abstract transaction UpdateEmployee
+{
+  -->Employee employee
+}
+
+transaction UpdateEmployeeInfo extends UpdateEmployee
+{
+  o String newFirstName
+  o String newLastName
+  o String newEmail
+  o String newPhoneNumber optional
+}
+
+transaction UpdateEmployeeType extends UpdateEmployeeInfo
+{
+  o EmployeeType newEmployeeType
+}
+
+/**
+ * JUST FOR INITIALIZING A DEMO
+ */
+transaction SetupDemo 
+{
+}
