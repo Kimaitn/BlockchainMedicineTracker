@@ -85,7 +85,7 @@ export class TrackComponent implements AfterViewInit  {
 		  for (let item of itemsList) {
 
 			if(item.itemId==medicine){
-				
+
 				this.medname = item.itemType;
 				this.medamount = item.amountOfMedication;
 				this.UoM = item.itemTypeUoM;
