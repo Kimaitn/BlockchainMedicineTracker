@@ -1,0 +1,57 @@
+<div id='main'>
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class='fullsize color4' [hidden]="signup">
+		<div class='container'>
+			<div id='signin' class='row'>
+				<div id='signinleft' class='col-md-4 color2'>
+					<div>
+						<h2 style='margin-top: 150px;'>Sign Up</h2>
+						<h3>Need An Account?</h3>
+						<a style='margin-top: 5px;' class="btn btn-primary btn-lg whiteborderbutton" role="button" (click)="toggleSignup(true)">SIGN UP</a>
+					</div>
+				</div>
+				<form id='signinform' class="form-signin col-md-8">
+					<h2 class="form-signin-heading">Sign In</h2>
+					<label for="inputEmail" class="sr-only">Email address</label>
+					<input type="email" id="inputEmail" class="form-control inputs" placeholder="Email address" required autofocus>
+					<label for="inputPassword" class="sr-only">Password</label>
+					<input type="password" id="inputPassword" class="form-control inputs" placeholder="Password" required>
+					<a href='#' id='forgotpasswordlink'>Forgot Password?</a>
+					<button class="btn btn-lg btn-primary btn-block" type="submit" (click)="signIn()">Sign in</button>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class='fullsize color4' [hidden]="signup==false">
+		<div class='container'>
+			<div id='signin2' class='row'>
+				<div id='signinleft2' class='col-md-4 color2'>
+					<div>
+						<h2 style='margin-top: 180px;'>Log In</h2>
+						<h3>Already Have an Account?</h3>
+						<a style='margin-top: 5px;' class="btn btn-primary btn-lg whiteborderbutton" role="button" (click)="toggleSignup(false)">SIGN IN</a>
+					</div>
+				</div>
+				<form id='signinform2' class="form-signin col-md-8">
+					<h2 class="form-signin-heading" style='margin-top: 50px;'>Sign Up</h2>
+					<label for="signupinputEmail" class="sr-only">Email address</label>
+					<input type="email" id="signupinputEmail" class="form-control inputs" placeholder="Email address" required autofocus>
+					<label for="signupinputPassword" class="sr-only">Password</label>
+					<input type="password" id="signupinputPassword" class="form-control inputs" placeholder="Password" required>
+					<label for="signupinputRPassword" class="sr-only">Retype Password</label>
+					<input type="password" id="signupinputRPassword" class="form-control inputs" placeholder="Retype Password" required>
+					<label for="signupinputCompany" class="sr-only">Company Name</label>
+					<input type="input" id="signupinputCompany" class="form-control inputs" placeholder="Company" required>
+					<label for="signupinputRole" class="sr-only">Company Role</label>
+					<select class="form-control inputs" id='signupinputRole' required>
+					  <option value='Manufacturer'>Manufacturer</option>
+					  <option value='Carrier'>Carrier</option>
+					  <option value='Distributor'>Distributor</option>
+					</select>
+					<a href='#' id='signinspace'> </a>
+					<button class="btn btn-lg btn-primary btn-block" type="submit" style='margin-bottom: 50px;' (click)="signUp()">Sign Up</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

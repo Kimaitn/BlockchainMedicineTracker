@@ -1,0 +1,446 @@
+*, body {
+	font-family: 'Open Sans';
+}
+
+#topnav {
+	top: 80px;
+	height: 50px;
+	background-color: #f9f9f9 !important;
+}
+
+em {
+	font-style:normal;
+	font-weight: 500;
+}
+
+h1 {
+	font-weight: 300;
+	text-align: center;
+	font-size: 25pt;
+}
+
+h1 span {
+	color: #379cd6;
+}
+
+a:link, a:visited {
+	color: #838382;
+	font-weight: 500;
+}
+
+.active a:link,.active a:visited {
+	color: #3b3a36 !important;
+}
+
+.navbar .navbar-nav {
+  display: inline-block;
+  float: none;
+  vertical-align: top;
+}
+
+.navbar .navbar-collapse {
+  text-align: center;
+}
+
+#top {
+	position: fixed;
+	top:0;
+	width: 100%;
+	background-color: white;
+	height: 80px;
+	z-index: 15;
+}
+
+#main {
+	margin-top: 130px;
+}
+
+#banner {
+	background-image: url('../background.png');
+	background-position-x: 80%;
+	background-size: cover;
+}
+
+#jumbo {
+	background: none;
+}
+
+#bannertext {
+	width: 350px;
+	margin-left: 30px;
+}
+
+#bannertext h2 {
+	margin: 0;
+	text-align: left;
+	font-size: 35pt;
+	line-height: 50px;
+	font-weight: 400;
+	color: #444444;
+}
+
+#bannertext p {
+	font-size: 16pt;
+	margin-top: 10px;
+	color: #8b8b8b;
+	font-weight: 400;
+}
+
+#bannerbutton {
+	color: white;
+	font-size: 10pt;
+	width: 160px;
+	padding: 14px 0px;
+	background-color: #379cd6;
+	border-radius: 1px;
+	border-color: #2388c2;
+}
+
+#jumbo {
+	padding: 0;
+}
+
+#holdboxes {
+	margin-top: -90px;
+	color: white;
+	text-align: center;
+}
+
+#line {
+	width: 100%;
+	height: 15px;
+	background: #2388c2;
+	background: -moz-linear-gradient(left, #2388c2 0%, #2388c2 50%, #5fb4e4 51%, #5fb4e4 100%);
+	background: -webkit-linear-gradient(left, #2388c2 0%,#2388c2 50%,#5fb4e4 51%,#5fb4e4 100%);
+	background: linear-gradient(to right, #2388c2 0%,#2388c2 50%,#5fb4e4 51%,#5fb4e4 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2388c2', endColorstr='#5fb4e4',GradientType=1 );
+}
+
+#holdboxes div div p {
+	padding: 0 30px;
+	font-size: 12pt;
+}
+
+#holdboxes div div a {
+	padding-bottom: 20px;
+}
+
+.color1 {
+	background-color: #2388c2;
+}
+
+.color2 {
+	background-color: #379cd6;
+}
+
+.color3 {
+	background-color: #5fb4e4;
+}
+
+.color4 {
+	background-color: #80c7ef;
+}
+
+.fas, .far {
+	margin-top: 30px;
+}
+
+#howwork {
+	text-align: center;
+	font-weight: 400;
+	margin-top: 50px;
+	margin-bottom: 20px;
+}
+
+#howdoeswork div div h3 {
+	font-weight: 400;
+	font-size: 16pt;
+	color: #444444;
+}
+
+#howdoeswork div div p {
+	font-weight: 400;
+	font-size: 12pt;
+	color: #444444;
+}
+
+#howdoeswork div div i {
+	float: left;
+	width: 100px;
+}
+
+#databoxes {
+	margin-top: 50px;
+	color: white;
+	text-align: center;
+	height: 200px;
+}
+
+#databoxes div {
+	height: 200px;
+}
+
+.numberbox {
+	font-size: 35pt;
+}
+
+#databoxes div p {
+	font-size: 15pt;
+	line-height: 25px;
+	margin-top: 70px;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
+footer {
+	color: white;
+}
+
+.h2text {
+	text-align: center;
+	font-weight: 400;
+	margin-top: 50px;
+	margin-bottom: 20px;
+}
+
+#otherinfo {
+	padding-bottom: 30px;
+	padding-top: 60px;
+}
+
+#signin, #signin2 {
+	background-color: #5fb4e4;
+	font-family: 'Open Sans';
+}
+
+#signin form, #signin2 form {
+	padding-left: 40px;
+	padding-right: 40px;
+	background-color: white;
+}
+
+#signin form input, #signin2 form input{
+	border: none;
+}
+
+#signin form input, #signin2 form input{
+	border: none;
+	outline:none;
+	box-shadow: none;
+	border-bottom: solid 2px #eee;
+	padding-left: 0;
+}
+
+#signin form input:focus, #signin2 form input:focus{
+	border: none;
+	outline:none;
+	box-shadow: none;
+	border-bottom: solid 2px #379cd6;
+}
+
+#signin form h2, #signin2 form h2{
+	margin-top: 80px;
+}
+
+#signin form button, #signin2 form button {
+	border-radius: 0px;
+	width: 200px;
+	margin-bottom: 80px;
+	background-color: #379cd6;
+	border-color: #2388c2;
+}
+
+#signinleft, #signinleft2 {
+    position: relative;
+    overflow: hidden;
+	color: white;
+	opacity: 1;
+}
+
+#signinleft:before, #signinleft2:before {
+    content: ' ';
+    display: block;
+    position: absolute;
+	left: 0;
+    top: 0;
+    width: 100%;
+	height: 100%;
+	background: url('../lab.jpg');
+    background-size: cover;
+    opacity: .2;
+	z-index: 1;
+}
+
+#signinleft div, #signinleft2 div {
+	z-index: 2;
+    position: relative;
+}
+
+#signinleft div h2, #signinleft2 div h2 {
+	text-align: center;
+	margin-top: 25px;
+	font-size: 30px;
+}
+
+#signinleft div h3, #signinleft2 div h3 {
+	text-align: center;
+	margin-top: 5px;
+	font-size: 18px;
+	font-weight: 400;
+}
+
+#signinleft div ul, #signinleft2 div ul {
+	margin-top: 25px;
+	font-weight: 400;
+	padding-right:20px;
+}
+
+.inputs {
+	border-radius: 0;
+	margin-top: 15px;
+	height: 40px;
+}
+
+#forgotpasswordlink, #signinspace {
+	text-align: right;
+	width: 100%;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	display: block;
+}
+
+.whiteborderbutton {
+	background-color: transparent;
+	display: block;
+	text-align: center;
+	font-size: 12pt;
+	color: white;
+	width: 150px;
+	margin: 20px auto 0;
+	border-color: white;
+	border-width: 2px;
+	border-radius: 0;
+}
+
+.whiteborderbutton:link, .whiteborderbutton:visited {
+	color: white;
+}
+
+.whiteborderbutton:hover,.whiteborderbutton:active,.whiteborderbutton:focus {
+	background-color: transparent !important;
+	border-color: white !important;
+}
+
+
+
+h3 {
+	font-weight: 400;
+}
+
+h4 {
+	font-size: 25pt;
+	font-weight: 400;
+	margin: 0;
+	margin-top: 5px;
+	margin-bottom: 22px;
+}
+
+h5 {
+	font-size: 12pt;
+	font-weight: 400;
+	margin: 0;
+}
+
+hr {
+	border-color: #379cd6;
+	border-width: 2px;
+	width: 60px;
+	margin: 45px auto;
+}
+
+footer div div{
+	margin: 0;
+	position:relative;
+	padding: 20px;
+}
+
+#trackform {
+	/*background-color: white !important;*/
+	padding: 20px;
+	width: 500px;
+	margin: 0 auto;
+}
+
+#trackform h2 {
+	font-weight: 300;
+	text-align: center;
+	color: white;
+	font-size: 30pt;
+}
+
+#trackform input {
+	height: 50px;
+	width: 360px;
+}
+
+button {
+	border-radius: 0 !important;
+	background-color: #2388c2 !important;
+	border-color: #379cd6 !important;
+}
+
+.buttons {
+	width: 100px;
+	float: right;
+	height: 48px;
+	margin-top: 6px;
+}
+
+#needhelp {
+	margin-top: 10px;
+	display: block;
+	color: white;
+}
+
+#trackformfinished {
+	background-color: white !important;
+	margin: 20px auto 20px;
+	padding: 20px;
+	padding-left: 40px;
+	padding-right: 40px;
+}
+
+#trackformfinished h2 {
+	font-weight: 400;
+	margin-bottom: 20px;
+	font-size: 20pt;
+	text-decoration: underline;
+}
+
+#trackformfinished div div {
+	margin: 0;
+}
+.buttons2 {
+	width: 300px;
+	vertical-align: top;
+	display: inline-block;
+}
+
+#trackfilledinfo {
+	text-align: center;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.lessbigh4 {
+	font-size: 13pt;
+	margin-bottom: 0px;
+	margin-top: 15px;
+	font-weight:500;
+}
+
+.lessbigh4 span {
+	font-size: 11pt;
+	font-weight:400;
+}
+
