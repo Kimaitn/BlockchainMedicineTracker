@@ -38,21 +38,8 @@ enum UoM
   o g
 }
 
-<<<<<<< HEAD
 //Address concept for locations
-concept Address 
-=======
-// Types of Medicine
-asset ItemType identified by itemTypeName 
-{
-  o String itemTypeName
-}
-
-// The specific type of Medicine based on id 
-// that stores the quantity and Unit of Measure.
-// Also can be used to map to the owner of the item
-asset Item identified by itemId
->>>>>>> origin/logicfileupdates
+concept Address
 {
   o String city
   o String country
@@ -80,7 +67,9 @@ concept ItemRequest
   o Integer quantity
 }
 
-<<<<<<< HEAD
+// The specific type of Medicine based on id 
+// that stores the quantity and Unit of Measure.
+// Also can be used to map to the owner of the item
 asset ItemType identified by itemTypeName 
 {
   o String itemTypeName
@@ -95,11 +84,9 @@ asset Item identified by itemId
   --> ItemType itemType
 }
 
-=======
 // Contract holds the data on the contract such as what is 
 // being shipped and when, the status of the contract, and the contract 
 // id number.  It can also hold the businesses that are selling and buying.
->>>>>>> origin/logicfileupdates
 asset Contract identified by contractId 
 {
   o String contractId
@@ -120,19 +107,10 @@ asset User identified by userEmail
   o String employeeId
 }
 
-<<<<<<< HEAD
-=======
-// Made so that the Log in caradentails are correct
-participant LogInChecker identified by LogInCheckerId
-{
-  o String LogInCheckerId
-}
-
 // This stores the businesses.
 // Holds information ranging from the type of the business
 // to the name and the poinnt of contact name and email of the business.
 // Also it can hold the employess, inventory, and account balance of the business.
->>>>>>> origin/logicfileupdates
 asset Business identified by businessId 
 {
   o String businessId
@@ -146,17 +124,15 @@ asset Business identified by businessId
   --> Employee[] employees optional
 }
 
-<<<<<<< HEAD
+// Made so that the Log in caradentails are correct
 participant LogInChecker identified by LogInCheckerId
 {
   o String LogInCheckerId
 }
 
-=======
 // Employee data is stored here with the ID of the employee.
 // Including the type of the employee, name, and the business they work for.
 // Also employee email and phone number
->>>>>>> origin/logicfileupdates
 participant Employee identified by employeeId
 {
   o String employeeId
@@ -175,28 +151,26 @@ transaction UpdateItemOwner
   --> Item item
 }
 
+// Updates the contract if need be
+abstract transaction UpdateContract
+{
+  --> Contract contract
+}
+
 //Shipment Transaction to allow the owner of a shipment to to be changed
-transaction UpdateShipment
+transaction UpdateShipment extends UpdateContract
 {
   --> Business newCarryingBusiness
-  --> Contract contract
   o Status newStatus
   o Integer shipmentIndex
 }
 
 //call to bulk load invenotory in
-transaction UpdateItemRequest
+transaction UpdateItemRequest extends UpdateContract
 {
-  --> Contract contract
   o Integer itemRequestIndex
   o Double newUnitPrice
   o Integer newQuantity
-}
-
-// Updates the contract if need be
-abstract transaction UpdateContract
-{
-  --> Contract contract
 }
 
 // Approves the status of the contract
@@ -210,16 +184,40 @@ transaction UpdateContractArrivalDateTime extends UpdateContract
   o DateTime newArrivalDateTime
 }
 
-// Update the shipping items on the contract 
+// needs to be removed
 transaction UpdateContractShipmentList extends UpdateContract 
 {
   o Shipment[] newShipmentList
 }
 
-// Update the items requested by an employee and update contract
+//logic file needs to be updated with this function
+transaction AddShipmentToShipmentList extends UpdateContract
+{
+  o Shipment addShipment
+}
+
+//logic file needs to be updated with this function
+transaction RemoveShipmentFromShipmentList extends UpdateContract
+{
+  o Shipment removeShipment
+}
+
+// needs to be removed
 transaction UpdateContractItemRequestedItems extends UpdateContract 
 {
   o ItemRequest[] newRequestedItems
+}
+
+//logic file needs to be updated with this function
+transaction AddItemRequestToRequestedItemsList extends UpdateContract
+{
+  o ItemRequest addItemRequest
+}
+
+//logic file needs to be updated with this function
+transaction RemoveItemRequestFromRequestedItemsList extends UpdateContract
+{
+  o ItemRequest removeItemRequest
 }
 
 // Update user 
