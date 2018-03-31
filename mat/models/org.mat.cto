@@ -10,6 +10,12 @@ enum Status
   o CONFIRMED
 }
 
+enum contractConfirmation
+{
+  o WAITING_CONFIRMATION
+  o CONFIRMED
+}
+
 //Business type
 enum BusinessType
 {
@@ -32,8 +38,21 @@ enum UoM
   o g
 }
 
+<<<<<<< HEAD
 //Address concept for locations
 concept Address 
+=======
+// Types of Medicine
+asset ItemType identified by itemTypeName 
+{
+  o String itemTypeName
+}
+
+// The specific type of Medicine based on id 
+// that stores the quantity and Unit of Measure.
+// Also can be used to map to the owner of the item
+asset Item identified by itemId
+>>>>>>> origin/logicfileupdates
 {
   o String city
   o String country
@@ -43,6 +62,7 @@ concept Address
   o String zip optional
 }
 
+// Shipment holds the shipment information of the goods (medicine)
 concept Shipment
 {
   o Status status
@@ -52,6 +72,7 @@ concept Shipment
   --> Item[] items
 }
 
+// The item that is being requested for the transaction
 concept ItemRequest 
 {
   --> Item requestedItem
@@ -59,6 +80,7 @@ concept ItemRequest
   o Integer quantity
 }
 
+<<<<<<< HEAD
 asset ItemType identified by itemTypeName 
 {
   o String itemTypeName
@@ -73,10 +95,16 @@ asset Item identified by itemId
   --> ItemType itemType
 }
 
+=======
+// Contract holds the data on the contract such as what is 
+// being shipped and when, the status of the contract, and the contract 
+// id number.  It can also hold the businesses that are selling and buying.
+>>>>>>> origin/logicfileupdates
 asset Contract identified by contractId 
 {
   o String contractId
   o Status status
+  o contractConfirmation approvalStatus
   o DateTime arrivalDateTime
   o Shipment[] shipments optional
   o ItemRequest[] requestedItems
@@ -84,6 +112,7 @@ asset Contract identified by contractId
   --> Business buyingBusiness
 }
 
+//The basic User class that will be using the system
 asset User identified by userEmail 
 {
   o String userEmail
@@ -91,6 +120,19 @@ asset User identified by userEmail
   o String employeeId
 }
 
+<<<<<<< HEAD
+=======
+// Made so that the Log in caradentails are correct
+participant LogInChecker identified by LogInCheckerId
+{
+  o String LogInCheckerId
+}
+
+// This stores the businesses.
+// Holds information ranging from the type of the business
+// to the name and the poinnt of contact name and email of the business.
+// Also it can hold the employess, inventory, and account balance of the business.
+>>>>>>> origin/logicfileupdates
 asset Business identified by businessId 
 {
   o String businessId
@@ -104,11 +146,17 @@ asset Business identified by businessId
   --> Employee[] employees optional
 }
 
+<<<<<<< HEAD
 participant LogInChecker identified by LogInCheckerId
 {
   o String LogInCheckerId
 }
 
+=======
+// Employee data is stored here with the ID of the employee.
+// Including the type of the employee, name, and the business they work for.
+// Also employee email and phone number
+>>>>>>> origin/logicfileupdates
 participant Employee identified by employeeId
 {
   o String employeeId
@@ -145,51 +193,61 @@ transaction UpdateItemRequest
   o Integer newQuantity
 }
 
+// Updates the contract if need be
 abstract transaction UpdateContract
 {
   --> Contract contract
 }
 
-transaction UpdateContractStatus extends UpdateContract 
+// Approves the status of the contract
+transaction ApproveContractChanges extends UpdateContract
 {
-  o Status newStatus
 }
 
+// Update the arrival time of the shipment on the contract
 transaction UpdateContractArrivalDateTime extends UpdateContract 
 {
   o DateTime newArrivalDateTime
 }
 
+// Update the shipping items on the contract 
 transaction UpdateContractShipmentList extends UpdateContract 
 {
   o Shipment[] newShipmentList
 }
 
+// Update the items requested by an employee and update contract
 transaction UpdateContractItemRequestedItems extends UpdateContract 
 {
   o ItemRequest[] newRequestedItems
 }
 
+// Update user 
 abstract transaction UpdateUser
 {
   --> User user
 }
 
+// Update user email if changed
 transaction UpdateUserEmail extends UpdateUser
 {
   o String newUserEmail
 }
 
+// Update users password 
 transaction UpdateUserPassword extends UpdateUser
 {
   o String newUserPass
 }
 
+// Update Business 
 abstract transaction UpdateBusiness
 {
   -->Business business
 }
 
+//Upadating Business inoframtion going from the name of the business,
+// to the point of contact, to the address
 transaction UpdateBusinessInfo extends UpdateBusiness 
 {
   o String newBusinessName
@@ -198,36 +256,44 @@ transaction UpdateBusinessInfo extends UpdateBusiness
   o Address newAddress optional
 }
 
+// Update account balance of the business
 transaction UpdateBusinessAccBalance extends UpdateBusiness
 {
   o Double newAccBalance
 }
 
+// Removing items from the business inventory
 transaction RemoveItemFromInventory extends UpdateBusiness
 {
   -->Item removeItem
 }
 
+// Adding items to the business's inventory
 transaction AddItemToInventory extends UpdateBusiness
 {
   -->Item addItem
 }
 
+// Removing an employee from a business 
 transaction RemoveEmployeeFromBusiness extends UpdateBusiness
 {
   -->Employee removeEmployee
 }
 
+// Adding an employee to the business
 transaction AddEmployeeToBusiness extends UpdateBusiness
 {
   -->Employee addEmployee
 }
 
+// Update the employee
 abstract transaction UpdateEmployee
 {
   -->Employee employee
 }
 
+// Update the various employee information 
+// You can change the name, email, and phone number
 transaction UpdateEmployeeInfo extends UpdateEmployee
 {
   o String newFirstName
@@ -236,6 +302,7 @@ transaction UpdateEmployeeInfo extends UpdateEmployee
   o String newPhoneNumber optional
 }
 
+// Update the employee type such as admin and regular
 transaction UpdateEmployeeType extends UpdateEmployeeInfo
 {
   o EmployeeType newEmployeeType
