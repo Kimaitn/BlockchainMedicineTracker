@@ -1,16 +1,5 @@
 namespace org.mat
 
-//Address concept for locations
-concept Address 
-{
-  o String city
-  o String country
-  o String street
-  o String street2 optional
-  o String state optional
-  o String zip optional
-}
-
 //Status of shipment and order
 enum Status 
 {
@@ -43,18 +32,15 @@ enum UoM
   o g
 }
 
-asset ItemType identified by itemTypeName 
+//Address concept for locations
+concept Address 
 {
-  o String itemTypeName
-}
-
-asset Item identified by itemId
-{
-  o String itemId
-  o UoM itemTypeUoM
-  o Double amountOfMedication
-  --> Business currentOwner
-  --> ItemType itemType
+  o String city
+  o String country
+  o String street
+  o String street2 optional
+  o String state optional
+  o String zip optional
 }
 
 concept Shipment
@@ -71,6 +57,20 @@ concept ItemRequest
   --> Item requestedItem
   o Double unitPrice
   o Integer quantity
+}
+
+asset ItemType identified by itemTypeName 
+{
+  o String itemTypeName
+}
+
+asset Item identified by itemId
+{
+  o String itemId
+  o UoM itemTypeUoM
+  o Double amountOfMedication
+  --> Business currentOwner
+  --> ItemType itemType
 }
 
 asset Contract identified by contractId 
@@ -91,11 +91,6 @@ asset User identified by userEmail
   o String employeeId
 }
 
-participant LogInChecker identified by LogInCheckerId
-{
-  o String LogInCheckerId
-}
-
 asset Business identified by businessId 
 {
   o String businessId
@@ -107,6 +102,11 @@ asset Business identified by businessId
   o Double accountBalance
   --> Item[] inventory optional
   --> Employee[] employees optional
+}
+
+participant LogInChecker identified by LogInCheckerId
+{
+  o String LogInCheckerId
 }
 
 participant Employee identified by employeeId
