@@ -13,6 +13,7 @@ function updateItemOwner(updateItemOwner) {
         });
 }
 
+
 /**
  * Track the trade of a commodity from one trader to another
  * @param {org.mat.UpdateShipment} updateShipment - the trade to be processed
@@ -229,9 +230,7 @@ function updateEmployeeType(updateEmployeeType) {
         });
  }
 
-
-
-/**
+/** 
  * Initialize some test assets and participants useful for running a demo.
  * @param {org.mat.SetupDemo} setupDemo - the SetupDemo transaction
  * @transaction
