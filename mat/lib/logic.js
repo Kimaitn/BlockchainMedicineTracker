@@ -308,12 +308,6 @@ async function setupDemo(setupDemo) {
     item.currentOwner = manufacturer;
     item.itemType = itemType;
 
-    // create itemRequest
-    const itemRequest = factory.newResource(org, 'ItemRequest', 'R001');
-    itemRequest.requestedItem = item;
-    itemRequest.unitPrice = 14.2;
-    itemRequest.quantity = 2;
-
     // create the contract
     const contract = factory.newResource(org, 'Contract', 'C001');
     contract.requestedItems = itemRequest;
@@ -323,6 +317,14 @@ async function setupDemo(setupDemo) {
     const tomorrow = setupDemo.timestamp;
     tomorrow.setDate(tomorrow.getDate() + 1);
     contract.arrivalDateTime = tomorrow; // the shipment has to arrive tomorrow
+
+    // create the itemRequest concept
+    const itemRequest = factory.newResource(org, 'ItemRequest', 'R001');
+    itemRequest.requestedItem = item;
+    itemRequest.unitPrice = 14.2;
+    itemRequest.quantity = 2;
+
+    contract.itemRequest = [itemRequest];
 
     // create the shipment concept
     const shipment = factory.newConcept(org, 'Shipment', 'S001');
@@ -355,11 +357,11 @@ async function setupDemo(setupDemo) {
     const itemRegistry = await getAssetRegistry(org + '.Item');
     await itemRegistry.addAll([item]);
 
-    // add the itemRequest
-    const itemRequestRegistry = await getAssetRegistry(org + '.ItemRequest');
-    await itemRequestRegistry.addAll([itemRequest]);
+    // add the itemRequest - are now concepts
+    //const itemRequestRegistry = await getAssetRegistry(org + '.ItemRequest');
+    //await itemRequestRegistry.addAll([itemRequest]);
 
-    // add the shipments
+    // add the shipments - are now concepts
     //const shipmentRegistry = await getAssetRegistry(org + '.Shipment');
     //await shipmentRegistry.addAll([shipment]);
 
