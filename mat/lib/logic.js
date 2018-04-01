@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Change owners of a particular item
+ * Changes owners of a particular item
  * @param {org.mat.UpdateItemOwner} updateItemOwner - the itemTransaction to be updated
  * @transaction
  */
@@ -31,7 +31,7 @@ function updateShipmentCarrier(updateShipment) {
 }
 
 /**
- * Change the quantity or unit price of an item request
+ * Changes the quantity or unit price of an item request
  * This will need approval from all participants of the contract
  * @param {org.mat.UpdateItemRequest} updateItemRequest - the itemRequestTransaction to be edited
  * @transaction
@@ -47,7 +47,7 @@ function updateItemRequest(updateItemRequest) {
 }
 
 /**
- * Confirm the contract's changes
+ * Confirms a contract's changes
  * @param {org.mat.ApproveContractChanges} approveContractChanges - the contractTransaction to be approved
  * @transaction
  */
@@ -60,7 +60,7 @@ function approveContractChanges(approveContractChanges) {
 }
 
 /**
- * Update the absolute arrival time of the shipments specified within the contract
+ * Updates the absolute arrival time of shipments specified within a contract
  * This will need approval from all participants of the contract
  * @param {org.mat.UpdateContractArrivalDateTime} updateContractArrivalDateTime - the contractTransaction to be updated
  * @transaction
@@ -135,7 +135,7 @@ function removeItemRequestFromRequestedItemsList(removeItemRequestFromRequestedI
 }
 
 /**
- * Update a user's email
+ * Updates a user's email
  * @param {org.mat.UpdateUserEmail} updateUserEmail - the userTransaction to be changed
  * @transaction
  */
@@ -161,7 +161,7 @@ function updateUserPassword(updateUserPassword) {
  }
 
 /** 
- * Update Business's information
+ * Updates a business's information
  * @param {org.mat.UpdateBusinessInfo} updateBusinessInfo - the businessTransaction to be processed
  * @transaction
  */
@@ -208,7 +208,7 @@ function removeItemFromInventory(removeItemFromInventory) {
  }
 
 /** 
- * Add an item to the inventory of a business
+ * Adds an item to the inventory of a business
  * @param {org.mat.AddItemToInventory} addItemToInventory - the businessTransaction to be processed
  * @transaction
  */
@@ -221,7 +221,7 @@ function addItemToInventory(addItemToInventory) {
  }
 
 /**
- * Remove an employee from a business
+ * Removes an employee from a business
  * @param {org.mat.RemoveEmployeeFromBusiness} removeEmployeeFromBusiness - the businessTransaction to be processed
  * @transaction
  */
@@ -236,7 +236,7 @@ function removeEmployeeFromBusiness(removeEmployeeFromBusiness) {
  }
 
 /**
- * Add an employee to a business
+ * Adds an employee to a business
  * @param {org.mat.AddEmployeeToBusiness} addEmployeeToBusiness - the businessTransaction to be processed
  * @transaction
  */
@@ -266,7 +266,7 @@ function updateEmployeeInfo(updateEmployeeInfo) {
  }
 
 /** 
-* Update the employee's type of a business
+* Updates an employee's type of a business
 * @param {org.mat.UpdateEmployeeType} updateEmployeeType - the employeeTransaction to be processed
 * @transaction
 */
