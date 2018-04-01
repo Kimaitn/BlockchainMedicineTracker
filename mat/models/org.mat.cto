@@ -24,21 +24,21 @@ enum BusinessType
   o Distributor
 }
 
-//Employee type
+// Employee type
 enum EmployeeType
 {
   o Admin
   o Regular
 }
 
-//Unit of Measure for ItemType
+// Unit of Measure for ItemType
 enum UoM 
 {
   o mL
   o g
 }
 
-//Address concept for locations
+// Address concept for locations
 concept Address
 {
   o String city
@@ -184,40 +184,28 @@ transaction UpdateContractArrivalDateTime extends UpdateContract
   o DateTime newArrivalDateTime
 }
 
-// needs to be removed
-transaction UpdateContractShipmentList extends UpdateContract 
-{
-  o Shipment[] newShipmentList
-}
-
-//logic file needs to be updated with this function
+// Adds a shipment to the contract
 transaction AddShipmentToShipmentList extends UpdateContract
 {
-  o Shipment addShipment
+  o Shipment newShipment
 }
 
-//logic file needs to be updated with this function
+// Removes a shipment in the contract
 transaction RemoveShipmentFromShipmentList extends UpdateContract
 {
-  o Shipment removeShipment
+  o Integer shipmentIndex
 }
 
-// needs to be removed
-transaction UpdateContractItemRequestedItems extends UpdateContract 
-{
-  o ItemRequest[] newRequestedItems
-}
-
-//logic file needs to be updated with this function
+// Adds an itemRequest to the contract
 transaction AddItemRequestToRequestedItemsList extends UpdateContract
 {
-  o ItemRequest addItemRequest
+  o ItemRequest newItemRequest
 }
 
-//logic file needs to be updated with this function
+// Removes an itemRequest from the contract
 transaction RemoveItemRequestFromRequestedItemsList extends UpdateContract
 {
-  o ItemRequest removeItemRequest
+  o Integer itemRequestindex
 }
 
 // Update user 
@@ -244,8 +232,8 @@ abstract transaction UpdateBusiness
   -->Business business
 }
 
-//Upadating Business inoframtion going from the name of the business,
-// to the point of contact, to the address
+// Upadating business information going from the name of the business
+// to the point of contact to the address
 transaction UpdateBusinessInfo extends UpdateBusiness 
 {
   o String newBusinessName
