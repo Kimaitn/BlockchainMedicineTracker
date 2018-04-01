@@ -16,7 +16,8 @@
     "deployFabric": "npm run composerCreate && npm run composerInstall && npm run composerStart && npm run composerImport",
     "pingNetwork": "composer network ping --card admin@mat-network",
     "deployServer": "composer-rest-server --card admin@mat-network",
-    "deploy": "npm run deployFabric && npm run deployServer"
+    "deploy": "npm run deployFabric && npm run deployServer",
+    "teardown": "rm -rf ~/.composer"
   },
   "repository": {
     "type": "git",
