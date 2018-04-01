@@ -75,32 +75,64 @@ function updateContractArrivalDateTime(updateContractArrivalDateTime) {
 }
 
 /** 
- * Update which shipments are being specified in the contract
- * @param {org.mat.UpdateContractShipmentList} updateContractShipmentList - the contractTransaction to be updated
+ * Adds a shipment to a shipmentList in a contract
+ * @param {org.mat.AddShipmentToShipmentList} addShipmentToShipmentList - the contractTransaction to be updated
  * @transaction
  */
-function updateContractShipmentList(updateContractShipmentList) {
-   updateContractShipmentList.contract.shipments = updateContractShipmentList.newShipmentList;
-   updateContractShipmentList.contract.approvalStatus = 'WAITING_CONFIRMATION';
-   return getAssetRegistry('org.mat.Contract')
-       .then(function (assetRegistry) {
-           return assetRegistry.update(updateContractShipmentList.contract);
-       });
-}
-
-/**
- * Track the trade of a commodity from one trader to another
- * @param {org.mat.UpdateContractItemRequestedItems} updateContractItemRequestedItems - the contractTransaction to be processed
- * @transaction
- */
-function updateContractItemRequestedItems(updateContractItemRequestedItems) {
-    updateContractItemRequestedItems.contract.requestedItems = updateContractItemRequestedItems.newRequestedItems;
-    updateContractItemRequestedItems.contract.approvalStatus = 'WAITING_CONFIRMATION';
+function addShipmentToShipmentList(addShipmentToShipmentList) {
+    addShipmentToShipmentList.contract.shipmentList.addAll([addShipmentToShipmentList.newShipment]);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
-            return assetRegistry.update(updateContractItemRequestedItems.contract);
+            return assetRegistry.update(updateContractShipmentList.contract);
         });
- }
+}
+
+/** 
+ * Removes a shipment from a shipmentList in a contract
+ * @param {org.mat.RemoveShipmentFromShipmentList} removeShipmentFromShipmentList - the contractTransaction to be updated
+ * @transaction
+ */
+function removeShipmentToShipmentList(removeShipmentToShipmentList) {
+    removeShipmentToShipmentList.contract.shipmentList = 
+        removeShipmentToShipmentList.contract.shipmentList.splice(
+            removeShipmentToShipmentList.shipmentIndex,
+            1
+        );
+    return getAssetRegistry('org.mat.Contract')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateContractShipmentList.contract);
+        });
+}
+
+/** 
+ * Adds an itemRequest to a contract
+ * @param {org.mat.AddItemRequestToRequestedItemsList} addItemRequestToRequestedItemsList - the contractTransaction to be updated
+ * @transaction
+ */
+function addItemRequestToRequestedItemsList(addItemRequestToRequestedItemsList) {
+    addItemRequestToRequestedItemsList.contract.requestedItems = addItemRequestToRequestedItemsList.newItemRequest;
+    return getAssetRegistry('org.mat.Contract')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateContractShipmentList.contract);
+        });
+}
+
+/** 
+ * Removes an itemRequest from a contract
+ * @param {org.mat.RemoveItemRequestFromRequestedItemsList} removeItemRequestFromRequestedItemsList - the contractTransaction to be updated
+ * @transaction
+ */
+function removeItemRequestFromRequestedItemsList(removeItemRequestFromRequestedItemsList) {
+    removeItemRequestFromRequestedItemsList.contract.requestedItems = 
+        removeItemRequestFromRequestedItemsList.contract.requestedItems.splice(
+            removeItemRequestFromRequestedItemsList.itemRequestIndex,
+            1
+        );
+    return getAssetRegistry('org.mat.Contract')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateContractShipmentList.contract);
+        });
+}
 
 /**
  * Update a user's email
@@ -128,8 +160,8 @@ function updateUserPassword(updateUserPassword) {
         });
  }
 
- /** 
-  * Update Business's information
+/** 
+ * Update Business's information
  * @param {org.mat.UpdateBusinessInfo} updateBusinessInfo - the businessTransaction to be processed
  * @transaction
  */
@@ -160,7 +192,8 @@ function updateBusinessAccBalance(updateBusinessAccBalance) {
         });
  }
 
-/** Remove an item from the inventory of a business
+/** 
+* Remove an item from the inventory of a business
 * @param {org.mat.RemoveItemFromInventory} removeItemFromInventory - the businessTransaction to be processed
 * @transaction
 */
@@ -215,7 +248,8 @@ function addEmployeeToBusiness(addEmployeeToBusiness) {
         });
  }
 
- /** Updates employee's information
+/** 
+* Updates employee's information
 * @param {org.mat.UpdateEmployeeInfo} updateEmployeeInfo - the employeeTransaction to be processed
 * @transaction
 */
@@ -231,7 +265,8 @@ function updateEmployeeInfo(updateEmployeeInfo) {
         });
  }
 
-  /** Update the employee's type of a business
+/** 
+* Update the employee's type of a business
 * @param {org.mat.UpdateEmployeeType} updateEmployeeType - the employeeTransaction to be processed
 * @transaction
 */
