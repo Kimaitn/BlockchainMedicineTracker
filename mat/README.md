@@ -37,20 +37,17 @@ Ensure that your current project directory has a `dist` folder (in this case, th
 within the `fabric-tools` folder:
 run `./downloadFabric.sh` to download the Fabric network.
 
-run `./createPeerAdminCard.sh` to create the PeerAdmin card.
-
 ## Teardown/Reset
 
-If there is an existing fabric project already running, run `./teardownFabric.sh` to tear it down
-
-If you want to remove existing composer cards, run `rm -r ~/.composer`
-NOTE: This command will require you to run `./createPeerAdminCard.sh` again
+If there is an existing fabric project already running, run `./teardownFabric.sh` to tear it down.
+Run `rm -r ~/.composer` to remove any previous composer cards
 
 ## Fabric Deployment 
 
 Start Hyperledger Fabric
 
-within the `fabric-tools` folder, run `./startFabric.sh`
+within the `fabric-tools` folder, run `./startFabric.sh`;
+run `./createPeerAdminCard.sh` to create the PeerAdmin card.
 
 ## Sparknotes Project Deployment
 
