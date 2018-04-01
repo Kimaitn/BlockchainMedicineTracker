@@ -13,6 +13,7 @@ function updateItemOwner(updateItemOwner) {
         });
 }
 
+
 /**
  * Updates a shipment's carrier
  * This will need approval from all participants of the contract
@@ -242,9 +243,7 @@ function updateEmployeeType(updateEmployeeType) {
         });
  }
 
-
-
-/**
+/** 
  * Initialize some test assets and participants useful for running a demo.
  * @param {org.mat.SetupDemo} setupDemo - the SetupDemo transaction
  * @transaction
