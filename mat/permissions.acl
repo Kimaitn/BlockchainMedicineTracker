@@ -177,3 +177,120 @@ rule EmployeeUPDATEContractViaRemoveItemRequestFromRequestedItems
   action: ALLOW
 }
 
+rule EmployeeREADBusiness
+{
+  description: "Allow ANY employee to READ a business' info that it belongs to"
+  participant(e): "org.mat.Employee" 
+  operation: READ
+  resource(b): "org.mat.Business"
+  condition: (e.worksFor.businessId == b.businessId)
+  action: ALLOW
+}
+
+rule EmployeeUPDATEBusinessViaRemoveItemFromInventory
+{
+  description: "Allow ANY employee to UPDATE a business via RemoveItemFromInventory"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(b): "org.mat.Business"
+  transaction(tx): "org.mat.RemoveItemFromInventory"
+  condition: (e.worksFor.businessId == b.businessId == tx.business)
+  action: ALLOW
+}
+
+rule EmployeeUPDATEBusinessViaRAddItemToInventory
+{
+  description: "Allow ANY employee to UPDATE a business via RemoveItemFromInventory"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(b): "org.mat.Business"
+  transaction(tx): "org.mat.AddItemToInventory"
+  condition: (e.worksFor.businessId == b.businessId == tx.business)
+  action: ALLOW
+}
+
+rule AdminEmployeeCREATEBusiness
+{
+  description: "Allow an ADMIN employee to CREATE a business"
+  participant(e): "org.mat.Employee"
+  operation: CREATE
+  resource(b): "org.mat.Business"
+  condition: (e.employeeType == "Admin")
+  action: ALLOW
+}
+
+rule AdminEmployeeUPDATEBusinessViaRemoveEmployeeFromBusiness
+{
+  description: "Allow an ADMIN employee to UPDATE a business via RemoveEmployeeFromBusiness"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(b): "org.mat.Business"
+  transaction(tx): "org.mat.RemoveEmployeeFromBusiness"
+  condition: ((e.employeeType == "Admin") && (e.worksFor == tx.business) && (e.worksFor.businessId == b.businessId))
+  action: ALLOW
+}
+
+rule AdminEmployeeUPDATEBusinessViaAddEmployeeToBusiness
+{
+  description: "Allow an ADMIN employee to UPDATE a business via AddEmployeeToBusiness"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(b): "org.mat.Business"
+  transaction(tx): "org.mat.AddEmployeeToBusiness"
+  condition: ((e.employeeType == "Admin") && (e.worksFor == tx.business) && (e.worksFor.businessId == b.businessId))
+  action: ALLOW
+}
+
+rule AdminEmployeeUPDATEBusinessViaUpdateBusinessInfo
+{
+  description: "Allow an ADMIN employee to UPDATE a business via AddEmployeeToBusiness"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(b): "org.mat.Business"
+  transaction(tx): "org.mat.UpdateBusinessInfo"
+  condition: ((e.employeeType == "Admin") && (e.worksFor == tx.business) && (e.worksFor.businessId == b.businessId))
+  action: ALLOW
+}
+
+rule AdminEmployeeUPDATEBusinessViaUpdateBusinessAccBalance
+{
+  description: "Allow an ADMIN employee to UPDATE a business via UpdateBusinessAccBalance"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(b): "org.mat.Business"
+  transaction(tx): "org.mat.UpdateBusinessAccBalance"
+  condition: ((e.employeeType == "Admin") && (e.worksFor == tx.business) && (e.worksFor.businessId == b.businessId))
+  action: ALLOW
+}
+
+rule AdminEmployeeCRUDUser
+{
+  description: "Allow an ADMIN employee to CRUD a user"
+  participant(e): "org.mat.Employee"
+  operation: CREATE, READ, UPDATE, DELETE
+  resource(u): "org.mat.User"
+  condition: (e.employeeType == "Admin")
+  action: ALLOW
+}
+
+rule EmployeeUPDATEEmployeeInfo
+{
+  description: "Allow ANY employee to UPDATE their employee info"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(e): "org.mat.Employee"
+  transaction(tx): "org.mat.UpdateEmployeeInfo"
+  condition: (e.employeeId == tx.employee.employeeId)
+  action: ALLOW
+}
+
+rule AdminEmployeeUPDATEEmployeeType
+{
+  description: "Allow ANY employee to UPDATE their employee info"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(oe): "org.mat.Employee"
+  transaction(tx): "org.mat.UpdateEmployeeType"
+  condition: ((e.employeeType == "Admin") && (e.worksFor == tx.worksFor) && (e.worksFor == oe.worksFor))
+  action: ALLOW
+}
