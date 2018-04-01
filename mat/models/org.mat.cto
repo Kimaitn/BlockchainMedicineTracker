@@ -1,0 +1,314 @@
+namespace org.mat
+
+//Status of shipment and order
+enum Status 
+{
+  o IN_TRANSIT
+  o ARRIVED
+  o CANCELLED
+  o WAITING_CONFIRMATION
+  o CONFIRMED
+}
+
+enum contractConfirmation
+{
+  o WAITING_CONFIRMATION
+  o CONFIRMED
+}
+
+//Business type
+enum BusinessType
+{
+  o Manufacturer
+  o Carrier
+  o Distributor
+}
+
+//Employee type
+enum EmployeeType
+{
+  o Admin
+  o Regular
+}
+
+//Unit of Measure for ItemType
+enum UoM 
+{
+  o mL
+  o g
+}
+
+//Address concept for locations
+concept Address
+{
+  o String city
+  o String country
+  o String street
+  o String street2 optional
+  o String state optional
+  o String zip optional
+}
+
+// Shipment holds the shipment information of the goods (medicine)
+concept Shipment
+{
+  o Status status
+  o Address destinationAddress
+  o Address sourceAddress
+  --> Business carryingBusiness
+  --> Item[] items
+}
+
+// The item that is being requested for the transaction
+concept ItemRequest 
+{
+  --> Item requestedItem
+  o Double unitPrice
+  o Integer quantity
+}
+
+// The specific type of Medicine based on id 
+// that stores the quantity and Unit of Measure.
+// Also can be used to map to the owner of the item
+asset ItemType identified by itemTypeName 
+{
+  o String itemTypeName
+}
+
+asset Item identified by itemId
+{
+  o String itemId
+  o UoM itemTypeUoM
+  o Double amountOfMedication
+  --> Business currentOwner
+  --> ItemType itemType
+}
+
+// Contract holds the data on the contract such as what is 
+// being shipped and when, the status of the contract, and the contract 
+// id number.  It can also hold the businesses that are selling and buying.
+asset Contract identified by contractId 
+{
+  o String contractId
+  o Status status
+  o contractConfirmation approvalStatus
+  o DateTime arrivalDateTime
+  o Shipment[] shipments optional
+  o ItemRequest[] requestedItems
+  --> Business sellingBusiness
+  --> Business buyingBusiness
+}
+
+//The basic User class that will be using the system
+asset User identified by userEmail 
+{
+  o String userEmail
+  o String password
+  o String employeeId
+}
+
+// This stores the businesses.
+// Holds information ranging from the type of the business
+// to the name and the poinnt of contact name and email of the business.
+// Also it can hold the employess, inventory, and account balance of the business.
+asset Business identified by businessId 
+{
+  o String businessId
+  o String name
+  o BusinessType businessType
+  o String PoCName optional
+  o String PoCEmail optional
+  o Address address optional
+  o Double accountBalance
+  --> Item[] inventory optional
+  --> Employee[] employees optional
+}
+
+// Made so that the Log in caradentails are correct
+participant LogInChecker identified by LogInCheckerId
+{
+  o String LogInCheckerId
+}
+
+// Employee data is stored here with the ID of the employee.
+// Including the type of the employee, name, and the business they work for.
+// Also employee email and phone number
+participant Employee identified by employeeId
+{
+  o String employeeId
+  o String firstName
+  o String lastName
+  o String email
+  o EmployeeType employeeType
+  o String phoneNumber optional
+  --> Business worksFor
+}
+
+//Item Transaction to allow the owner of the item to be changed
+transaction UpdateItemOwner
+{
+  --> Business newOwner
+  --> Item item
+}
+
+// Updates the contract if need be
+abstract transaction UpdateContract
+{
+  --> Contract contract
+}
+
+//Shipment Transaction to allow the owner of a shipment to to be changed
+transaction UpdateShipment extends UpdateContract
+{
+  --> Business newCarryingBusiness
+  o Status newStatus
+  o Integer shipmentIndex
+}
+
+//call to bulk load invenotory in
+transaction UpdateItemRequest extends UpdateContract
+{
+  o Integer itemRequestIndex
+  o Double newUnitPrice
+  o Integer newQuantity
+}
+
+// Approves the status of the contract
+transaction ApproveContractChanges extends UpdateContract
+{
+}
+
+// Update the arrival time of the shipment on the contract
+transaction UpdateContractArrivalDateTime extends UpdateContract 
+{
+  o DateTime newArrivalDateTime
+}
+
+// needs to be removed
+transaction UpdateContractShipmentList extends UpdateContract 
+{
+  o Shipment[] newShipmentList
+}
+
+//logic file needs to be updated with this function
+transaction AddShipmentToShipmentList extends UpdateContract
+{
+  o Shipment addShipment
+}
+
+//logic file needs to be updated with this function
+transaction RemoveShipmentFromShipmentList extends UpdateContract
+{
+  o Shipment removeShipment
+}
+
+// needs to be removed
+transaction UpdateContractItemRequestedItems extends UpdateContract 
+{
+  o ItemRequest[] newRequestedItems
+}
+
+//logic file needs to be updated with this function
+transaction AddItemRequestToRequestedItemsList extends UpdateContract
+{
+  o ItemRequest addItemRequest
+}
+
+//logic file needs to be updated with this function
+transaction RemoveItemRequestFromRequestedItemsList extends UpdateContract
+{
+  o ItemRequest removeItemRequest
+}
+
+// Update user 
+abstract transaction UpdateUser
+{
+  --> User user
+}
+
+// Update user email if changed
+transaction UpdateUserEmail extends UpdateUser
+{
+  o String newUserEmail
+}
+
+// Update users password 
+transaction UpdateUserPassword extends UpdateUser
+{
+  o String newUserPass
+}
+
+// Update Business 
+abstract transaction UpdateBusiness
+{
+  -->Business business
+}
+
+//Upadating Business inoframtion going from the name of the business,
+// to the point of contact, to the address
+transaction UpdateBusinessInfo extends UpdateBusiness 
+{
+  o String newBusinessName
+  o String newPoCName optional
+  o String newPoCEmail optional
+  o Address newAddress optional
+}
+
+// Update account balance of the business
+transaction UpdateBusinessAccBalance extends UpdateBusiness
+{
+  o Double newAccBalance
+}
+
+// Removing items from the business inventory
+transaction RemoveItemFromInventory extends UpdateBusiness
+{
+  -->Item removeItem
+}
+
+// Adding items to the business's inventory
+transaction AddItemToInventory extends UpdateBusiness
+{
+  -->Item addItem
+}
+
+// Removing an employee from a business 
+transaction RemoveEmployeeFromBusiness extends UpdateBusiness
+{
+  -->Employee removeEmployee
+}
+
+// Adding an employee to the business
+transaction AddEmployeeToBusiness extends UpdateBusiness
+{
+  -->Employee addEmployee
+}
+
+// Update the employee
+abstract transaction UpdateEmployee
+{
+  -->Employee employee
+}
+
+// Update the various employee information 
+// You can change the name, email, and phone number
+transaction UpdateEmployeeInfo extends UpdateEmployee
+{
+  o String newFirstName
+  o String newLastName
+  o String newEmail
+  o String newPhoneNumber optional
+}
+
+// Update the employee type such as admin and regular
+transaction UpdateEmployeeType extends UpdateEmployeeInfo
+{
+  o EmployeeType newEmployeeType
+}
+
+/**
+ * JUST FOR INITIALIZING A DEMO
+ */
+transaction SetupDemo 
+{
+}
