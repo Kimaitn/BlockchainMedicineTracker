@@ -153,9 +153,19 @@ rule EmployeeDELETEContractPermission
 rule CreateEmployee
 {
   description: "lets businesses create employees"
-  participant(b): "org.mat.Business"
+  participant(b): "org.mat.Employee"
   operation: ALL
   resource(e): "org.mat.Employee"
   condition: (e.worksFor == b)
+  action: ALLOW
+}
+
+//lets only the loginchecker verify the email
+rule LogInCheckerREADUser
+{
+  description: "lets the login checker verify the user"
+  participant: "org.mat.LogInChecker"
+  operation: READ
+  resource: "org.mat.User"
   action: ALLOW
 }

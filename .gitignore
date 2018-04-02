@@ -13,5 +13,6 @@ node_modules
 # Mac files.
 **/.DS_Store
 
-dist
-package-lock.json
+mat/dist
+mat/package-lock.json
+fabric-tools

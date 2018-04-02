@@ -61,7 +61,7 @@ yo hyperledger-composer:businessnetwork
 > Namespace: org.acme.shipping.mat
 ```
 
-This is based off of mat sample network [found here](https://github.com/hyperledger/composer-sample-networks/tree/master/packages/mat-network).
+This is based off of perishable sample network [found here](https://github.com/hyperledger/composer-sample-networks/tree/master/packages/perishable-network).
 
 Create your `.bna` file
 

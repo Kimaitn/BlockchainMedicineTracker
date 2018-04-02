@@ -6,6 +6,8 @@ concept Address
   o String city
   o String country
   o String street
+  o String street2 optional
+  o String state optional
   o String zip
 }
 
@@ -41,117 +43,62 @@ enum UoM
   o g
 }
 
-/**
- * The commodity is pretty much the product type that jasper had
- * the idea is that a commodity is a drug type such as adderall and 
- * tylenol. You would then have it's name that they call it. the UoM 
- * mL for liquids and g for tablets/powders. THe commoditymedid is used
- * to go into the lookup table and find the commodity name
- * ProductType --> Commodity
- */
- //Network Admin - CRUD
-asset ItemType identified by itemTypeId 
+asset ItemType identified by itemTypeName 
 {
-  o String itemTypeId
   o String itemTypeName
-  o UoM itemTypeUoM
-  o Integer itemTypeMedId
 }
 
-/**
- * An item is the actual product. Such as a bottle of tylenol that contains
- * 1000 mL. The relationship to the commodity type allows us to simply send a 
- * parameter with the commodity identifier number and fetch the data. 
- */
- //Admin - CRUD - FINISHED
- //Employee - READ - FINISHED
- //Employee - UPDATE using ItemTransaction - FINISHED
-asset Item identified by itemId 
+asset Item identified by itemId
 {
   o String itemId
-  o String packageType 
-  o Business currentOwner
+  o UoM itemTypeUoM
+  o Double amountOfMedication
+  --> Business currentOwner
   --> ItemType itemType
 }
 
-/**
- * This is an order, an order can have mulitple items in it
- */
- //Admin - CREATE, READ
- //Admin - UPDATE using updateOrder Transaction
- //Admin - DELETE using deleteOrder Transaction
- //Employee - CREATE, READ
- //Employee - UPDATE using updateOrder Transaction
- //Employee - DELETE using deleteOrder Transaction
-// asset Order identified by orderId 
-// {
-//   o String orderId
-//   o Employee requester
-//   o Employee provider
-//   o Address destinationAddress
-//   o Address sourceAddress
-//   o Address[] locations
-//   o Address billingAddress
-//   o Status status
-//   o Business receiver
-//   o Business sender
-//   --> Contract[] itemContracts
-// }
-
-/**
- * shipments can have multiple orders since multiple orders may be going to the same
- * place or shipped together since they are near each other
- */
- //Employee - READ
- //Employee - CREATE using createShipment Transaction
- //Employee - UPDATE using updateShipment Transaction
- //Employee - DELETE using deleteShipment Transaction
-asset Shipment identified by shipmentId 
+concept Shipment
 {
-  o String shipmentId
   o Status status
-  o ItemType itemType
-  o Business currentOwner
   o Address destinationAddress
   o Address sourceAddress
-  --> Contract contract
+  --> Business currentOwner
+  --> Business carryingBusiness
   --> Item[] items
 }
 
-asset ItemRequest identified by itemRequestId 
+concept ItemRequest 
 {
   o String itemRequestId
-  o ItemType itemType
+  --> Item requestedItem
   o Double unitPrice
   o Integer quantity
 }
 
-/*
- * Defines a contract between a Manufacturer and an Distributor to ship using
- * a Carrier, paying a set unit price. The unit price is multiplied by
- * a penality factor proportional to the deviation from the min and max
- * negociated temperatures for the shipment.
- * A contract will be made for each itemType. This is the agreement of * what price will be paid. 
- */
- //Employee - READ
- //Employee - CREATE using createContract Transaction
- //Employee - UPDATE using updateContract Transaction
- //Employee - DELETE using deleteContract Transaction
 asset Contract identified by contractId 
 {
   o String contractId
   o Status status
+  o DateTime arrivalDateTime
+  o Shipment[] shipments optional
   o ItemRequest[] requestedItems
-  o Business sellingBusiness
-  o Business buyingBusiness
-  --> Shipment[] shipments
+  --> Business sellingBusiness
+  --> Business buyingBusiness
 }
 
-/**
- * An abstract participant type in this business network
- */
- //NetworkAdmin - CRUD
-participant Business identified by businessId 
+asset User identified by userEmail 
+{
+  o String userEmail
+  o String password
+  o String employeeId
+}
+
+participant LogInChecker identified by LogInCheckerId
+{
+  o String LogInCheckerId
+}
+
+asset Business identified by businessId 
 {
   o String businessId
   o String name
@@ -160,12 +107,10 @@ participant Business identified by businessId
   o String PoCEmail optional
   o Address address optional
   o Double accountBalance
-  --> Item[] inventory
-  --> Employee[] employees
+  --> Item[] inventory optional
+  --> Employee[] employees optional
 }
 
-
-//Business - CRUD
 participant Employee identified by employeeId
 {
   o String employeeId
@@ -180,17 +125,17 @@ participant Employee identified by employeeId
 //Item Transaction to allow the owner of the item to be changed
 transaction ItemTransaction
 {
-  o Integer itemTransactionID
-  o Business newOwner
-  o Item item
+  o Integer itemTransactionId
+  --> Business newOwner
+  --> Item item
 }
 
 //Shipment Transaction to allow the owner of a shipment to to be changed
 transaction ShipmentTransaction
 {
-  o Integer shipmentTransaction
-  o Business newOwner
+  o Integer shipmentTransactionId
   o Shipment shipment
+  --> Business newOwner
 }
 
 //call to bulk load invenotory in
