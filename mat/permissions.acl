@@ -38,7 +38,7 @@ rule LogInCheckerREADUser
 }
 
 //Employee Rules  
-rule EmployeeCRUDItemType
+rule AdminEmployeeCRUDItemType
 {
   description: "Allow an admin employee to be able to CRUD item types"
   participant(e): "org.mat.Employee"
@@ -69,7 +69,7 @@ rule EmployeeUPDATEItemViaUpdateItemOwner
   action: ALLOW
 }
 
-rule EmployeeCDItem 
+rule AdminEmployeeCDItem 
 {
   description: "Allow an ADMIN employee to CREATE and DELETE an item that belongs to their business"
   participant(e): "org.mat.Employee"
