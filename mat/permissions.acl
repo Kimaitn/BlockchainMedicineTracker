@@ -67,37 +67,37 @@ rule EmployeeCRUDItem
 //   action: ALLOW
 // }
 
-rule EmployeeCRContract
+rule EmployeeCRDContract
 {
   description: "Allow ANY employee to CRUD a contract that belongs to their business"
   participant(e): "org.mat.Employee"
-  operation: CREATE, READ, UPDATE, DELETE
+  operation: CREATE, READ, DELETE
   resource(c): "org.mat.Contract"
   condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
   action: ALLOW
 }
 
-// rule EmployeeUPDATEContractViaUpdateShipment
-// {
-//   description: "Allow ANY employee to UPDATE a contract that belongs to their business via the UpdateShipment transaction"
-//   participant(e): "org.mat.Employee"
-//   operation: UPDATE
-//   resource(c): "org.mat.Contract"
-//   transaction: "org.mat.UpdateShipment"
-//   condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
-//   action: ALLOW
-// }
+rule EmployeeUPDATEContractViaUpdateShipment
+{
+  description: "Allow ANY employee to UPDATE a contract that belongs to their business via the UpdateShipment transaction"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(c): "org.mat.Contract"
+  transaction: "org.mat.UpdateShipment"
+  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  action: ALLOW
+}
 
-// rule EmployeeUPDATEContractViaUpdateItemRequest
-// {
-//   description: "Allow ANY employee to UPDATE a contract that belongs to their business via the UpdateItemRequest transaction"
-//   participant(e): "org.mat.Employee"
-//   operation: UPDATE
-//   resource(c): "org.mat.Contract"
-//   transaction: "org.mat.UpdateItemRequest"
-//   condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
-//   action: ALLOW
-// }
+rule EmployeeUPDATEContractViaUpdateItemRequest
+{
+  description: "Allow ANY employee to UPDATE a contract that belongs to their business via the UpdateItemRequest transaction"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(c): "org.mat.Contract"
+  transaction: "org.mat.UpdateItemRequest"
+  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  action: ALLOW
+}
 
 rule EmployeeUPDATEContractViaApproveContractChanges
 {
@@ -110,60 +110,60 @@ rule EmployeeUPDATEContractViaApproveContractChanges
   action: ALLOW
 }
 
-// rule EmployeeUPDATEContractViaUpdateContractArrivalDateTime
-// {
-//   description: "Allow ANY employee to UPDATE a contract that belongs to their business via the UpdateContractArrivalDateTime transaction"
-//   participant(e): "org.mat.Employee"
-//   operation: UPDATE
-//   resource(c): "org.mat.Contract"
-//   transaction: "org.mat.UpdateContractArrivalDateTime"
-//   condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
-//   action: ALLOW
-// }
+rule EmployeeUPDATEContractViaUpdateContractArrivalDateTime
+{
+  description: "Allow ANY employee to UPDATE a contract that belongs to their business via the UpdateContractArrivalDateTime transaction"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(c): "org.mat.Contract"
+  transaction: "org.mat.UpdateContractArrivalDateTime"
+  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  action: ALLOW
+}
 
-// rule EmployeeUPDATEContractViaAddShipmentToShipmentList
-// {
-//   description: "Allow ANY employee to UPDATE a contract that belongs to their business via the AddShipmentToShipmentList transaction"
-//   participant(e): "org.mat.Employee"
-//   operation: UPDATE
-//   resource(c): "org.mat.Contract"
-//   transaction: "org.mat.AddShipmentToShipmentList"
-//   condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
-//   action: ALLOW
-// }
+rule EmployeeUPDATEContractViaAddShipmentToShipmentList
+{
+  description: "Allow ANY employee to UPDATE a contract that belongs to their business via the AddShipmentToShipmentList transaction"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(c): "org.mat.Contract"
+  transaction: "org.mat.AddShipmentToShipmentList"
+  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  action: ALLOW
+}
 
-// rule EmployeeUPDATEContractViaRemoveShipmentFromShipmentList
-// {
-//   description: "Allow ANY employee to UPDATE a contract that belongs to their business via the RemoveShipmentFromShipmentList transaction"
-//   participant(e): "org.mat.Employee"
-//   operation: UPDATE
-//   resource(c): "org.mat.Contract"
-//   transaction: "org.mat.RemoveShipmentFromShipmentList"
-//   condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
-//   action: ALLOW
-// }
+rule EmployeeUPDATEContractViaRemoveShipmentFromShipmentList
+{
+  description: "Allow ANY employee to UPDATE a contract that belongs to their business via the RemoveShipmentFromShipmentList transaction"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(c): "org.mat.Contract"
+  transaction: "org.mat.RemoveShipmentFromShipmentList"
+  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  action: ALLOW
+}
 
-// rule EmployeeUPDATEContractViaAddItemRequestToRequestedItems
-// {
-//   description: "Allow ANY employee to UPDATE a contract that belongs to their business via the AddItemRequestToRequestedItems transaction"
-//   participant(e): "org.mat.Employee"
-//   operation: UPDATE
-//   resource(c): "org.mat.Contract"
-//   transaction: "org.mat.AddItemRequestToRequestedItemsList"
-//   condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
-//   action: ALLOW
-// }
+rule EmployeeUPDATEContractViaAddItemRequestToRequestedItems
+{
+  description: "Allow ANY employee to UPDATE a contract that belongs to their business via the AddItemRequestToRequestedItems transaction"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(c): "org.mat.Contract"
+  transaction: "org.mat.AddItemRequestToRequestedItemsList"
+  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  action: ALLOW
+}
 
-// rule EmployeeUPDATEContractViaRemoveItemRequestFromRequestedItems
-// {
-//   description: "Allow ANY employee to UPDATE a contract that belongs to their business via the RemoveItemRequestFromRequestedItems transaction"
-//   participant(e): "org.mat.Employee"
-//   operation: UPDATE
-//   resource(c): "org.mat.Contract"
-//   transaction: "org.mat.RemoveItemRequestFromRequestedItemsList"
-//   condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
-//   action: ALLOW
-// }
+rule EmployeeUPDATEContractViaRemoveItemRequestFromRequestedItems
+{
+  description: "Allow ANY employee to UPDATE a contract that belongs to their business via the RemoveItemRequestFromRequestedItems transaction"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(c): "org.mat.Contract"
+  transaction: "org.mat.RemoveItemRequestFromRequestedItemsList"
+  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  action: ALLOW
+}
 
 //Allows an employee to be able to READ the business info that they belong to.
 //Allows an employee to be able to READ the inventory and the employees that belong to.
@@ -177,27 +177,27 @@ rule EmployeeREADBusiness
   action: ALLOW
 }
 
-// rule EmployeeUPDATEBusinessViaRemoveItemFromInventory
-// {
-//   description: "Allow ANY employee to UPDATE a business via RemoveItemFromInventory"
-//   participant(e): "org.mat.Employee"
-//   operation: UPDATE
-//   resource(b): "org.mat.Business"
-//   transaction(tx): "org.mat.RemoveItemFromInventory"
-//   condition: (e.worksFor.businessId == b.businessId == tx.business)
-//   action: ALLOW
-// }
+rule EmployeeUPDATEBusinessViaRemoveItemFromInventory
+{
+  description: "Allow ANY employee to UPDATE a business via RemoveItemFromInventory"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(b): "org.mat.Business"
+  transaction(tx): "org.mat.RemoveItemFromInventory"
+  condition: (e.worksFor == tx.business)
+  action: ALLOW
+}
 
-// rule EmployeeUPDATEBusinessViaRAddItemToInventory
-// {
-//   description: "Allow ANY employee to UPDATE a business via RemoveItemFromInventory"
-//   participant(e): "org.mat.Employee"
-//   operation: UPDATE
-//   resource(b): "org.mat.Business"
-//   transaction(tx): "org.mat.AddItemToInventory"
-//   condition: (e.worksFor.businessId == b.businessId == tx.business)
-//   action: ALLOW
-// }
+rule EmployeeUPDATEBusinessViaAddItemToInventory
+{
+  description: "Allow ANY employee to UPDATE a business via RemoveItemFromInventory"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(b): "org.mat.Business"
+  transaction(tx): "org.mat.AddItemToInventory"
+  condition: (e.worksFor == tx.business)
+  action: ALLOW
+}
 
 rule AdminEmployeerRUBusiness
 {
@@ -205,7 +205,7 @@ rule AdminEmployeerRUBusiness
   participant(e): "org.mat.Employee"
   operation: READ, UPDATE
   resource(b): "org.mat.Business"
-  condition: ((e.employeeType == "Admin") && (e.worksFor == b))
+  condition: ((e.employeeType == "Admin") && (e.worksFor == ("org.mat.Business#"+b.businessId)))
   action: ALLOW
 }
 
