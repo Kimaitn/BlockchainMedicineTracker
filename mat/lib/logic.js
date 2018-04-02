@@ -339,6 +339,20 @@ async function setupDemo(setupDemo) {
     manufacturer.address = mAddress;
     manufacturer.accountBalance = 23.03;
 
+    // create employee for manufacturer
+    const memployee = factory.newResource(org, 'Employee', 'B001_E001');
+    memployee.firstName = 'Bob';
+    memployee.lastName = 'Ross';
+    memployee.email = 'BobRoss@gmail.com';
+    memployee.employeeType = 'Admin';
+    memployee.phoneNumber = '407-999-9999';
+    memployee.worksFor = manufacturer;
+
+    // create user for manufacturer employee
+    const muser = factory.newResource(org, 'User', 'BobRoss@gmail.com');
+    muser.password = 'BobRoss';
+    muser.employeeId = memployee.employeeId;
+
     // create the carrier
     const carrier = factory.newResource(org, 'Business', 'B002');
     const cAddress = factory.newConcept(org, 'Address');
@@ -354,6 +368,20 @@ async function setupDemo(setupDemo) {
     carrier.address = cAddress;
     carrier.accountBalance = 55.54;
 
+    // create employee for carrier
+    const cemployee = factory.newResource(org, 'Carrier', 'B002_E001');
+    cemployee.firstName = 'Bob';
+    cemployee.lastName = 'Loss';
+    cemployee.email = 'BobLoss@gmail.com';
+    cemployee.employeeType = 'Admin';
+    cemployee.phoneNumber = '407-999-9991';
+    cemployee.worksFor = carrier;
+
+    // create user for carrier employee
+    const cuser = factory.newResource(org, 'User', 'BobLoss@gmail.com');
+    cuser.password = 'BobLoss';
+    cuser.employeeId = cemployee.employeeId;
+
     // create the distributor
     const distributor = factory.newResource(org, 'Business', 'B003');
     const dAddress = factory.newConcept(org, 'Address');
@@ -368,6 +396,34 @@ async function setupDemo(setupDemo) {
     dAddress.zip = '02895';
     distributor.address = dAddress;
     distributor.accountBalance = 645.64;
+
+    // create employee for distributor
+    const demployee = factory.newResource(org, 'Employee', 'B003_E001');
+    demployee.firstName = 'Bob';
+    demployee.lastName = 'DDoss';
+    demployee.email = 'BobDDoss@gmail.com';
+    demployee.employeeType = 'Admin';
+    demployee.phoneNumber = '407-999-9992';
+    demployee.worksFor = distributor;
+
+    // create user for distributor employee
+    const duser = factory.newResource(org, 'User', 'BobDDoss@gmail.com');
+    duser.password = 'BobDDoss';
+    duser.employeeId = demployee.employeeId;
+
+    // create regular employee for distributor
+    const demployee2 = factory.newResource(org, 'Employee', 'B003_E002');
+    demployee2.firstName = 'Bob';
+    demployee2.lastName = 'Zoss';
+    demployee2.email = 'BobZoss@gmail.com';
+    demployee2.employeeType = 'Regular';
+    demployee2.phoneNumber = '407-999-9993';
+    demployee2.worksFor = distributor;
+
+    // create user for distributor employee
+    const duser2 = factory.newResource(org, 'User', 'BobZoss@gmail.com');
+    duser2.password = 'BobZoss';
+    duser2.employeeId = demployee2.employeeId;
 
     // create itemType
     const itemType = factory.newResource(org, 'ItemType', 'Adderall');
@@ -387,40 +443,62 @@ async function setupDemo(setupDemo) {
     const tomorrow = setupDemo.timestamp;
     tomorrow.setDate(tomorrow.getDate() + 1);
     contract.arrivalDateTime = tomorrow; // the shipment has to arrive tomorrow
-    contract.requestedItems = [itemRequest];
     contract.sellingBusiness = manufacturer;
     contract.buyingBusiness = distributor;
 
     // create the itemRequest concept
     const itemRequest = factory.newResource(org, 'ItemRequest', 'R001');
-    itemRequest.requestedItem = item;
+    itemRequest.requestedItemType = itemType;
     itemRequest.unitPrice = 14.2;
     itemRequest.quantity = 2;
 
-    contract.itemRequest = [itemRequest];
+    contract.requestedItems = [itemRequest];
 
     // create the shipment concept
     const shipment = factory.newConcept(org, 'Shipment', 'S001');
     shipment.status = 'IN_TRANSIT';
     shipment.destinationAddress = dAddress;
     shipment.sourceAddress = mAddress;
-    shipment.currentOwner = manufacturer;
     shipment.carryingBusiness = carrier;
     shipment.items = [item];
 
     contract.shipments = [shipment];
 
     // add the manufacturer
-    const manufacturerRegistry = await getParticipantRegistry(org + '.Manufacturer');
+    const manufacturerRegistry = await getAssetRegistry(org + '.Manufacturer');
     await manufacturerRegistry.addAll([manufacturer]);
 
+    // add the memployee
+    const memployeeRegistry = await getParticipantRegistry(org + '.Employee');
+    await memployeeRegistry.addAll([memployee]);
+
+    // add the memployee user
+    const muserRegistry = await getAssetRegistry(org + '.User');
+    await muserRegistry.addAll([muser]);
+
     // add the carrier
-    const carrierRegistry = await getParticipantRegistry(org + '.Carrier');
+    const carrierRegistry = await getAssetRegistry(org + '.Carrier');
     await carrierRegistry.addAll([carrier]);
 
+    // add the cemployee
+    const cemployeeRegistry = await getParticipantRegistry(org + '.Employee');
+    await cemployeeRegistry.addAll([cemployee]);
+
+    // add the cemployee user
+    const cuserRegistry = await getAssetRegistry(org + '.User');
+    await cuserRegistry.addAll([cuser]);
+
     // add the distributor
-    const distributorRegistry = await getParticipantRegistry(org + '.Distributor');
+    const distributorRegistry = await getAssetRegistry(org + '.Distributor');
     await distributorRegistry.addAll([distributor]);
+
+    // add the cemployee
+    const cemployeeRegistry = await getParticipantRegistry(org + '.Employee');
+    await cemployeeRegistry.addAll([cemployee]);
+
+    // add the cemployee user
+    const cuserRegistry = await getAssetRegistry(org + '.User');
+    await cuserRegistry.addAll([cuser]);
 
     // add the itemType
     const itemTypeRegistry = await getAssetRegistry(org + '.ItemType');
