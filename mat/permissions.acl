@@ -1,23 +1,3 @@
-/*
-This is the permissions access control list 
-All the permissions are listed here
-
-The format for permissions is:
-
-rule SampleConditionalRuleWithTransaction 
-{
-    description: "Description of the ACL rule"
-    participant(m): "org.example.SampleParticipant"
-    operation: READ, CREATE, UPDATE
-    resource(v): "org.example.SampleAsset"
-    transaction(tx): "org.example.SampleTransaction"
-    condition: (v.owner.getIdentifier() == m.getIdentifier())
-    action: ALLOW
-}
-*/
-
-//gives network control and business control to the 
-//admin of the hyperledger fabric network 
 rule NetworkAdminUser
 {
   description:  "Network admin is given business and network permissions"
@@ -27,18 +7,16 @@ rule NetworkAdminUser
   action: ALLOW  
 }
 
-//LogInChecker Rules
-rule LogInCheckerREADUser
+rule loginCheckerREADUser
 {
   description: "lets the login checker verify the user"
-  participant: "org.mat.LogInChecker"
+  participant: "org.mat.loginChecker"
   operation: READ
   resource: "org.mat.User"
   action: ALLOW
 }
-
-//Employee Rules  
-rule AdminEmployeeCRUDItemType
+  
+rule EmployeeCRUDItemType
 {
   description: "Allow an admin employee to be able to CRUD item types"
   participant(e): "org.mat.Employee"
@@ -69,7 +47,7 @@ rule EmployeeUPDATEItemViaUpdateItemOwner
   action: ALLOW
 }
 
-rule AdminEmployeeCDItem 
+rule EmployeeCDItem 
 {
   description: "Allow an ADMIN employee to CREATE and DELETE an item that belongs to their business"
   participant(e): "org.mat.Employee"
