@@ -9,10 +9,11 @@ enum shipmentStatus
 }
 
 // Status of a contract
-enum contractConfirmation
+enum contractStatus
 {
   o WAITING_CONFIRMATION
   o CONFIRMED
+  o COMPLETED
 }
 
 // Business type
@@ -86,7 +87,7 @@ asset Item identified by itemId
 asset Contract identified by contractId 
 {
   o String contractId
-  o contractConfirmation approvalStatus
+  o contractStatus approvalStatus
   o DateTime arrivalDateTime
   o Shipment[] shipments optional
   o ItemRequest[] requestedItems
@@ -165,6 +166,11 @@ transaction UpdateItemRequest extends UpdateContract
 
 // Approves a contract's changes
 transaction ApproveContractChanges extends UpdateContract
+{
+}
+
+// Complete a contract
+transaction CompleteContract extends UpdateContract
 {
 }
 
