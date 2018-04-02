@@ -199,26 +199,26 @@ rule EmployeeREADBusiness
 //   action: ALLOW
 // }
 
-rule AdminEmployeeCDBusiness
+rule AdminEmployeerRUBusiness
 {
-  description: "Allow an ADMIN employee to CREATE a business"
+  description: "Allow an ADMIN employee to READ and UPDATE a business"
   participant(e): "org.mat.Employee"
-  operation: CREATE, UPDATE, DELETE
+  operation: READ, UPDATE
   resource(b): "org.mat.Business"
-  condition: (e.employeeType == "Admin")
+  condition: ((e.employeeType == "Admin") && (e.worksFor == b))
   action: ALLOW
 }
 
-rule AdminEmployeeUPDATEBusinessViaRemoveEmployeeFromBusiness
-{
-  description: "Allow an ADMIN employee to UPDATE a business via RemoveEmployeeFromBusiness"
-  participant(e): "org.mat.Employee"
-  operation: UPDATE
-  resource(b): "org.mat.Business"
-  transaction(tx): "org.mat.RemoveEmployeeFromBusiness"
-  condition: ((e.employeeType == "Admin") && (e.worksFor == tx.business) && (e.worksFor.businessId == b.businessId))
-  action: ALLOW
-}
+// rule AdminEmployeeUPDATEBusinessViaRemoveEmployeeFromBusiness
+// {
+//   description: "Allow an ADMIN employee to UPDATE a business via RemoveEmployeeFromBusiness"
+//   participant(e): "org.mat.Employee"
+//   operation: UPDATE
+//   resource(b): "org.mat.Business"
+//   transaction(tx): "org.mat.RemoveEmployeeFromBusiness"
+//   condition: ((e.employeeType == "Admin") && (e.worksFor == tx.business) && (e.worksFor.businessId == b.businessId))
+//   action: ALLOW
+// }
 
 // rule AdminEmployeeUPDATEBusinessViaAddEmployeeToBusiness
 // {
