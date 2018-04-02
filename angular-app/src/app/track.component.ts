@@ -78,18 +78,18 @@ export class TrackComponent implements AfterViewInit  {
 				this.errorMessage = null;
 			  result.forEach(item => {
 				itemsList.push(item);
-			  });     
+			  });
 		})
 		.then(() => {
 
 		  for (let item of itemsList) {
-			//console.log("in for loop")
-			if(item.ItemType.itemTypeMedId==medicine){
-				console.log(item.ItemType.itemTypeMedId);
-				this.medname = item.ItemType.itemTypeName;
-				this.medamount = item.ItemType.itemTypeAmount;
-				this.UoM = item.ItemType.itemTypeUoM;
-				this.loadContracts(medicine);
+
+			if(item.itemId==medicine){
+
+				this.medname = item.itemType;
+				this.medamount = item.amountOfMedication;
+				this.UoM = item.itemTypeUoM;
+				//this.loadContracts(medicine);
 				//todo remove old data from table
 				this.showMedicine = true;
 				break;
