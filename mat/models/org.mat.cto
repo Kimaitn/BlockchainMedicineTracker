@@ -118,7 +118,7 @@ asset Business identified by businessId
 }
 
 // A string that ensures correct login by users
-participant loginChecker identified by loginCheckerId
+participant LoginChecker identified by loginCheckerId
 {
   o String loginCheckerId
 }
