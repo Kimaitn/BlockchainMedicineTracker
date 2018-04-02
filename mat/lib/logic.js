@@ -23,7 +23,7 @@ function updateItemOwner(updateItemOwner) {
 function updateShipmentCarrier(updateShipment) {
     updateShipment.contract.shipments[shipmentIndex].carryingBusiness = updateShipment.newCarryingBusiness;
     updateShipment.contract.shipments[shipmentIndex].status = updateShipment.newStatus;
-    updateShipment.contract.approvalStatus = 'WAITING_CONFIRMATION';
+    updateShipment.contract.approvalStatuses = 'WAITING_CONFIRMATION';
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateShipment.contract);
@@ -39,7 +39,7 @@ function updateShipmentCarrier(updateShipment) {
 function updateItemRequest(updateItemRequest) {
     updateItemRequest.contract.requestedItems[itemRequestIndex].unitPrice = updateItemRequest.newUnitPrice;
     updateItemRequest.contract.requestedItems[itemRequestIndex].quantity = updateItemRequest.newQuantity;
-    updateShipment.contract.approvalStatus = 'WAITING_CONFIRMATION';
+    updateShipment.contract.es = 'WAITING_CONFIRMATION';
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateItemRequest.contract);
@@ -52,7 +52,7 @@ function updateItemRequest(updateItemRequest) {
  * @transaction
  */
 function approveContractChanges(approveContractChanges) {
-    approveContractChanges.contract.approvalStatus = 'CONFIRMED';
+    approveContractChanges.contract.es = 'CONFIRMED';
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(approveContractChanges.contract);
@@ -65,7 +65,7 @@ function approveContractChanges(approveContractChanges) {
  * @transaction
  */
 function completeContract(completeContract) {
-    completeContract.contract.approvalStatus = 'COMPLETED';
+    completeContract.contract.es = 'COMPLETED';
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(completeContract.contract);

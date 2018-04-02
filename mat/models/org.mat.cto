@@ -87,12 +87,11 @@ asset Item identified by itemId
 asset Contract identified by contractId 
 {
   o String contractId
-  o contractStatus approvalStatus
   o DateTime arrivalDateTime
   o Shipment[] shipments optional
   o ItemRequest[] requestedItems
-  --> Business sellingBusiness
-  --> Business buyingBusiness
+  --> Business[] participatingBusiness
+  o contractStatus[] approvalStatuses
 }
 
 // The basic User class that will be using the system
