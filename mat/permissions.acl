@@ -7,9 +7,6 @@ rule NetworkAdminUser
   action: ALLOW  
 }
 
-<<<<<<< Updated upstream
-rule LoginCheckerREADUser
-=======
 rule EmployeeREADAccess
 {
   description: "Allow employee READ access "
@@ -19,8 +16,7 @@ rule EmployeeREADAccess
   action: ALLOW
 }
 
-rule loginCheckerREADUser
->>>>>>> Stashed changes
+rule LoginCheckerREADUser
 {
   description: "lets the login checker verify the user"
   participant: "org.mat.LoginChecker"
