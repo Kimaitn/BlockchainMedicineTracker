@@ -1,7 +1,11 @@
 'use strict';
 
 /**
+<<<<<<< HEAD
  * Change owners of a particular item
+=======
+ * Changes owners of a particular item
+>>>>>>> origin/logicfileupdates
  * @param {org.mat.UpdateItemOwner} updateItemOwner - the itemTransaction to be updated
  * @transaction
  */
@@ -31,7 +35,11 @@ function updateShipmentCarrier(updateShipment) {
 }
 
 /**
+<<<<<<< HEAD
  * Change the quantity or unit price of an item request
+=======
+ * Changes the quantity or unit price of an item request
+>>>>>>> origin/logicfileupdates
  * This will need approval from all participants of the contract
  * @param {org.mat.UpdateItemRequest} updateItemRequest - the itemRequestTransaction to be edited
  * @transaction
@@ -47,7 +55,11 @@ function updateItemRequest(updateItemRequest) {
 }
 
 /**
+<<<<<<< HEAD
  * Confirm the contract's changes
+=======
+ * Confirms a contract's changes
+>>>>>>> origin/logicfileupdates
  * @param {org.mat.ApproveContractChanges} approveContractChanges - the contractTransaction to be approved
  * @transaction
  */
@@ -60,7 +72,11 @@ function approveContractChanges(approveContractChanges) {
 }
 
 /**
+<<<<<<< HEAD
  * Update the absolute arrival time of the shipments specified within the contract
+=======
+ * Updates the absolute arrival time of shipments specified within a contract
+>>>>>>> origin/logicfileupdates
  * This will need approval from all participants of the contract
  * @param {org.mat.UpdateContractArrivalDateTime} updateContractArrivalDateTime - the contractTransaction to be updated
  * @transaction
@@ -75,6 +91,7 @@ function updateContractArrivalDateTime(updateContractArrivalDateTime) {
 }
 
 /** 
+<<<<<<< HEAD
  * Update which shipments are being specified in the contract
  * @param {org.mat.UpdateContractShipmentList} updateContractShipmentList - the contractTransaction to be updated
  * @transaction
@@ -104,6 +121,69 @@ function updateContractItemRequestedItems(updateContractItemRequestedItems) {
 
 /**
  * Update a user's email
+=======
+ * Adds a shipment to a shipmentList in a contract
+ * @param {org.mat.AddShipmentToShipmentList} addShipmentToShipmentList - the contractTransaction to be updated
+ * @transaction
+ */
+function addShipmentToShipmentList(addShipmentToShipmentList) {
+    addShipmentToShipmentList.contract.shipmentList.addAll([addShipmentToShipmentList.newShipment]);
+    return getAssetRegistry('org.mat.Contract')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateContractShipmentList.contract);
+        });
+}
+
+/** 
+ * Removes a shipment from a shipmentList in a contract
+ * @param {org.mat.RemoveShipmentFromShipmentList} removeShipmentFromShipmentList - the contractTransaction to be updated
+ * @transaction
+ */
+function removeShipmentToShipmentList(removeShipmentToShipmentList) {
+    removeShipmentToShipmentList.contract.shipmentList = 
+        removeShipmentToShipmentList.contract.shipmentList.splice(
+            removeShipmentToShipmentList.shipmentIndex,
+            1
+        );
+    return getAssetRegistry('org.mat.Contract')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateContractShipmentList.contract);
+        });
+}
+
+/** 
+ * Adds an itemRequest to a contract
+ * @param {org.mat.AddItemRequestToRequestedItemsList} addItemRequestToRequestedItemsList - the contractTransaction to be updated
+ * @transaction
+ */
+function addItemRequestToRequestedItemsList(addItemRequestToRequestedItemsList) {
+    addItemRequestToRequestedItemsList.contract.requestedItems = addItemRequestToRequestedItemsList.newItemRequest;
+    return getAssetRegistry('org.mat.Contract')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateContractShipmentList.contract);
+        });
+}
+
+/** 
+ * Removes an itemRequest from a contract
+ * @param {org.mat.RemoveItemRequestFromRequestedItemsList} removeItemRequestFromRequestedItemsList - the contractTransaction to be updated
+ * @transaction
+ */
+function removeItemRequestFromRequestedItemsList(removeItemRequestFromRequestedItemsList) {
+    removeItemRequestFromRequestedItemsList.contract.requestedItems = 
+        removeItemRequestFromRequestedItemsList.contract.requestedItems.splice(
+            removeItemRequestFromRequestedItemsList.itemRequestIndex,
+            1
+        );
+    return getAssetRegistry('org.mat.Contract')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateContractShipmentList.contract);
+        });
+}
+
+/**
+ * Updates a user's email
+>>>>>>> origin/logicfileupdates
  * @param {org.mat.UpdateUserEmail} updateUserEmail - the userTransaction to be changed
  * @transaction
  */
@@ -128,8 +208,13 @@ function updateUserPassword(updateUserPassword) {
         });
  }
 
+<<<<<<< HEAD
  /** 
   * Update Business's information
+=======
+/** 
+ * Updates a business's information
+>>>>>>> origin/logicfileupdates
  * @param {org.mat.UpdateBusinessInfo} updateBusinessInfo - the businessTransaction to be processed
  * @transaction
  */
@@ -160,7 +245,12 @@ function updateBusinessAccBalance(updateBusinessAccBalance) {
         });
  }
 
+<<<<<<< HEAD
 /** Remove an item from the inventory of a business
+=======
+/** 
+* Remove an item from the inventory of a business
+>>>>>>> origin/logicfileupdates
 * @param {org.mat.RemoveItemFromInventory} removeItemFromInventory - the businessTransaction to be processed
 * @transaction
 */
@@ -175,7 +265,11 @@ function removeItemFromInventory(removeItemFromInventory) {
  }
 
 /** 
+<<<<<<< HEAD
  * Add an item to the inventory of a business
+=======
+ * Adds an item to the inventory of a business
+>>>>>>> origin/logicfileupdates
  * @param {org.mat.AddItemToInventory} addItemToInventory - the businessTransaction to be processed
  * @transaction
  */
@@ -188,7 +282,11 @@ function addItemToInventory(addItemToInventory) {
  }
 
 /**
+<<<<<<< HEAD
  * Remove an employee from a business
+=======
+ * Removes an employee from a business
+>>>>>>> origin/logicfileupdates
  * @param {org.mat.RemoveEmployeeFromBusiness} removeEmployeeFromBusiness - the businessTransaction to be processed
  * @transaction
  */
@@ -203,7 +301,11 @@ function removeEmployeeFromBusiness(removeEmployeeFromBusiness) {
  }
 
 /**
+<<<<<<< HEAD
  * Add an employee to a business
+=======
+ * Adds an employee to a business
+>>>>>>> origin/logicfileupdates
  * @param {org.mat.AddEmployeeToBusiness} addEmployeeToBusiness - the businessTransaction to be processed
  * @transaction
  */
@@ -215,7 +317,12 @@ function addEmployeeToBusiness(addEmployeeToBusiness) {
         });
  }
 
+<<<<<<< HEAD
  /** Updates employee's information
+=======
+/** 
+* Updates employee's information
+>>>>>>> origin/logicfileupdates
 * @param {org.mat.UpdateEmployeeInfo} updateEmployeeInfo - the employeeTransaction to be processed
 * @transaction
 */
@@ -231,7 +338,12 @@ function updateEmployeeInfo(updateEmployeeInfo) {
         });
  }
 
+<<<<<<< HEAD
   /** Update the employee's type of a business
+=======
+/** 
+* Updates an employee's type of a business
+>>>>>>> origin/logicfileupdates
 * @param {org.mat.UpdateEmployeeType} updateEmployeeType - the employeeTransaction to be processed
 * @transaction
 */
@@ -307,12 +419,15 @@ async function setupDemo(setupDemo) {
     item.currentOwner = manufacturer;
     item.itemType = itemType;
 
+<<<<<<< HEAD
     // create itemRequest
     const itemRequest = factory.newResource(org, 'ItemRequest', 'R001');
     itemRequest.requestedItem = item;
     itemRequest.unitPrice = 14.2;
     itemRequest.quantity = 2;
 
+=======
+>>>>>>> origin/logicfileupdates
     // create the contract
     const contract = factory.newResource(org, 'Contract', 'C001');
     contract.requestedItems = itemRequest;
@@ -323,6 +438,17 @@ async function setupDemo(setupDemo) {
     tomorrow.setDate(tomorrow.getDate() + 1);
     contract.arrivalDateTime = tomorrow; // the shipment has to arrive tomorrow
 
+<<<<<<< HEAD
+=======
+    // create the itemRequest concept
+    const itemRequest = factory.newResource(org, 'ItemRequest', 'R001');
+    itemRequest.requestedItem = item;
+    itemRequest.unitPrice = 14.2;
+    itemRequest.quantity = 2;
+
+    contract.itemRequest = [itemRequest];
+
+>>>>>>> origin/logicfileupdates
     // create the shipment concept
     const shipment = factory.newConcept(org, 'Shipment', 'S001');
     shipment.status = 'IN_TRANSIT';
@@ -354,11 +480,19 @@ async function setupDemo(setupDemo) {
     const itemRegistry = await getAssetRegistry(org + '.Item');
     await itemRegistry.addAll([item]);
 
+<<<<<<< HEAD
     // add the itemRequest
     const itemRequestRegistry = await getAssetRegistry(org + '.ItemRequest');
     await itemRequestRegistry.addAll([itemRequest]);
 
     // add the shipments
+=======
+    // add the itemRequest - are now concepts
+    //const itemRequestRegistry = await getAssetRegistry(org + '.ItemRequest');
+    //await itemRequestRegistry.addAll([itemRequest]);
+
+    // add the shipments - are now concepts
+>>>>>>> origin/logicfileupdates
     //const shipmentRegistry = await getAssetRegistry(org + '.Shipment');
     //await shipmentRegistry.addAll([shipment]);
 
