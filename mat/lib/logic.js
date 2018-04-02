@@ -497,8 +497,8 @@ async function setupDemo(setupDemo) {
     await cemployeeRegistry.addAll([cemployee]);
 
     // add the cemployee user
-    const cuTserRegistry = await getAssetRegistry(org + '.User');
-    await cuTserRegistry.addAll([cuTser]);
+    const cuTT@serRegistry = await getAssetRegistry(org + '.User');
+    await cuTT@serRegistry.addAll([cuTT@ser]);
 
     // add the itemType
     const itemTypeRegistry = await getAssetRegistry(org + '.ItemType');
