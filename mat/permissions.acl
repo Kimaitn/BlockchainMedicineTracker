@@ -7,10 +7,10 @@ rule NetworkAdminUser
   action: ALLOW  
 }
 
-rule loginCheckerREADUser
+rule LoginCheckerREADUser
 {
   description: "lets the login checker verify the user"
-  participant: "org.mat.loginChecker"
+  participant: "org.mat.LoginChecker"
   operation: READ
   resource: "org.mat.User"
   action: ALLOW
