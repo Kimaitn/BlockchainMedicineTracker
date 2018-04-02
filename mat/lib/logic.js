@@ -52,7 +52,10 @@ function updateItemRequest(updateItemRequest) {
  * @transaction
  */
 function approveContractChanges(approveContractChanges) {
-    approveContractChanges.contract.approvalStatus = 'CONFIRMED';
+    if(approveContractChagnes.acceptingEmployee == approveContractChanges.contract.sellingBusiness)
+        approveContractChanges.contract.approvalStatusSellingBusiness = 'CONFIRMED';
+    if(approveContractChagnes.acceptingEmployee == approveContractChanges.contract.buyingBusiness)
+        approveContractChanges.contract.approvalStatusBuyingBusiness = 'CONFIRMED';
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(approveContractChanges.contract);
