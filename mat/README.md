@@ -6,7 +6,7 @@ firing up your personal network
 ## Environment Setup Commands (First Time Deployment)
 
 Download hyperledger client and tools (or `npm update` if you have already installed)
-The `fabric-tools` folder should be outside of the current project directory
+The `fabric-tools` folder can be installed within the `BlockchainMedicineTracker` folder
 
 ```
 npm install -g composer-cli
@@ -27,24 +27,27 @@ Kill all current docker processes and all old connection profiles and cards from
 docker kill $(docker ps -q)
 docker rm $(docker ps -aq)
 docker rmi $(docker images dev-* -q)
-
-`rm -rf ~/.composer`
 ```
 
 Ensure that your current project directory has a `dist` folder (in this case, the `mat` folder:
 `mkdir dist`
 
+# Single Time Setup
+
+within the `fabric-tools` folder:
+run `./downloadFabric.sh` to download the Fabric network.
+
+## Teardown/Reset
+
+If there is an existing fabric project already running, run `./teardownFabric.sh` to tear it down.
+Run `rm -r ~/.composer` to remove any previous composer cards
 
 ## Fabric Deployment 
 
 Start Hyperledger Fabric
 
-within the `fabric-tools` folder:
-```
-./downloadFabric.sh
-./startFabric.sh
-./createPeerAdminCard.sh
-```
+within the `fabric-tools` folder, run `./startFabric.sh`;
+run `./createPeerAdminCard.sh` to create the PeerAdmin card.
 
 ## Sparknotes Project Deployment
 
