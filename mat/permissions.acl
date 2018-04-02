@@ -169,7 +169,7 @@ rule EmployeeUPDATEContractViaRemoveItemRequestFromRequestedItems
 //Allows an employee to be able to READ the inventory and the employees that belong to.
 rule EmployeeREADBusiness
 {
-  description: "Allow ANY employee to READ a business' info that it belongs to"
+  description: "Allow ANY employee to READ a business's info that it belongs to"
   participant(e): "org.mat.Employee" 
   operation: READ
   resource(b): "org.mat.Business"
@@ -179,7 +179,7 @@ rule EmployeeREADBusiness
 
 rule EmployeeUPDATEBusinessViaRemoveItemFromInventory
 {
-  description: "Allow ANY employee to UPDATE a business via RemoveItemFromInventory"
+  description: "Allow ANY employee to remove from a business's inventory via RemoveItemFromInventory"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(b): "org.mat.Business"
@@ -199,6 +199,7 @@ rule EmployeeUPDATEBusinessViaAddItemToInventory
   action: ALLOW
 }
 
+<<<<<<< HEAD
 rule AdminEmployeerRUBusiness
 {
   description: "Allow an ADMIN employee to READ and UPDATE a business"
@@ -219,6 +220,18 @@ rule AdminEmployeerRUBusiness
 //   condition: ((e.employeeType == "Admin") && (e.worksFor == tx.business) && (e.worksFor.businessId == b.businessId))
 //   action: ALLOW
 // }
+=======
+rule AdminEmployeeUPDATEBusinessViaRemoveEmployeeFromBusiness
+{
+  description: "Allow an ADMIN employee to UPDATE a business via RemoveEmployeeFromBusiness"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(b): "org.mat.Business"
+  transaction(tx): "org.mat.RemoveEmployeeFromBusiness"
+  condition: ((e.employeeType == "Admin") && (e.worksFor == tx.business) && (e.worksFor.businessId == b.businessId))
+  action: ALLOW
+}
+>>>>>>> origin/logicfileupdates
 
 // rule AdminEmployeeUPDATEBusinessViaAddEmployeeToBusiness
 // {
