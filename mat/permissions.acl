@@ -157,7 +157,7 @@ rule EmployeeUPDATEContractViaRemoveItemRequestFromRequestedItems
 
 rule EmployeeREADBusiness
 {
-  description: "Allow ANY employee to READ a business' info that it belongs to"
+  description: "Allow ANY employee to READ a business's info that it belongs to"
   participant(e): "org.mat.Employee" 
   operation: READ
   resource(b): "org.mat.Business"
@@ -167,7 +167,7 @@ rule EmployeeREADBusiness
 
 rule EmployeeUPDATEBusinessViaRemoveItemFromInventory
 {
-  description: "Allow ANY employee to UPDATE a business via RemoveItemFromInventory"
+  description: "Allow ANY employee to remove from a business's inventory via RemoveItemFromInventory"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(b): "org.mat.Business"
@@ -176,7 +176,7 @@ rule EmployeeUPDATEBusinessViaRemoveItemFromInventory
   action: ALLOW
 }
 
-rule EmployeeUPDATEBusinessViaRAddItemToInventory
+rule EmployeeUPDATEBusinessViaAddItemToInventory
 {
   description: "Allow ANY employee to UPDATE a business via RemoveItemFromInventory"
   participant(e): "org.mat.Employee"
@@ -184,16 +184,6 @@ rule EmployeeUPDATEBusinessViaRAddItemToInventory
   resource(b): "org.mat.Business"
   transaction(tx): "org.mat.AddItemToInventory"
   condition: (e.worksFor.businessId == b.businessId == tx.business)
-  action: ALLOW
-}
-
-rule AdminEmployeeCREATEBusiness
-{
-  description: "Allow an ADMIN employee to CREATE a business"
-  participant(e): "org.mat.Employee"
-  operation: CREATE
-  resource(b): "org.mat.Business"
-  condition: (e.employeeType == "Admin")
   action: ALLOW
 }
 
