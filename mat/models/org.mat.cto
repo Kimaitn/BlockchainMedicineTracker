@@ -86,11 +86,13 @@ asset Item identified by itemId
 asset Contract identified by contractId 
 {
   o String contractId
+  o contractConfirmation approvalStatusSellingBusiness
+  o contractConfirmation approvalStatusBuyingBusiness
   o DateTime arrivalDateTime
   o Shipment[] shipments optional
   o ItemRequest[] requestedItems
-  --> Business[] participatingBusiness
-  o contractConfirmation[] approvalStatus
+  --> Business sellingBusiness
+  --> Business buyingBusiness
 }
 
 // The basic User class that will be using the system
@@ -165,6 +167,7 @@ transaction UpdateItemRequest extends UpdateContract
 // Approves a contract's changes
 transaction ApproveContractChanges extends UpdateContract
 {
+  --> Employee acceptingBusiness
 }
 
 // Updates the arrival time of a shipment on a contract
