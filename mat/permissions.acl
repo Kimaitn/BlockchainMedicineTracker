@@ -99,14 +99,14 @@ rule EmployeeUPDATEContractViaUpdateItemRequest
   action: ALLOW
 }
 
-rule EmployeeUPDATEContractViaApproveContractChanges
+rule AdminEmployeeUPDATEContractViaApproveContractChanges
 {
-  description: "Allow ANY employee to UPDATE a contract that belongs to their business via the ApproveContractChanges transaction"
+  description: "Allow an Admin employee to UPDATE a contract that belongs to their business via the ApproveContractChanges transaction"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.ApproveContractChanges"
-  condition: ((e.employeeType=="Admin")&&(e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  condition: ((e.employeeType=="Admin") && (e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
   action: ALLOW
 }
 
