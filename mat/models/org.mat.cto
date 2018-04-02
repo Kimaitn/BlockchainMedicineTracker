@@ -196,6 +196,13 @@ transaction ShipmentTransaction
 //call to bulk load invenotory in
 transaction BulkLoad
 {
+  o Integer medicineNumber
+  o String medicineName
+  o String unitOfMeasure
+  o Integer medicineQuantity
+  o Business owner
+  o String medicineLocation 
+
 }
 
 //Creates a contract
