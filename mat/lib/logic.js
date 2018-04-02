@@ -1,5 +1,12 @@
 'use strict';
 
+// Private function that changes the status of a contract to 'WAITING_CONFIRMATION'
+function changeContractStatuses(contract) {
+    contract.status = 'WAITING_CONFIRMATION';
+    contract.approvalStatusBuyingBusiness = 'WAITING_CONFIRMATION';
+    contract.approvalStatusSellingBusiness = 'WAITING_CONFIRMATION';
+}
+
 /**
  * Changes owners of a particular item
  * @param {org.mat.UpdateItemOwner} updateItemOwner - the itemTransaction to be updated
@@ -23,7 +30,7 @@ function updateItemOwner(updateItemOwner) {
 function updateShipmentCarrier(updateShipment) {
     updateShipment.contract.shipments[shipmentIndex].carryingBusiness = updateShipment.newCarryingBusiness;
     updateShipment.contract.shipments[shipmentIndex].status = updateShipment.newStatus;
-    updateShipment.contract.approvalStatuses = 'WAITING_CONFIRMATION';
+    changeContractStatuses(updateShipment.contract);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateShipment.contract);
@@ -39,7 +46,7 @@ function updateShipmentCarrier(updateShipment) {
 function updateItemRequest(updateItemRequest) {
     updateItemRequest.contract.requestedItems[itemRequestIndex].unitPrice = updateItemRequest.newUnitPrice;
     updateItemRequest.contract.requestedItems[itemRequestIndex].quantity = updateItemRequest.newQuantity;
-    updateShipment.contract.es = 'WAITING_CONFIRMATION';
+    changeContractStatuses(updateShipment.contract);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateItemRequest.contract);
@@ -52,7 +59,10 @@ function updateItemRequest(updateItemRequest) {
  * @transaction
  */
 function approveContractChanges(approveContractChanges) {
-    approveContractChanges.contract.es = 'CONFIRMED';
+    if(approveContractChagnes.acceptingEmployee == approveContractChanges.contract.sellingBusiness)
+        approveContractChanges.contract.approvalStatusSellingBusiness = 'CONFIRMED';
+    if(approveContractChagnes.acceptingEmployee == approveContractChanges.contract.buyingBusiness)
+        approveContractChanges.contract.approvalStatusBuyingBusiness = 'CONFIRMED';
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(approveContractChanges.contract);
@@ -65,7 +75,21 @@ function approveContractChanges(approveContractChanges) {
  * @transaction
  */
 function completeContract(completeContract) {
-    completeContract.contract.es = 'COMPLETED';
+    if(completeContract.contract.approvalStatusSellingBusiness == 
+        completeContract.contract.approvalStatusSellingBusiness ==
+        'CONFIRMED')
+    {
+        return;
+    }
+    if(completeContract.contract.shipments.every((shipment) => {
+        return shipment.status == 'ARRIVED';
+    }))
+    {
+        completeContract.contract.status = 'COMPLETED';
+    }
+    else {
+        return;
+    }
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(completeContract.contract);
@@ -80,7 +104,7 @@ function completeContract(completeContract) {
  */
 function updateContractArrivalDateTime(updateContractArrivalDateTime) {
     updateContractArrivalDateTime.contract.arrivalDateTime = updateContractArrivalDateTime.newArrivalDateTime;
-    updateContractArrivalDateTime.contract.status = 'WAITING_CONFIRMATION';
+    changeContractStatuses(updateContractArrivalDateTime.contract);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateContractArrivalDateTime.contract);
