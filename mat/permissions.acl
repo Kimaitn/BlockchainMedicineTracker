@@ -7,7 +7,20 @@ rule NetworkAdminUser
   action: ALLOW  
 }
 
+<<<<<<< Updated upstream
 rule LoginCheckerREADUser
+=======
+rule EmployeeREADAccess
+{
+  description: "Allow employee READ access "
+  participant: "org.mat.Employee"
+  operation: READ
+  resource: "org.hyperledger.composer.system.Network#mat-network@0.0.1"
+  action: ALLOW
+}
+
+rule loginCheckerREADUser
+>>>>>>> Stashed changes
 {
   description: "lets the login checker verify the user"
   participant: "org.mat.LoginChecker"
