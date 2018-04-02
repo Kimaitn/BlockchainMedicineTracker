@@ -381,13 +381,15 @@ async function setupDemo(setupDemo) {
 
     // create the contract
     const contract = factory.newResource(org, 'Contract', 'C001');
-    contract.requestedItems = itemRequest;
+    contract.approvalStatusBuyingBusiness = 'CONFIRMED';
+    contract.approvalStatusSellingBusiness = 'CONFIRMED';
     contract.status = 'CONFIRMED';
-    contract.sellingBusiness = manufacturer;
-    contract.buyingBusiness = distributor;
     const tomorrow = setupDemo.timestamp;
     tomorrow.setDate(tomorrow.getDate() + 1);
     contract.arrivalDateTime = tomorrow; // the shipment has to arrive tomorrow
+    contract.requestedItems = [itemRequest];
+    contract.sellingBusiness = manufacturer;
+    contract.buyingBusiness = distributor;
 
     // create the itemRequest concept
     const itemRequest = factory.newResource(org, 'ItemRequest', 'R001');
