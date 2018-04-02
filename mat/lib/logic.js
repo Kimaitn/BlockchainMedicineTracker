@@ -12,7 +12,7 @@ function changeContractStatuses(contract) {
  * @param {org.mat.UpdateItemOwner} updateItemOwner - the itemTransaction to be updated
  * @transaction
  */
-function updateItemOwner(updateItemOwner) {
+async function updateItemOwner(updateItemOwner) {
     updateItemOwner.item.currentOwner = updateItemOwner.newOwner;
     return getAssetRegistry('org.mat.Item')
         .then(function (assetRegistry) {
@@ -27,7 +27,7 @@ function updateItemOwner(updateItemOwner) {
  * @param {org.mat.UpdateShipment} updateShipment - the shipmentTransaction to be edited
  * @transaction
  */
-function updateShipmentCarrier(updateShipment) {
+async function updateShipmentCarrier(updateShipment) {
     updateShipment.contract.shipments[shipmentIndex].carryingBusiness = updateShipment.newCarryingBusiness;
     updateShipment.contract.shipments[shipmentIndex].status = updateShipment.newStatus;
     changeContractStatuses(updateShipment.contract);
@@ -43,7 +43,7 @@ function updateShipmentCarrier(updateShipment) {
  * @param {org.mat.UpdateItemRequest} updateItemRequest - the itemRequestTransaction to be edited
  * @transaction
  */
-function updateItemRequest(updateItemRequest) {
+async function updateItemRequest(updateItemRequest) {
     updateItemRequest.contract.requestedItems[itemRequestIndex].unitPrice = updateItemRequest.newUnitPrice;
     updateItemRequest.contract.requestedItems[itemRequestIndex].quantity = updateItemRequest.newQuantity;
     changeContractStatuses(updateShipment.contract);
@@ -58,7 +58,7 @@ function updateItemRequest(updateItemRequest) {
  * @param {org.mat.ApproveContractChanges} approveContractChanges - the contractTransaction to be approved
  * @transaction
  */
-function approveContractChanges(approveContractChanges) {
+async function approveContractChanges(approveContractChanges) {
     if(approveContractChagnes.acceptingEmployee == approveContractChanges.contract.sellingBusiness)
         approveContractChanges.contract.approvalStatusSellingBusiness = 'CONFIRMED';
     if(approveContractChagnes.acceptingEmployee == approveContractChanges.contract.buyingBusiness)
@@ -102,7 +102,7 @@ function completeContract(completeContract) {
  * @param {org.mat.UpdateContractArrivalDateTime} updateContractArrivalDateTime - the contractTransaction to be updated
  * @transaction
  */
-function updateContractArrivalDateTime(updateContractArrivalDateTime) {
+async function updateContractArrivalDateTime(updateContractArrivalDateTime) {
     updateContractArrivalDateTime.contract.arrivalDateTime = updateContractArrivalDateTime.newArrivalDateTime;
     changeContractStatuses(updateContractArrivalDateTime.contract);
     return getAssetRegistry('org.mat.Contract')
@@ -116,7 +116,7 @@ function updateContractArrivalDateTime(updateContractArrivalDateTime) {
  * @param {org.mat.AddShipmentToShipmentList} addShipmentToShipmentList - the contractTransaction to be updated
  * @transaction
  */
-function addShipmentToShipmentList(addShipmentToShipmentList) {
+async function addShipmentToShipmentList(addShipmentToShipmentList) {
     addShipmentToShipmentList.contract.shipmentList.addAll([addShipmentToShipmentList.newShipment]);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
@@ -129,7 +129,7 @@ function addShipmentToShipmentList(addShipmentToShipmentList) {
  * @param {org.mat.RemoveShipmentFromShipmentList} removeShipmentFromShipmentList - the contractTransaction to be updated
  * @transaction
  */
-function removeShipmentToShipmentList(removeShipmentToShipmentList) {
+async function removeShipmentToShipmentList(removeShipmentToShipmentList) {
     removeShipmentToShipmentList.contract.shipmentList = 
         removeShipmentToShipmentList.contract.shipmentList.splice(
             removeShipmentToShipmentList.shipmentIndex,
@@ -146,7 +146,7 @@ function removeShipmentToShipmentList(removeShipmentToShipmentList) {
  * @param {org.mat.AddItemRequestToRequestedItemsList} addItemRequestToRequestedItemsList - the contractTransaction to be updated
  * @transaction
  */
-function addItemRequestToRequestedItemsList(addItemRequestToRequestedItemsList) {
+async function addItemRequestToRequestedItemsList(addItemRequestToRequestedItemsList) {
     addItemRequestToRequestedItemsList.contract.requestedItems = addItemRequestToRequestedItemsList.newItemRequest;
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
@@ -159,7 +159,7 @@ function addItemRequestToRequestedItemsList(addItemRequestToRequestedItemsList) 
  * @param {org.mat.RemoveItemRequestFromRequestedItemsList} removeItemRequestFromRequestedItemsList - the contractTransaction to be updated
  * @transaction
  */
-function removeItemRequestFromRequestedItemsList(removeItemRequestFromRequestedItemsList) {
+async function removeItemRequestFromRequestedItemsList(removeItemRequestFromRequestedItemsList) {
     removeItemRequestFromRequestedItemsList.contract.requestedItems = 
         removeItemRequestFromRequestedItemsList.contract.requestedItems.splice(
             removeItemRequestFromRequestedItemsList.itemRequestIndex,
@@ -176,7 +176,7 @@ function removeItemRequestFromRequestedItemsList(removeItemRequestFromRequestedI
  * @param {org.mat.UpdateUserEmail} updateUserEmail - the userTransaction to be changed
  * @transaction
  */
-function updateUserEmail(updateUserEmail) {
+async function updateUserEmail(updateUserEmail) {
     updateUserEmail.user.userEmail = updateUserEmail.newUserEmail;
     return getAssetRegistry('org.mat.User')
         .then(function (assetRegistry) {
@@ -189,7 +189,7 @@ function updateUserEmail(updateUserEmail) {
  * @param {org.mat.UpdateUserPassword} updateUserPassword - the userTransaction to be processed
  * @transaction
  */
-function updateUserPassword(updateUserPassword) {
+async function updateUserPassword(updateUserPassword) {
     updateUserPassword.user.password = updateUserPassword.newUserPass;
     return getAssetRegistry('org.mat.User')
         .then(function (assetRegistry) {
@@ -202,7 +202,7 @@ function updateUserPassword(updateUserPassword) {
  * @param {org.mat.UpdateBusinessInfo} updateBusinessInfo - the businessTransaction to be processed
  * @transaction
  */
-function updateBusinessInfo(updateBusinessInfo) {
+async function updateBusinessInfo(updateBusinessInfo) {
     updateBusinessInfo.business.name = updateBusinessInfo.newBusinessName;
     if(updateBusinessInfo.hasOwnProperty(newPoCName))
         updateBusinessInfo.business.PoCName = updateBusinessInfo.newPoCName;
@@ -221,7 +221,7 @@ function updateBusinessInfo(updateBusinessInfo) {
  * @param {org.mat.UpdateBusinessAccBalance} updateBusinessAccBalance - the businessTransaction to be processed
  * @transaction
  */
-function updateBusinessAccBalance(updateBusinessAccBalance) {
+async function updateBusinessAccBalance(updateBusinessAccBalance) {
     updateBusinessAccBalance.business.accountBalance = updateBusinessAccBalance.newAccBalance;
     return getAssetRegistry('org.mat.Business')
         .then(function (assetRegistry) {
@@ -234,7 +234,7 @@ function updateBusinessAccBalance(updateBusinessAccBalance) {
 * @param {org.mat.RemoveItemFromInventory} removeItemFromInventory - the businessTransaction to be processed
 * @transaction
 */
-function removeItemFromInventory(removeItemFromInventory) {
+async function removeItemFromInventory(removeItemFromInventory) {
     var index = removeItemFromInventory.business.inventory.indexOf(removeItemFromInventory.removeItem);
     if(index>-1)
         removeItemFromInventory.business.inventory.splice(index, 1);
@@ -249,7 +249,7 @@ function removeItemFromInventory(removeItemFromInventory) {
  * @param {org.mat.AddItemToInventory} addItemToInventory - the businessTransaction to be processed
  * @transaction
  */
-function addItemToInventory(addItemToInventory) {
+async function addItemToInventory(addItemToInventory) {
     addItemToInventory.business.inventory.push(addItemToInventory.addItem);
     return getAssetRegistry('org.mat.Business')
         .then(function (assetRegistry) {
@@ -262,7 +262,7 @@ function addItemToInventory(addItemToInventory) {
  * @param {org.mat.RemoveEmployeeFromBusiness} removeEmployeeFromBusiness - the businessTransaction to be processed
  * @transaction
  */
-function removeEmployeeFromBusiness(removeEmployeeFromBusiness) {
+async function removeEmployeeFromBusiness(removeEmployeeFromBusiness) {
     var index = removeEmployeeFromBusiness.business.employees.indexOf(removeEmployeeFromBusiness.removeEmployee);
     if(index>-1)
         removeEmployeeFromBusiness.business.employees.splice(index, 1);
@@ -277,7 +277,7 @@ function removeEmployeeFromBusiness(removeEmployeeFromBusiness) {
  * @param {org.mat.AddEmployeeToBusiness} addEmployeeToBusiness - the businessTransaction to be processed
  * @transaction
  */
-function addEmployeeToBusiness(addEmployeeToBusiness) {
+async function addEmployeeToBusiness(addEmployeeToBusiness) {
     addEmployeeToBusiness.business.employees.push(addEmployeeToBusiness.addEmployee);
     return getAssetRegistry('org.mat.Business')
         .then(function (assetRegistry) {
@@ -290,7 +290,7 @@ function addEmployeeToBusiness(addEmployeeToBusiness) {
 * @param {org.mat.UpdateEmployeeInfo} updateEmployeeInfo - the employeeTransaction to be processed
 * @transaction
 */
-function updateEmployeeInfo(updateEmployeeInfo) {
+async function updateEmployeeInfo(updateEmployeeInfo) {
     updateEmployeeInfo.employee.firstName = updateEmployeeInfo.employee.newFirstName;
     updateEmployeeInfo.employee.lastName = updateEmployeeInfo.employee.newLastName;
     updateEmployeeInfo.employee.email = updateEmployeeInfo.employee.newEmail;
@@ -307,7 +307,7 @@ function updateEmployeeInfo(updateEmployeeInfo) {
 * @param {org.mat.UpdateEmployeeType} updateEmployeeType - the employeeTransaction to be processed
 * @transaction
 */
-function updateEmployeeType(updateEmployeeType) {
+async function updateEmployeeType(updateEmployeeType) {
     updateEmployeeType.employee.employeeType = updateEmployeeType.employee.newEmployeeType;
     return getParticipantRegistry('org.mat.Employee')
         .then(function (assetRegistry) {

@@ -169,7 +169,7 @@ transaction UpdateItemRequest extends UpdateContract
 // Approves a contract's changes
 transaction ApproveContractChanges extends UpdateContract
 {
-  --> Employee acceptingBusiness
+  --> Employee acceptingEmployee
 }
 
 // Complete a contract
