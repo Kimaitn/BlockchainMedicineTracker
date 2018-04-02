@@ -61,7 +61,7 @@ concept Shipment
 // The item that is being requested within a contract
 concept ItemRequest 
 {
-  --> Item requestedItem
+  --> ItemType requestedItem
   o Double unitPrice
   o Integer quantity
 }
