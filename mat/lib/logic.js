@@ -60,6 +60,19 @@ function approveContractChanges(approveContractChanges) {
 }
 
 /**
+ * Confirms a contract's changes
+ * @param {org.mat.CompleteContract} completeContract - the contractTransaction to be approved
+ * @transaction
+ */
+function completeContract(completeContract) {
+    completeContract.contract.approvalStatus = 'COMPLETED';
+    return getAssetRegistry('org.mat.Contract')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(completeContract.contract);
+        });
+}
+
+/**
  * Updates the absolute arrival time of shipments specified within a contract
  * This will need approval from all participants of the contract
  * @param {org.mat.UpdateContractArrivalDateTime} updateContractArrivalDateTime - the contractTransaction to be updated
