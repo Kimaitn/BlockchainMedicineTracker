@@ -17,7 +17,7 @@ async function tradeCommodity(itemTransaction) {
 /**
  * Track the trade of a commodity from one trader to another
  * @param {org.mat.BulkLoad} bulkLoad - the trade to be processed
- * @transaction
+ * @upload
  */
 function MEDS(h1, h2, h3, h4, h5, h6){
     this.MedNum = h1;
@@ -29,7 +29,7 @@ function MEDS(h1, h2, h3, h4, h5, h6){
 }
 
 function Parser(bulkLoad){
-    const addResources = await getAssetRegistry(namespace + '.bulkLoad');
+    const addResources = await getAssetRegistry('org.mat.BulkLoad');
     const resources = [];
 
     bulkLoad.forEach(function(item) {
