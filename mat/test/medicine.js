@@ -29,9 +29,12 @@ let manufacturer_id = 'BobRoss@gmail.com';
 let shipper_id = 'BobDDoss@gmail.com';
 let distributor_id = 'BobDDoss@gmail.com';
 
+
+//TODO: Verify that cardStore definition is correct and not TOO sketchy
 describe('Perishable Shipping Network', () => {
     // In-memory card store for testing so cards are not persisted to the file system
-    const cardStore = new MemoryCardStore();
+    //const cardStore = new MemoryCardStore();
+    const cardStore = require('composer-common').MemoryCardStore; //THIS IS A SKETCHY WORKAROUND, SEE ABOVE
     let adminConnection;
     let businessNetworkConnection;
     let factory;
