@@ -361,7 +361,7 @@ async function setupDemo(setupDemo) {
     memployee.email = 'BobRoss@gmail.com';
     memployee.employeeType = 'Admin';
     memployee.phoneNumber = '407-999-9999';
-    memployee.worksFor = manufacturer;
+    memployee.worksFor = factory.newRelationship(org, 'Business', 'B001');
 
     // create user for manufacturer employee
     const muser = factory.newResource(org, 'User', 'BobRoss@gmail.com');
@@ -384,13 +384,13 @@ async function setupDemo(setupDemo) {
     carrier.accountBalance = 55.54;
 
     // create employee for carrier
-    const cemployee = factory.newResource(org, 'Carrier', 'B002_E001');
+    const cemployee = factory.newResource(org, 'Employee', 'B002_E001');
     cemployee.firstName = 'Bob';
     cemployee.lastName = 'Loss';
     cemployee.email = 'BobLoss@gmail.com';
     cemployee.employeeType = 'Admin';
     cemployee.phoneNumber = '407-999-9991';
-    cemployee.worksFor = carrier;
+    cemployee.worksFor = factory.newRelationship(org, 'Business', 'B002');
 
     // create user for carrier employee
     const cuser = factory.newResource(org, 'User', 'BobLoss@gmail.com');
@@ -419,7 +419,7 @@ async function setupDemo(setupDemo) {
     demployee.email = 'BobDDoss@gmail.com';
     demployee.employeeType = 'Admin';
     demployee.phoneNumber = '407-999-9992';
-    demployee.worksFor = distributor;
+    demployee.worksFor = factory.newRelationship(org, 'Business', 'B003');
 
     // create user for distributor employee
     const duser = factory.newResource(org, 'User', 'BobDDoss@gmail.com');
@@ -433,7 +433,7 @@ async function setupDemo(setupDemo) {
     demployee2.email = 'BobZoss@gmail.com';
     demployee2.employeeType = 'Regular';
     demployee2.phoneNumber = '407-999-9993';
-    demployee2.worksFor = distributor;
+    demployee2.worksFor = factory.newRelationship(org, 'Business', 'B003');
 
     // create user for distributor employee
     const duser2 = factory.newResource(org, 'User', 'BobZoss@gmail.com');
@@ -447,8 +447,8 @@ async function setupDemo(setupDemo) {
     const item = factory.newResource(org, 'Item', 'I00001');
     item.itemTypeUoM = 'g';
     item.amountOfMedication = 400;
-    item.currentOwner = manufacturer;
-    item.itemType = itemType;
+    item.currentOwner = factory.newRelationship(org, 'Business', 'B001');
+    item.itemType = factory.newRelationship(org, 'ItemType', 'Adderall');
 
     // create the contract
     const contract = factory.newResource(org, 'Contract', 'C001');
@@ -458,12 +458,12 @@ async function setupDemo(setupDemo) {
     const tomorrow = setupDemo.timestamp;
     tomorrow.setDate(tomorrow.getDate() + 1);
     contract.arrivalDateTime = tomorrow; // the shipment has to arrive tomorrow
-    contract.sellingBusiness = manufacturer;
-    contract.buyingBusiness = distributor;
+    contract.sellingBusiness = factory.newRelationship(org, 'Business', 'B001');
+    contract.buyingBusiness = factory.newRelationship(org, 'Business', 'B003');
 
     // create the itemRequest concept
-    const itemRequest = factory.newResource(org, 'ItemRequest', 'R001');
-    itemRequest.requestedItemType = itemType;
+    const itemRequest = factory.newConcept(org, 'ItemRequest', 'R001');
+    itemRequest.requestedItem = factory.newRelationship(org, 'ItemType', 'Adderall');
     itemRequest.unitPrice = 14.2;
     itemRequest.quantity = 2;
 
@@ -474,13 +474,13 @@ async function setupDemo(setupDemo) {
     shipment.status = 'IN_TRANSIT';
     shipment.destinationAddress = dAddress;
     shipment.sourceAddress = mAddress;
-    shipment.carryingBusiness = carrier;
-    shipment.items = [item];
+    shipment.carryingBusiness = factory.newRelationship(org, 'Business', 'B002');
+    shipment.items = [factory.newRelationship(org, 'Item', 'I00001')];
 
     contract.shipments = [shipment];
 
     // add the manufacturer
-    const manufacturerRegistry = await getAssetRegistry(org + '.Manufacturer');
+    const manufacturerRegistry = await getAssetRegistry(org + '.Business');
     await manufacturerRegistry.addAll([manufacturer]);
 
     // add the memployee
@@ -492,7 +492,7 @@ async function setupDemo(setupDemo) {
     await muserRegistry.addAll([muser]);
 
     // add the carrier
-    const carrierRegistry = await getAssetRegistry(org + '.Carrier');
+    const carrierRegistry = await getAssetRegistry(org + '.Business');
     await carrierRegistry.addAll([carrier]);
 
     // add the cemployee
@@ -504,16 +504,16 @@ async function setupDemo(setupDemo) {
     await cuserRegistry.addAll([cuser]);
 
     // add the distributor
-    const distributorRegistry = await getAssetRegistry(org + '.Distributor');
+    const distributorRegistry = await getAssetRegistry(org + '.Business');
     await distributorRegistry.addAll([distributor]);
 
-    // // add the cemployee
-    // const cemployeeRegistry = await getParticipantRegistry(org + '.Employee');
-    // await cemployeeRegistry.addAll([cemployee]);
+    // add the demployee
+    const demployeeRegistry = await getParticipantRegistry(org + '.Employee');
+    await demployeeRegistry.addAll([demployee]);
 
-    // // add the cemployee user
-    // const cuserRegistry = await getAssetRegistry(org + '.User');
-    // await cuserRegistry.addAll([cuser]);
+    // add the cemployee user
+    const duserRegistry = await getAssetRegistry(org + '.User');
+    await duserRegistry.addAll([duser]);
 
     // add the itemType
     const itemTypeRegistry = await getAssetRegistry(org + '.ItemType');
