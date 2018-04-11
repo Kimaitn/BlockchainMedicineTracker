@@ -138,16 +138,10 @@ transaction ShipmentTransaction
   --> Business newOwner
 }
 
-//call to bulk load invenotory in
+//call to bulk load invenotory from front end
 transaction BulkLoad
 {
-  o Integer medicineNumber
-  o String medicineName
-  o String unitOfMeasure
-  o Integer medicineQuantity
-  o Business owner
-  o String medicineLocation 
-
+  o Item[] items
 }
 
 //Creates a contract

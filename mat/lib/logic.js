@@ -13,37 +13,30 @@ async function tradeCommodity(itemTransaction) {
         });
 }
 
-
 /**
  * Track the trade of a commodity from one trader to another
  * @param {org.mat.BulkLoad} bulkLoad - the trade to be processed
- * @upload
+ * @transaction
  */
-function MEDS(h1, h2, h3, h4, h5, h6){
-    this.MedNum = h1;
-    this.MedName = h2;
-    this.MedUnitOfMeasure = h3;
-    this.MedQuantity = h4;
-    this.MedCompany = h5
-    this.MedLocation = h6;
-}
-
-function Parser(bulkLoad){
-    const addResources = await getAssetRegistry('org.mat.BulkLoad');
+async function Parser(bulkLoad){
+    const addResources = await getAssetRegistry('org.mat.Item');
     const resources = [];
+    const factory = getFactory();
+    const org = 'org.mat';
 
-    bulkLoad.forEach(function(item) {
-        resources.push(new MEDS(item.medicineNumber, item.medicineName, item.unitOfMeasure, item.medicineQuantity, item.owner, item.medicineLocation));
-    });
+    
+    for(var i = 0; i< bulkLoad.items.length; i++){
+        const itemALL = factory.newResource(org, 'Item', bulkLoad.items[i].itemId);
+        itemALL.itemTypeUoM = bulkLoad.items[i].itemTypeUoM;
+        itemALL.amountOfMedication = bulkLoad.items[i].amountOfMedication;
+        itemALL.currentOwner = bulkLoad.items[i].currentOwner;
+        itemALL.itemType = bulkLoad.items[i].itemType;
+        resources.push(itemALL);
+    }
 
-    await addResources.addALL(resources);
+    await addResources.addAll(resources);    
+
 }
-
-
-
-
-
-
 
 /**
  * Initialize some test assets and participants useful for running a demo.
@@ -161,8 +154,8 @@ async function setupDemo(setupDemo) {
     await itemRequestRegistry.addAll([itemRequest]);
 
     // add the shipments
-    //const shipmentRegistry = await getAssetRegistry(org + '.Shipment');
-    //await shipmentRegistry.addAll([shipment]);
+    const shipmentRegistry = await getAssetRegistry(org + '.Shipment');
+    await shipmentRegistry.addAll([shipment]);
 
     // add the contracts
     const contractRegistry = await getAssetRegistry(org + '.Contract');
