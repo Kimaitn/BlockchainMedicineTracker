@@ -111,6 +111,183 @@ describe('Perishable Shipping Network', () => {
         clock.restore();
     });
 
+    /******************************************************************************************************/
+    /**********************************Logic.js file function tests below**********************************/
+    /******************************************************************************************************/
+
+    const logic = require('../lib/logic');
+    const assert = require('chai').assert;
+
+
+    /* Item change tests */
+    describe('Item Value updates', function(){
+
+        it('updateItemOwner should change the owner value of the item' , function(){
+            let result = logic.updateItemOwner();
+            //Test the result against expected result here (???)
+            //assert.equal(result, );
+
+        });
+
+        it('updateItemRequest should change the quantity of an item request' , function(){
+            let result = logic.updateItemRequest();
+            //Test the result against expected result here
+
+        });
+
+        it('updateItemRequest should change the unit price of an item request' , function(){
+            let result = logic.updateItemRequest();
+            //Test the result against expected result here
+
+        });
+
+    });
+
+    /* Contract change tests */
+    describe('Contract updates', function(){
+
+        it('changeContractStatuses should change the status to \'WAITING_CONFIRMATION\'', function(){
+            let result = logic.changeContractStatuses();
+            //Test the result against expected result here
+
+        });
+
+        it('approveContractChanges should confirm a contracts changes\'', function(){
+            let result = logic.approveContractChanges();
+            //Test the result against expected result here
+
+        });
+
+        it('completeContract should .....', function(){
+            let result = logic.completeContract();
+            //Test the result against expected result here
+
+        });
+
+        it('updateContractArrivalDateTime should change the value of the arrival data and time for the contract', function(){
+            let result = logic.updateContractArrivalDateTime();
+            //Test the result against expected result here
+
+        });
+
+    });
+
+    /* Shipment change tests */
+    describe('Shipment updates', function(){
+
+        it('addShipmentToShipmentList should add a shipment to a contract\'s shipmentList', function(){
+            let result = logic.addShipmentToShipmentList();
+            //Test the result against expected result here
+
+        });
+
+        it('removeShipmentToShipmentList should remove a shipment from a contract\'s shipmentList', function(){
+            let result = logic.removeShipmentToShipmentList();
+            //Test the result against expected result here
+
+
+        });
+
+    });
+
+    /* itemRequest change tests */
+    describe('Item Request updates', function(){
+
+        it('addItemRequestToRequestedItemsList should add an itemRequest to a contract', function(){
+            let result = logic.addItemRequestToRequestedItemsList();
+            //Test the result against expected result here
+
+        });
+
+        it('removeItemRequestFromRequestedItemsList should remove an itemRequest from a contract', function(){
+            let result = logic.removeItemRequestFromRequestedItemsList();
+            //Test the result against expected result here
+
+        });
+
+    });
+
+    /* User Info change tests */
+    describe('User Info updates', function(){
+
+        it('updateUserEmail should change a user\'s email address', function(){
+            let result = logic.updateUserEmail();
+            //Test the result against expected result here
+
+        });
+
+        it('updateUserPassword should change a user\'s password', function(){
+            let result = logic.updateUserPassword();
+            //Test the result against expected result here
+
+        });
+
+    });
+
+    /* Business change tests */
+    describe('Business updates (Admin Info, Inventory, Employee Management)', function(){
+
+        it('updateBusinessInfo should change a business\'s information', function(){
+            let result = logic.updateBusinessInfo();
+            //Test the result against expected result here
+
+        });
+
+        it('updateBusinessAccBalance should change the account balance', function(){
+            let result = ogic.updateBusinessAccBalance();
+            //Test the result against expected result here
+
+
+        });
+
+        it('removeItemFromInventory should remove an item from the inventory of a business', function(){
+            let result = logic.removeItemFromInventory();
+            //Test the result against expected result here
+
+        });
+
+        it('addItemToInventory should add an item to the inventory of a business', function(){
+            let result = logic.addItemToInventory();
+            //Test the result against expected result here
+
+        });
+
+        it('removeEmployeeFromBusiness should remove an employee from a business', function(){
+            let result = logic.removeEmployeeFromBusiness();
+            //Test the result against expected result here
+
+        });
+
+        it('addEmployeeToBusiness should add an employee to a business', function(){
+            let result = logic.addEmployeeToBusiness();
+            //Test the result against expected result here
+
+        });
+
+    });
+
+    /* Employee change tests */
+    describe('Exmployee Info updates', function(){
+
+        it('updateEmployeeInfo should change an employee\'s information', function(){
+            let result = logic.updateEmployeeInfo();
+            //Test the result against expected result here
+
+        });
+
+        it('updateEmployeeType should change an employee\'s type of business', function(){
+            let result = logc.updateEmployeeType();
+            //Test the result against expected result here
+
+        });
+
+    });
+
+
+
+
+
+
     // putting on hold until deployment works first
     /*
     describe('#shipment', () => {
