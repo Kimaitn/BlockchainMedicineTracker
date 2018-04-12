@@ -23,7 +23,6 @@ async function updateItemOwner(updateItemOwner) {
         });
 }
 
-/*global updateShipmentCarrier shipmentIndex:true*/
 /**
  * Updates a shipment's carrier
  * This will need approval from all participants of the contract
@@ -40,7 +39,6 @@ async function updateShipmentCarrier(updateShipment) {
         });
 }
 
-/*global updateItemRequest itemRequestIndex:true, updateShipment:true*/
 /**
  * Changes the quantity or unit price of an item request
  * This will need approval from all participants of the contract
@@ -117,7 +115,6 @@ async function updateContractArrivalDateTime(updateContractArrivalDateTime) {
         });
 }
 
-/*global addShipmentToShipmentList updateContractShipmentList:true*/
 /**
  * Adds a shipment to a shipmentList in a contract
  * @param {org.mat.AddShipmentToShipmentList} addShipmentToShipmentList - the contractTransaction to be updated
@@ -204,7 +201,6 @@ async function updateUserPassword(updateUserPassword) {
         });
 }
 
-/*global updateBusinessInfo newPoCName:true, newPoCEmail:true, newAddress:true*/
 /**
  * Updates a business's information
  * @param {org.mat.UpdateBusinessInfo} updateBusinessInfo - the businessTransaction to be processed
@@ -298,7 +294,6 @@ async function addEmployeeToBusiness(addEmployeeToBusiness) {
         });
 }
 
-/*global updateEmployeeInfo newPhoneNumber:true*/
 /**
 * Updates employee's information
 * @param {org.mat.UpdateEmployeeInfo} updateEmployeeInfo - the employeeTransaction to be processed
