@@ -16,9 +16,7 @@
 
 const AdminConnection = require('composer-admin').AdminConnection;
 const BusinessNetworkConnection = require('composer-client').BusinessNetworkConnection;
-const BusinessNetworkDefinition = require('composer-common').BusinessNetworkDefinition;
-const IdCard = require('composer-common').IdCard;
-const MemoryCardStore = require('composer-common').MemoryCardStore;
+const { BusinessNetworkDefinition, CertificateUtil, IdCard } = require('composer-common');
 const path = require('path');
 
 require('chai').should();
@@ -29,28 +27,22 @@ let manufacturer_id = 'BobRoss@gmail.com';
 let shipper_id = 'BobDDoss@gmail.com';
 let distributor_id = 'BobDDoss@gmail.com';
 
-
-//TODO: Verify that cardStore definition is correct and not TOO sketchy
-describe('Perishable Shipping Network', () => {
+describe('Medicine Asset Tracking Network', () => {
     // In-memory card store for testing so cards are not persisted to the file system
-    //const cardStore = new MemoryCardStore();
-    const cardStore = require('composer-common').MemoryCardStore; //THIS IS A SKETCHY WORKAROUND, SEE ABOVE
+    const cardStore = require('composer-common').NetworkCardStoreManager.getCardStore( { type: 'composer-wallet-inmemory' } );
     let adminConnection;
     let businessNetworkConnection;
     let factory;
     let clock;
 
-    before(() => {
+    before(async () => {
         // Embedded connection used for local testing
         const connectionProfile = {
             name: 'embedded',
-            type: 'embedded'
+            'x-type': 'embedded'
         };
-        // Embedded connection does not need real credentials
-        const credentials = {
-            certificate: 'FAKE CERTIFICATE',
-            privateKey: 'FAKE PRIVATE KEY'
-        };
+        // Generate certificates for use with the embedded connection
+        const credentials = CertificateUtil.generate({ commonName: 'admin' });
 
         // PeerAdmin identity used with the admin connection to deploy business networks
         const deployerMetadata = {
@@ -59,48 +51,43 @@ describe('Perishable Shipping Network', () => {
             roles: [ 'PeerAdmin', 'ChannelAdmin' ]
         };
         const deployerCard = new IdCard(deployerMetadata, connectionProfile);
+        const deployerCardName = 'PeerAdmin';
         deployerCard.setCredentials(credentials);
 
-        const deployerCardName = 'PeerAdmin';
+        // setup admin connection
         adminConnection = new AdminConnection({ cardStore: cardStore });
+        await adminConnection.importCard(deployerCardName, deployerCard);
+        await adminConnection.connect(deployerCardName);
 
         const adminUserName = 'admin';
-        let adminCardName;
-        let businessNetworkDefinition;
+        const businessNetworkDefinition = await BusinessNetworkDefinition.fromDirectory(path.resolve(__dirname, '..'));
 
-        return adminConnection.importCard(deployerCardName, deployerCard).then(() => {
-            return adminConnection.connect(deployerCardName);
-        }).then(() => {
-            businessNetworkConnection = new BusinessNetworkConnection({ cardStore: cardStore });
+        businessNetworkConnection = new BusinessNetworkConnection({ cardStore: cardStore });
 
-            return BusinessNetworkDefinition.fromDirectory(path.resolve(__dirname, '..'));
-        }).then(definition => {
-            businessNetworkDefinition = definition;
-            // Install the Composer runtime for the new business network
-            return adminConnection.install(businessNetworkDefinition.getName());
-        }).then(() => {
-            // Start the business network and configure an network admin identity
-            const startOptions = {
-                networkAdmins: [
-                    {
-                        userName: adminUserName,
-                        enrollmentSecret: 'adminpw'
-                    }
-                ]
-            };
-            return adminConnection.start(businessNetworkDefinition, startOptions);
-        }).then(adminCards => {
-            // Import the network admin identity for us to use
-            adminCardName = `${adminUserName}@${businessNetworkDefinition.getName()}`;
-            return adminConnection.importCard(adminCardName, adminCards.get(adminUserName));
-        }).then(() => {
-            // Connect to the business network using the network admin identity
-            return businessNetworkConnection.connect(adminCardName);
-        }).then(() => {
-            factory = businessNetworkConnection.getBusinessNetwork().getFactory();
-            const setupDemo = factory.newTransaction(namespace, 'SetupDemo');
-            return businessNetworkConnection.submitTransaction(setupDemo);
-        });
+        // Install the Composer runtime for the new business network
+        await adminConnection.install(businessNetworkDefinition);
+
+        // Start the business network and configure an network admin identity
+        const startOptions = {
+            networkAdmins: [
+                {
+                    userName: adminUserName,
+                    enrollmentSecret: 'adminpw'
+                }
+            ]
+        };
+        const adminCards = await adminConnection.start(businessNetworkDefinition.getName(), businessNetworkDefinition.getVersion(), startOptions);
+
+        // Import the network admin identity for us to use
+        const adminCardName = `${adminUserName}@${businessNetworkDefinition.getName()}`;
+        await adminConnection.importCard(adminCardName, adminCards.get(adminUserName));
+
+        // Connect to the business network using the network admin identity
+        await businessNetworkConnection.connect(adminCardName);
+
+        factory = businessNetworkConnection.getBusinessNetwork().getFactory();
+        const setupDemo = factory.newTransaction(namespace, 'SetupDemo');
+        await businessNetworkConnection.submitTransaction(setupDemo);
     });
 
     beforeEach(() => {
@@ -110,6 +97,201 @@ describe('Perishable Shipping Network', () => {
     afterEach(function () {
         clock.restore();
     });
+
+    /******************************************************************************************************/
+    /**********************************Logic.js file function tests below**********************************/
+    /******************************************************************************************************/
+
+    /* Item change tests */
+    describe('#item', () => {
+
+        it('updateItemOwner should change the owner value of the item' , async () => {
+            const item_id = 'I00001';
+            const business_id = 'B003';
+
+            // create the transaction
+            const updateItemOwner = factory.newTransaction(namespace, 'UpdateItemOwner');
+            updateItemOwner.item = factory.newRelationship(namespace, 'Item', item_id);
+            updateItemOwner.newOwner = factory.newRelationship(namespace, 'Business', business_id);
+            await businessNetworkConnection.submitTransaction(updateItemOwner);
+
+            // check the owner has changed
+            const itemRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.Item');
+            const editedItem = await itemRegistry.get(item_id);
+            editedItem.currentOwner.getIdentifier().should.equal(business_id);
+        });
+
+        // it('updateItemRequest should change the quantity of an item request' , function(){
+        //     let result = logic.updateItemRequest();
+        //     //Test the result against expected result here
+
+        // });
+
+        // it('updateItemRequest should change the unit price of an item request' , function(){
+        //     let result = logic.updateItemRequest();
+        //     //Test the result against expected result here
+
+        // });
+
+    });
+
+    /* Contract change tests */
+    describe('Contract updates', function(){
+
+        // it('changeContractStatuses should change the status to \'WAITING_CONFIRMATION\'', async () => {
+        //     let result = logic.changeContractStatuses();
+        //     //Test the result against expected result here
+
+        // });
+
+        it('approveContractChanges should confirm a contract\'s changes', async () => {
+            const employee_id = 'B003_E001';
+            const contract_id = 'C001';
+
+            // create the transaction
+            const approveContractChanges = factory.newTransaction(namespace, 'ApproveContractChanges');
+            approveContractChanges.acceptingEmployee = factory.newRelationship(namespace, 'Employee', employee_id);
+            approveContractChanges.contract = factory.newRelationship(namespace, 'Contract', contract_id);
+            approveContractChanges.contract.approvalStatusSellingBusiness = 'WAITING_CONFIRMATION';
+            approveContractChanges.contract.status = 'WAITING_CONFIRMATION';
+            await businessNetworkConnection.submitTransaction(approveContractChanges);
+
+            // check the contract's approval status has changed
+            const contractRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.Contract');
+            const editedContract = await contractRegistry.get(contract_id);
+            editedContract.status.should.equal('CONFIRMED');
+            editedContract.approvalStatusSellingBusiness.should.equal('CONFIRMED');
+        });
+
+        // it('completeContract should .....', function(){
+        //     let result = logic.completeContract();
+        //     //Test the result against expected result here
+
+        // });
+
+        // it('updateContractArrivalDateTime should change the value of the arrival data and time for the contract', function(){
+        //     let result = logic.updateContractArrivalDateTime();
+        //     //Test the result against expected result here
+
+        // });
+
+    });
+
+    // /* Shipment change tests */
+    // describe('Shipment updates', function(){
+
+    //     it('addShipmentToShipmentList should add a shipment to a contract\'s shipmentList', function(){
+    //         let result = logic.addShipmentToShipmentList();
+    //         //Test the result against expected result here
+
+    //     });
+
+    //     it('removeShipmentToShipmentList should remove a shipment from a contract\'s shipmentList', function(){
+    //         let result = logic.removeShipmentToShipmentList();
+    //         //Test the result against expected result here
+
+
+    //     });
+
+    // });
+
+    // /* itemRequest change tests */
+    // describe('Item Request updates', function(){
+
+    //     it('addItemRequestToRequestedItemsList should add an itemRequest to a contract', function(){
+    //         let result = logic.addItemRequestToRequestedItemsList();
+    //         //Test the result against expected result here
+
+    //     });
+
+    //     it('removeItemRequestFromRequestedItemsList should remove an itemRequest from a contract', function(){
+    //         let result = logic.removeItemRequestFromRequestedItemsList();
+    //         //Test the result against expected result here
+
+    //     });
+
+    // });
+
+    // /* User Info change tests */
+    // describe('User Info updates', function(){
+
+    //     it('updateUserEmail should change a user\'s email address', function(){
+    //         let result = logic.updateUserEmail();
+    //         //Test the result against expected result here
+
+    //     });
+
+    //     it('updateUserPassword should change a user\'s password', function(){
+    //         let result = logic.updateUserPassword();
+    //         //Test the result against expected result here
+
+    //     });
+
+    // });
+
+    // /* Business change tests */
+    // describe('Business updates (Admin Info, Inventory, Employee Management)', function(){
+
+    //     it('updateBusinessInfo should change a business\'s information', function(){
+    //         let result = logic.updateBusinessInfo();
+    //         //Test the result against expected result here
+
+    //     });
+
+    //     it('updateBusinessAccBalance should change the account balance', function(){
+    //         let result = logic.updateBusinessAccBalance();
+    //         //Test the result against expected result here
+
+
+    //     });
+
+    //     it('removeItemFromInventory should remove an item from the inventory of a business', function(){
+    //         let result = logic.removeItemFromInventory();
+    //         //Test the result against expected result here
+
+    //     });
+
+    //     it('addItemToInventory should add an item to the inventory of a business', function(){
+    //         let result = logic.addItemToInventory();
+    //         //Test the result against expected result here
+
+    //     });
+
+    //     it('removeEmployeeFromBusiness should remove an employee from a business', function(){
+    //         let result = logic.removeEmployeeFromBusiness();
+    //         //Test the result against expected result here
+
+    //     });
+
+    //     it('addEmployeeToBusiness should add an employee to a business', function(){
+    //         let result = logic.addEmployeeToBusiness();
+    //         //Test the result against expected result here
+
+    //     });
+
+    // });
+
+    // /* Employee change tests */
+    // describe('Employee Info updates', function(){
+
+    //     it('updateEmployeeInfo should change an employee\'s information', function(){
+    //         let result = logic.updateEmployeeInfo();
+    //         //Test the result against expected result here
+
+    //     });
+
+    //     it('updateEmployeeType should change an employee\'s type of business', function(){
+    //         let result = logic.updateEmployeeType();
+    //         //Test the result against expected result here
+
+    //     });
+
+    // });
+
+
+
+
+
 
     // putting on hold until deployment works first
     /*
