@@ -1,27 +1,22 @@
 namespace org.mat
 
-//Address concept for locations
-concept Address 
-{
-  o String city
-  o String country
-  o String street
-  o String street2 optional
-  o String state optional
-  o String zip
-}
-
-//Status of shipment and order
-enum Status 
+// Status of a shipment
+enum shipmentStatus 
 {
   o IN_TRANSIT
   o ARRIVED
   o CANCELLED
-  o WAITING_CONFIRMATION
-  o CONFIRMED
 }
 
-//Business type
+// Status of a contract
+enum contractStatus
+{
+  o WAITING_CONFIRMATION
+  o CONFIRMED
+  o COMPLETED
+}
+
+// Business type
 enum BusinessType
 {
   o Manufacturer
@@ -29,25 +24,56 @@ enum BusinessType
   o Distributor
 }
 
-//Employee type
+// Employee type
 enum EmployeeType
 {
   o Admin
   o Regular
 }
 
-//Unit of Measure for ItemType
+// Unit of Measure for ItemType
 enum UoM 
 {
   o mL
   o g
 }
 
+// Address concept for locations
+concept Address
+{
+  o String city
+  o String country
+  o String street
+  o String street2 optional
+  o String state optional
+  o String zip optional
+}
+
+// Packages of items to be delivered between businesses
+concept Shipment
+{
+  o shipmentStatus status
+  o Address destinationAddress
+  o Address sourceAddress
+  --> Business carryingBusiness
+  --> Item[] items
+}
+
+// The item that is being requested within a contract
+concept ItemRequest 
+{
+  --> ItemType requestedItem
+  o Double unitPrice
+  o Integer quantity
+}
+
+// An asset medication's colloquial name
 asset ItemType identified by itemTypeName 
 {
   o String itemTypeName
 }
 
+// Physical medicine that a business currently holds
 asset Item identified by itemId
 {
   o String itemId
@@ -57,28 +83,13 @@ asset Item identified by itemId
   --> ItemType itemType
 }
 
-concept Shipment
-{
-  o Status status
-  o Address destinationAddress
-  o Address sourceAddress
-  --> Business currentOwner
-  --> Business carryingBusiness
-  --> Item[] items
-}
-
-concept ItemRequest 
-{
-  o String itemRequestId
-  --> Item requestedItem
-  o Double unitPrice
-  o Integer quantity
-}
-
+// An agreement for shipping goods between two businesses
 asset Contract identified by contractId 
 {
   o String contractId
-  o Status status
+  o contractStatus approvalStatusSellingBusiness
+  o contractStatus approvalStatusBuyingBusiness
+  o contractStatus status
   o DateTime arrivalDateTime
   o Shipment[] shipments optional
   o ItemRequest[] requestedItems
@@ -86,6 +97,7 @@ asset Contract identified by contractId
   --> Business buyingBusiness
 }
 
+// The basic User class that will be using the system
 asset User identified by userEmail 
 {
   o String userEmail
@@ -93,11 +105,7 @@ asset User identified by userEmail
   o String employeeId
 }
 
-participant LogInChecker identified by LogInCheckerId
-{
-  o String LogInCheckerId
-}
-
+// Entities in the network that employees work for
 asset Business identified by businessId 
 {
   o String businessId
@@ -111,6 +119,13 @@ asset Business identified by businessId
   --> Employee[] employees optional
 }
 
+// A string that ensures correct login by users
+participant LoginChecker identified by loginCheckerId
+{
+  o String loginCheckerId
+}
+
+// Participants in a network that create contracts between each other and represent businesses
 participant Employee identified by employeeId
 {
   o String employeeId
@@ -122,20 +137,114 @@ participant Employee identified by employeeId
   --> Business worksFor
 }
 
-//Item Transaction to allow the owner of the item to be changed
-transaction ItemTransaction
+// Allows the owner of an item to be changed
+transaction UpdateItemOwner
 {
-  o Integer itemTransactionId
   --> Business newOwner
   --> Item item
 }
 
-//Shipment Transaction to allow the owner of a shipment to to be changed
-transaction ShipmentTransaction
+// Updates a contract if need be
+abstract transaction UpdateContract
 {
-  o Integer shipmentTransactionId
-  o Shipment shipment
-  --> Business newOwner
+  --> Contract contract
+}
+
+// ALlows the owner of a shipment to to be changed
+transaction UpdateShipment extends UpdateContract
+{
+  --> Business newCarryingBusiness
+  o shipmentStatus newStatus
+  o Integer shipmentIndex
+}
+
+// Bulk loads inventory in
+transaction UpdateItemRequest extends UpdateContract
+{
+  o Integer itemRequestIndex
+  o Double newUnitPrice
+  o Integer newQuantity
+}
+
+// Approves a contract's changes
+transaction ApproveContractChanges extends UpdateContract
+{
+  --> Employee acceptingEmployee
+}
+
+// Complete a contract
+transaction CompleteContract extends UpdateContract
+{
+}
+
+// Updates the arrival time of a shipment on a contract
+transaction UpdateContractArrivalDateTime extends UpdateContract 
+{
+  o DateTime newArrivalDateTime
+}
+
+// Adds a shipment to a contract
+transaction AddShipmentToShipmentList extends UpdateContract
+{
+  o Shipment newShipment
+}
+
+// Removes a shipment in a contract
+transaction RemoveShipmentFromShipmentList extends UpdateContract
+{
+  o Integer shipmentIndex
+}
+
+// Adds an itemRequest to a contract
+transaction AddItemRequestToRequestedItemsList extends UpdateContract
+{
+  o ItemRequest newItemRequest
+}
+
+// Removes an itemRequest from a contract
+transaction RemoveItemRequestFromRequestedItemsList extends UpdateContract
+{
+  o Integer itemRequestindex
+}
+
+// Updates user 
+abstract transaction UpdateUser
+{
+  --> User user
+}
+
+// Updates a user's email
+transaction UpdateUserEmail extends UpdateUser
+{
+  o String newUserEmail
+}
+
+// Update a user's password 
+transaction UpdateUserPassword extends UpdateUser
+{
+  o String newUserPass
+}
+
+// Updates a business 
+abstract transaction UpdateBusiness
+{
+  -->Business business
+}
+
+// Upadates business information
+// business name, point of contact information, business address
+transaction UpdateBusinessInfo extends UpdateBusiness 
+{
+  o String newBusinessName optional
+  o String newPoCName optional
+  o String newPoCEmail optional
+  o Address newAddress optional
+}
+
+// Updates the account balance of a business
+transaction UpdateBusinessAccBalance extends UpdateBusiness
+{
+  o Double newAccBalance
 }
 
 //call to bulk load invenotory from front end
@@ -144,34 +253,51 @@ transaction BulkLoad
   o Item[] items
 }
 
-//Creates a contract
-transaction CreateContract
+// Removes an item from a business's inventory
+transaction RemoveItemFromInventory extends UpdateBusiness
 {
+  -->Item removeItem
 }
 
-//Updates an already created contract
-transaction UpdateContract
+// Adds an item to a business's inventory
+transaction AddItemToInventory extends UpdateBusiness
 {
+  -->Item addItem
 }
 
-//Delete an already deleted contract
-transaction DeleteContract
+// Removing an employee from a business 
+transaction RemoveEmployeeFromBusiness extends UpdateBusiness
 {
+  -->Employee removeEmployee
 }
 
-//Creates a shipment
-transaction CreateShipment
+// Adds an employee to a business
+transaction AddEmployeeToBusiness extends UpdateBusiness
 {
+  -->Employee addEmployee
 }
 
-//Updates an already created shipment
-transaction UpdateShipment
+// Updates an employee
+abstract transaction UpdateEmployee
 {
+  -->Employee employee
 }
 
-//Delete an already deleted shipment
-transaction DeleteShipment
+// Updates an employee's information 
+// name, email, and phone number
+transaction UpdateEmployeeInfo extends UpdateEmployee
 {
+  o String newFirstName optional
+  o String newLastName optional
+  o String newEmail optional
+  o String newPhoneNumber optional
+}
+
+// Updates an employee's type
+// admin, regular
+transaction UpdateEmployeeType extends UpdateEmployeeInfo
+{
+  o EmployeeType newEmployeeType
 }
 
 /**
