@@ -27,8 +27,6 @@ let manufacturer_id = 'BobRoss@gmail.com';
 let shipper_id = 'BobDDoss@gmail.com';
 let distributor_id = 'BobDDoss@gmail.com';
 
-
-//TODO: Verify that cardStore definition is correct and not TOO sketchy
 describe('Medicine Asset Tracking Network', () => {
     // In-memory card store for testing so cards are not persisted to the file system
     const cardStore = require('composer-common').NetworkCardStoreManager.getCardStore( { type: 'composer-wallet-inmemory' } );
@@ -104,173 +102,191 @@ describe('Medicine Asset Tracking Network', () => {
     /**********************************Logic.js file function tests below**********************************/
     /******************************************************************************************************/
 
-    const logic = require('../lib/logic');
-    const assert = require('chai').assert;
-
-
     /* Item change tests */
-    describe('Item Value updates', function(){
+    describe('#item', () => {
 
-        it('updateItemOwner should change the owner value of the item' , function(){
-            let result = logic.updateItemOwner();
-            //Test the result against expected result here (???)
-            //assert.equal(result, );
+        it('updateItemOwner should change the owner value of the item' , async () => {
+            const item_id = 'I00001';
+            const business_id = 'B003';
 
+            // create the transaction
+            const updateItemOwner = factory.newTransaction(namespace, 'UpdateItemOwner');
+            updateItemOwner.item = factory.newRelationship(namespace, 'Item', item_id);
+            updateItemOwner.newOwner = factory.newRelationship(namespace, 'Business', business_id);
+            await businessNetworkConnection.submitTransaction(updateItemOwner);
+
+            // check the owner has changed
+            const itemRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.Item');
+            const editedItem = await itemRegistry.get(item_id);
+            editedItem.currentOwner.getIdentifier().should.equal(business_id);
         });
 
-        it('updateItemRequest should change the quantity of an item request' , function(){
-            let result = logic.updateItemRequest();
-            //Test the result against expected result here
+        // it('updateItemRequest should change the quantity of an item request' , function(){
+        //     let result = logic.updateItemRequest();
+        //     //Test the result against expected result here
 
-        });
+        // });
 
-        it('updateItemRequest should change the unit price of an item request' , function(){
-            let result = logic.updateItemRequest();
-            //Test the result against expected result here
+        // it('updateItemRequest should change the unit price of an item request' , function(){
+        //     let result = logic.updateItemRequest();
+        //     //Test the result against expected result here
 
-        });
+        // });
 
     });
 
     /* Contract change tests */
     describe('Contract updates', function(){
 
-        it('changeContractStatuses should change the status to \'WAITING_CONFIRMATION\'', function(){
-            let result = logic.changeContractStatuses();
-            //Test the result against expected result here
+        // it('changeContractStatuses should change the status to \'WAITING_CONFIRMATION\'', async () => {
+        //     let result = logic.changeContractStatuses();
+        //     //Test the result against expected result here
 
+        // });
+
+        it('approveContractChanges should confirm a contract\'s changes', async () => {
+            const employee_id = 'B003_E001';
+            const contract_id = 'C001';
+
+            // create the transaction
+            const approveContractChanges = factory.newTransaction(namespace, 'ApproveContractChanges');
+            approveContractChanges.acceptingEmployee = factory.newRelationship(namespace, 'Employee', employee_id);
+            approveContractChanges.contract = factory.newRelationship(namespace, 'Contract', contract_id);
+            approveContractChanges.contract.approvalStatusSellingBusiness = 'WAITING_CONFIRMATION';
+            approveContractChanges.contract.status = 'WAITING_CONFIRMATION';
+            await businessNetworkConnection.submitTransaction(approveContractChanges);
+
+            // check the contract's approval status has changed
+            const contractRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.Contract');
+            const editedContract = await contractRegistry.get(contract_id);
+            editedContract.status.should.equal('CONFIRMED');
+            editedContract.approvalStatusSellingBusiness.should.equal('CONFIRMED');
         });
 
-        it('approveContractChanges should confirm a contracts changes\'', function(){
-            let result = logic.approveContractChanges();
-            //Test the result against expected result here
+        // it('completeContract should .....', function(){
+        //     let result = logic.completeContract();
+        //     //Test the result against expected result here
 
-        });
+        // });
 
-        it('completeContract should .....', function(){
-            let result = logic.completeContract();
-            //Test the result against expected result here
+        // it('updateContractArrivalDateTime should change the value of the arrival data and time for the contract', function(){
+        //     let result = logic.updateContractArrivalDateTime();
+        //     //Test the result against expected result here
 
-        });
-
-        it('updateContractArrivalDateTime should change the value of the arrival data and time for the contract', function(){
-            let result = logic.updateContractArrivalDateTime();
-            //Test the result against expected result here
-
-        });
+        // });
 
     });
 
-    /* Shipment change tests */
-    describe('Shipment updates', function(){
+    // /* Shipment change tests */
+    // describe('Shipment updates', function(){
 
-        it('addShipmentToShipmentList should add a shipment to a contract\'s shipmentList', function(){
-            let result = logic.addShipmentToShipmentList();
-            //Test the result against expected result here
+    //     it('addShipmentToShipmentList should add a shipment to a contract\'s shipmentList', function(){
+    //         let result = logic.addShipmentToShipmentList();
+    //         //Test the result against expected result here
 
-        });
+    //     });
 
-        it('removeShipmentToShipmentList should remove a shipment from a contract\'s shipmentList', function(){
-            let result = logic.removeShipmentToShipmentList();
-            //Test the result against expected result here
-
-
-        });
-
-    });
-
-    /* itemRequest change tests */
-    describe('Item Request updates', function(){
-
-        it('addItemRequestToRequestedItemsList should add an itemRequest to a contract', function(){
-            let result = logic.addItemRequestToRequestedItemsList();
-            //Test the result against expected result here
-
-        });
-
-        it('removeItemRequestFromRequestedItemsList should remove an itemRequest from a contract', function(){
-            let result = logic.removeItemRequestFromRequestedItemsList();
-            //Test the result against expected result here
-
-        });
-
-    });
-
-    /* User Info change tests */
-    describe('User Info updates', function(){
-
-        it('updateUserEmail should change a user\'s email address', function(){
-            let result = logic.updateUserEmail();
-            //Test the result against expected result here
-
-        });
-
-        it('updateUserPassword should change a user\'s password', function(){
-            let result = logic.updateUserPassword();
-            //Test the result against expected result here
-
-        });
-
-    });
-
-    /* Business change tests */
-    describe('Business updates (Admin Info, Inventory, Employee Management)', function(){
-
-        it('updateBusinessInfo should change a business\'s information', function(){
-            let result = logic.updateBusinessInfo();
-            //Test the result against expected result here
-
-        });
-
-        it('updateBusinessAccBalance should change the account balance', function(){
-            let result = logic.updateBusinessAccBalance();
-            //Test the result against expected result here
+    //     it('removeShipmentToShipmentList should remove a shipment from a contract\'s shipmentList', function(){
+    //         let result = logic.removeShipmentToShipmentList();
+    //         //Test the result against expected result here
 
 
-        });
+    //     });
 
-        it('removeItemFromInventory should remove an item from the inventory of a business', function(){
-            let result = logic.removeItemFromInventory();
-            //Test the result against expected result here
+    // });
 
-        });
+    // /* itemRequest change tests */
+    // describe('Item Request updates', function(){
 
-        it('addItemToInventory should add an item to the inventory of a business', function(){
-            let result = logic.addItemToInventory();
-            //Test the result against expected result here
+    //     it('addItemRequestToRequestedItemsList should add an itemRequest to a contract', function(){
+    //         let result = logic.addItemRequestToRequestedItemsList();
+    //         //Test the result against expected result here
 
-        });
+    //     });
 
-        it('removeEmployeeFromBusiness should remove an employee from a business', function(){
-            let result = logic.removeEmployeeFromBusiness();
-            //Test the result against expected result here
+    //     it('removeItemRequestFromRequestedItemsList should remove an itemRequest from a contract', function(){
+    //         let result = logic.removeItemRequestFromRequestedItemsList();
+    //         //Test the result against expected result here
 
-        });
+    //     });
 
-        it('addEmployeeToBusiness should add an employee to a business', function(){
-            let result = logic.addEmployeeToBusiness();
-            //Test the result against expected result here
+    // });
 
-        });
+    // /* User Info change tests */
+    // describe('User Info updates', function(){
 
-    });
+    //     it('updateUserEmail should change a user\'s email address', function(){
+    //         let result = logic.updateUserEmail();
+    //         //Test the result against expected result here
 
-    /* Employee change tests */
-    describe('Employee Info updates', function(){
+    //     });
 
-        it('updateEmployeeInfo should change an employee\'s information', function(){
-            let result = logic.updateEmployeeInfo();
-            //Test the result against expected result here
+    //     it('updateUserPassword should change a user\'s password', function(){
+    //         let result = logic.updateUserPassword();
+    //         //Test the result against expected result here
 
-        });
+    //     });
 
-        it('updateEmployeeType should change an employee\'s type of business', function(){
-            let result = logic.updateEmployeeType();
-            //Test the result against expected result here
+    // });
 
-        });
+    // /* Business change tests */
+    // describe('Business updates (Admin Info, Inventory, Employee Management)', function(){
 
-    });
+    //     it('updateBusinessInfo should change a business\'s information', function(){
+    //         let result = logic.updateBusinessInfo();
+    //         //Test the result against expected result here
+
+    //     });
+
+    //     it('updateBusinessAccBalance should change the account balance', function(){
+    //         let result = logic.updateBusinessAccBalance();
+    //         //Test the result against expected result here
+
+
+    //     });
+
+    //     it('removeItemFromInventory should remove an item from the inventory of a business', function(){
+    //         let result = logic.removeItemFromInventory();
+    //         //Test the result against expected result here
+
+    //     });
+
+    //     it('addItemToInventory should add an item to the inventory of a business', function(){
+    //         let result = logic.addItemToInventory();
+    //         //Test the result against expected result here
+
+    //     });
+
+    //     it('removeEmployeeFromBusiness should remove an employee from a business', function(){
+    //         let result = logic.removeEmployeeFromBusiness();
+    //         //Test the result against expected result here
+
+    //     });
+
+    //     it('addEmployeeToBusiness should add an employee to a business', function(){
+    //         let result = logic.addEmployeeToBusiness();
+    //         //Test the result against expected result here
+
+    //     });
+
+    // });
+
+    // /* Employee change tests */
+    // describe('Employee Info updates', function(){
+
+    //     it('updateEmployeeInfo should change an employee\'s information', function(){
+    //         let result = logic.updateEmployeeInfo();
+    //         //Test the result against expected result here
+
+    //     });
+
+    //     it('updateEmployeeType should change an employee\'s type of business', function(){
+    //         let result = logic.updateEmployeeType();
+    //         //Test the result against expected result here
+
+    //     });
+
+    // });
 
 
 
