@@ -22,20 +22,16 @@ async function Parser(bulkLoad){
     const addResources = await getAssetRegistry('org.mat.Item');
     const resources = [];
     const factory = getFactory();
-    const org = 'org.mat';
-
     
     for(var i = 0; i< bulkLoad.items.length; i++){
-        const itemALL = factory.newResource(org, 'Item', bulkLoad.items[i].itemId);
+        const itemALL = factory.newResource('org.mat', 'Item', bulkLoad.items[i].itemId);
         itemALL.itemTypeUoM = bulkLoad.items[i].itemTypeUoM;
         itemALL.amountOfMedication = bulkLoad.items[i].amountOfMedication;
         itemALL.currentOwner = bulkLoad.items[i].currentOwner;
         itemALL.itemType = bulkLoad.items[i].itemType;
         resources.push(itemALL);
     }
-
-    await addResources.addAll(resources);    
-
+        await addResources.addAll(resources);    
 }
 
 /**
