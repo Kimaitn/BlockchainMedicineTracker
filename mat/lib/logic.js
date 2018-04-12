@@ -1,6 +1,27 @@
 'use strict';
 
 /**
+ * Takes in an array of items to be placed on the blockchain for the
+ * @param {org.mat.BulkLoad} bulkLoad - The array of items
+ * @transaction
+ */
+async function Parser(bulkLoad){
+    const addResources = await getAssetRegistry('org.mat.Item');
+    const resources = [];
+    const factory = getFactory();
+    
+    for(var i = 0; i< bulkLoad.items.length; i++){
+        const itemALL = factory.newResource('org.mat', 'Item', bulkLoad.items[i].itemId);
+        itemALL.itemTypeUoM = bulkLoad.items[i].itemTypeUoM;
+        itemALL.amountOfMedication = bulkLoad.items[i].amountOfMedication;
+        itemALL.currentOwner = bulkLoad.items[i].currentOwner;
+        itemALL.itemType = bulkLoad.items[i].itemType;
+        resources.push(itemALL);
+    }
+        await addResources.addAll(resources);
+}
+
+/**
  * Private function that changes the status of a contract to 'WAITING_CONFIRMATION'
  * @param {org.mat.contract} contract - contract whose status is to be changed
  */
@@ -39,6 +60,7 @@ async function updateShipmentCarrier(updateShipment) {
         });
 }
 
+/*global updateItemRequest itemRequestIndex:true, updateShipment:true*/
 /**
  * Changes the quantity or unit price of an item request
  * This will need approval from all participants of the contract
