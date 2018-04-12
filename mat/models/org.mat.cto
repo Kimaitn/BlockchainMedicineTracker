@@ -247,6 +247,12 @@ transaction UpdateBusinessAccBalance extends UpdateBusiness
   o Double newAccBalance
 }
 
+//call to bulk load invenotory from front end
+transaction BulkLoad
+{
+  o Item[] items
+}
+
 // Removes an item from a business's inventory
 transaction RemoveItemFromInventory extends UpdateBusiness
 {
