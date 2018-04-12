@@ -1,20 +1,7 @@
 'use strict';
 
 /**
- * Track the trade of a commodity from one trader to another
- * @param {org.mat.ItemTransaction} itemTransaction - the trade to be processed
- * @transaction
- */
-async function tradeCommodity(itemTransaction) {
-    itemTransaction.item.currentOwner = itemTransaction.newOwner;
-    return getAssetRegistry('org.mat.Item')
-        .then(function (assetRegistry) {
-            return assetRegistry.update(itemTransaction.item);
-        });
-}
-
-/**
- * Adds all the items from the JSON onjects from the front end
+ * Takes in an array of items to be placed on the blockchain for the
  * @param {org.mat.BulkLoad} bulkLoad - The array of items
  * @transaction
  */
