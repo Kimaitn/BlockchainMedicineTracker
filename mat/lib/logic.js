@@ -14,8 +14,8 @@ async function tradeCommodity(itemTransaction) {
 }
 
 /**
- * Track the trade of a commodity from one trader to another
- * @param {org.mat.BulkLoad} bulkLoad - the trade to be processed
+ * Adds all the items from the JSON onjects from the front end
+ * @param {org.mat.BulkLoad} bulkLoad - The array of items
  * @transaction
  */
 async function Parser(bulkLoad){
