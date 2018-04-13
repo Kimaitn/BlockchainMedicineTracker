@@ -9,7 +9,7 @@ async function Parser(bulkLoad){
     const addResources = await getAssetRegistry('org.mat.Item');
     const resources = [];
     const factory = getFactory();
-    
+
     for(var i = 0; i< bulkLoad.items.length; i++){
         const itemALL = factory.newResource('org.mat', 'Item', bulkLoad.items[i].itemId);
         itemALL.itemTypeUoM = bulkLoad.items[i].itemTypeUoM;
@@ -18,7 +18,7 @@ async function Parser(bulkLoad){
         itemALL.itemType = bulkLoad.items[i].itemType;
         resources.push(itemALL);
     }
-        await addResources.addAll(resources);
+    await addResources.addAll(resources);
 }
 
 /**
@@ -51,8 +51,8 @@ async function updateItemOwner(updateItemOwner) {
  * @transaction
  */
 async function updateShipmentCarrier(updateShipment) {
-    updateShipment.contract.shipments[shipmentIndex].carryingBusiness = updateShipment.newCarryingBusiness;
-    updateShipment.contract.shipments[shipmentIndex].status = updateShipment.newStatus;
+    updateShipment.contract.shipments[updateShipment.shipmentIndex].carryingBusiness = updateShipment.newCarryingBusiness;
+    updateShipment.contract.shipments[updateShipment.shipmentIndex].status = updateShipment.newStatus;
     changeContractStatuses(updateShipment.contract);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
@@ -83,10 +83,10 @@ async function updateItemRequest(updateItemRequest) {
  * @transaction
  */
 async function approveContractChanges(approveContractChanges) {
-    if(approveContractChanges.acceptingEmployee === approveContractChanges.contract.sellingBusiness) {
+    if(approveContractChanges.contract.sellingBusiness.employees.indexOf(approveContractChanges.acceptingEmployee) >= 0) {
         approveContractChanges.contract.approvalStatusSellingBusiness = 'CONFIRMED';
     }
-    if(approveContractChanges.acceptingEmployee === approveContractChanges.contract.buyingBusiness) {
+    if(approveContractChanges.contract.buyingBusiness.employees.indexOf(approveContractChanges.acceptingEmployee) >= 0) {
         approveContractChanges.contract.approvalStatusBuyingBusiness = 'CONFIRMED';
     }
     return getAssetRegistry('org.mat.Contract')
@@ -146,7 +146,7 @@ async function addShipmentToShipmentList(addShipmentToShipmentList) {
     addShipmentToShipmentList.contract.shipmentList.addAll([addShipmentToShipmentList.newShipment]);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
-            return assetRegistry.update(updateContractShipmentList.contract);
+            return assetRegistry.update(addShipmentToShipmentList.contract);
         });
 }
 
@@ -155,15 +155,15 @@ async function addShipmentToShipmentList(addShipmentToShipmentList) {
  * @param {org.mat.RemoveShipmentFromShipmentList} removeShipmentFromShipmentList - the contractTransaction to be updated
  * @transaction
  */
-async function removeShipmentToShipmentList(removeShipmentToShipmentList) {
-    removeShipmentToShipmentList.contract.shipmentList =
-        removeShipmentToShipmentList.contract.shipmentList.splice(
-            removeShipmentToShipmentList.shipmentIndex,
+async function removeShipmentFromShipmentList(removeShipmentFromShipmentList) {
+    removeShipmentFromShipmentList.contract.shipmentList =
+        removeShipmentFromShipmentList.contract.shipmentList.splice(
+            removeShipmentFromShipmentList.shipmentIndex,
             1
         );
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
-            return assetRegistry.update(updateContractShipmentList.contract);
+            return assetRegistry.update(removeShipmentFromShipmentList.contract);
         });
 }
 
@@ -176,7 +176,7 @@ async function addItemRequestToRequestedItemsList(addItemRequestToRequestedItems
     addItemRequestToRequestedItemsList.contract.requestedItems = addItemRequestToRequestedItemsList.newItemRequest;
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
-            return assetRegistry.update(updateContractShipmentList.contract);
+            return assetRegistry.update(addItemRequestToRequestedItemsList.contract);
         });
 }
 
@@ -193,7 +193,7 @@ async function removeItemRequestFromRequestedItemsList(removeItemRequestFromRequ
         );
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
-            return assetRegistry.update(updateContractShipmentList.contract);
+            return assetRegistry.update(removeItemRequestFromRequestedItemsList.contract);
         });
 }
 
@@ -230,13 +230,13 @@ async function updateUserPassword(updateUserPassword) {
  */
 async function updateBusinessInfo(updateBusinessInfo) {
     updateBusinessInfo.business.name = updateBusinessInfo.newBusinessName;
-    if(updateBusinessInfo.hasOwnProperty(newPoCName)) {
+    if(updateBusinessInfo.hasOwnProperty('newPoCName')) {
         updateBusinessInfo.business.PoCName = updateBusinessInfo.newPoCName;
     }
-    if(updateBusinessInfo.hasOwnProperty(newPoCEmail)) {
+    if(updateBusinessInfo.hasOwnProperty('newPoCEmail')) {
         updateBusinessInfo.business.PoCEmail = updateBusinessInfo.newPoCEmail;
     }
-    if(updateBusinessInfo.hasOwnProperty(newAddress)) {
+    if(updateBusinessInfo.hasOwnProperty('newAddress')) {
         updateBusinessInfo.business.address = updateBusinessInfo.newAddress;
     }
     return getAssetRegistry('org.mat.Business')
@@ -325,7 +325,7 @@ async function updateEmployeeInfo(updateEmployeeInfo) {
     updateEmployeeInfo.employee.firstName = updateEmployeeInfo.employee.newFirstName;
     updateEmployeeInfo.employee.lastName = updateEmployeeInfo.employee.newLastName;
     updateEmployeeInfo.employee.email = updateEmployeeInfo.employee.newEmail;
-    if(updateEmployeeInfo.hasOwnProperty(newPhoneNumber)) {
+    if(updateEmployeeInfo.hasOwnProperty('newPhoneNumber')) {
         updateEmployeeInfo.employee.phoneNumber = updateEmployeeInfo.employee.newPhoneNumber;
     }
     return getParticipantRegistry('org.mat.Employee')
@@ -380,6 +380,8 @@ async function setupDemo(setupDemo) {
     memployee.phoneNumber = '407-999-9999';
     memployee.worksFor = factory.newRelationship(org, 'Business', 'B001');
 
+    manufacturer.employees = [memployee];
+
     // create user for manufacturer employee
     const muser = factory.newResource(org, 'User', 'BobRoss@gmail.com');
     muser.password = 'BobRoss';
@@ -408,6 +410,8 @@ async function setupDemo(setupDemo) {
     cemployee.employeeType = 'Admin';
     cemployee.phoneNumber = '407-999-9991';
     cemployee.worksFor = factory.newRelationship(org, 'Business', 'B002');
+
+    carrier.employees = [cemployee];
 
     // create user for carrier employee
     const cuser = factory.newResource(org, 'User', 'BobLoss@gmail.com');
@@ -438,6 +442,8 @@ async function setupDemo(setupDemo) {
     demployee.phoneNumber = '407-999-9992';
     demployee.worksFor = factory.newRelationship(org, 'Business', 'B003');
 
+    distributor.employees = [demployee];
+
     // create user for distributor employee
     const duser = factory.newResource(org, 'User', 'BobDDoss@gmail.com');
     duser.password = 'BobDDoss';
@@ -451,6 +457,8 @@ async function setupDemo(setupDemo) {
     demployee2.employeeType = 'Regular';
     demployee2.phoneNumber = '407-999-9993';
     demployee2.worksFor = factory.newRelationship(org, 'Business', 'B003');
+
+    distributor.employees = [demployee2];
 
     // create user for distributor employee
     const duser2 = factory.newResource(org, 'User', 'BobZoss@gmail.com');

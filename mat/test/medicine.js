@@ -143,10 +143,31 @@ describe('Medicine Asset Tracking Network', () => {
         //     //Test the result against expected result here
 
         // });
+        it('updateItemRequest should update the itemRequest in a contract', async () => {
+            const employee_id = 'B003_E001';
+            const contract_id = 'C001';
+
+            // create the transaction
+            const updateItemRequest = factory.newTransaction(namespace, 'UpdateItemRequest');
+            updateItemRequest.itemRequestIndex = 0;
+            updateItemRequest.newUnitPrice = 1;
+            updateItemRequest.newQuantity = 2;
+            updateItemRequest.contract = factory.newRelationship(namespace, 'Contract', contract_id);
+            await businessNetworkConnection.submitTransaction(updateItemRequest);
+
+            // check the contract's approval status has changed
+            const contractRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.Contract');
+            const editedContract = await contractRegistry.get(contract_id);
+            editedContract.status.should.equal('CONFIRMED');
+            editedContract.approvalStatusSellingBusiness.should.equal('CONFIRMED');
+        });
 
         it('approveContractChanges should confirm a contract\'s changes', async () => {
             const employee_id = 'B003_E001';
             const contract_id = 'C001';
+
+            const changeContractStatuses = factory.newTransaction(namespace, 'ChangeContractStatuses');
+            await businessNetworkConnection.submitTransaction(changeContractStatuses);
 
             // create the transaction
             const approveContractChanges = factory.newTransaction(namespace, 'ApproveContractChanges');
@@ -161,6 +182,28 @@ describe('Medicine Asset Tracking Network', () => {
             const editedContract = await contractRegistry.get(contract_id);
             editedContract.status.should.equal('CONFIRMED');
             editedContract.approvalStatusSellingBusiness.should.equal('CONFIRMED');
+        });
+
+        it('approveContractChanges from a different employee should not confirm a contract\'s changes', async () => {
+            const employee_id = 'B002_E001';
+            const contract_id = 'C001';
+
+            const changeContractStatuses = factory.newTransaction(namespace, 'ChangeContractStatuses');
+            await businessNetworkConnection.submitTransaction(changeContractStatuses);
+
+            // create the transaction
+            const approveContractChanges = factory.newTransaction(namespace, 'ApproveContractChanges');
+            approveContractChanges.acceptingEmployee = factory.newRelationship(namespace, 'Employee', employee_id);
+            approveContractChanges.contract = factory.newRelationship(namespace, 'Contract', contract_id);
+            approveContractChanges.contract.approvalStatusSellingBusiness = 'WAITING_CONFIRMATION';
+            approveContractChanges.contract.status = 'WAITING_CONFIRMATION';
+            await businessNetworkConnection.submitTransaction(approveContractChanges);
+
+            // check the contract's approval status has NOT been changed
+            const contractRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.Contract');
+            const editedContract = await contractRegistry.get(contract_id);
+            editedContract.status.should.equal('WAITING_CONFIRMATION');
+            editedContract.approvalStatusSellingBusiness.should.equal('WAITING_CONFIRMATION');
         });
 
         // it('completeContract should .....', function(){
