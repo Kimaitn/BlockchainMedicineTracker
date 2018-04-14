@@ -134,7 +134,7 @@ participant Employee identified by employeeId
   o String email
   o EmployeeType employeeType
   o String phoneNumber optional
-  --> Business worksFor
+  o Business worksFor
 }
 
 // Allows the owner of an item to be changed
