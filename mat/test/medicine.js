@@ -254,16 +254,12 @@ describe('Medicine Asset Tracking Network', () => {
             editedContract.shipments.length.should.equal(0);
         });
 
-    });
 
-    // /* itemRequest change tests */
-    // describe('Item Request updates', function(){
+        // it('addItemRequestToRequestedItemsList should add an itemRequest to a contract', function(){
+        //     let result = logic.addItemRequestToRequestedItemsList();
+        //     //Test the result against expected result here
 
-    //     it('addItemRequestToRequestedItemsList should add an itemRequest to a contract', function(){
-    //         let result = logic.addItemRequestToRequestedItemsList();
-    //         //Test the result against expected result here
-
-    //     });
+        // });
 
     //     it('removeItemRequestFromRequestedItemsList should remove an itemRequest from a contract', function(){
     //         let result = logic.removeItemRequestFromRequestedItemsList();
@@ -271,7 +267,7 @@ describe('Medicine Asset Tracking Network', () => {
 
     //     });
 
-    // });
+    });
 
     // /* User Info change tests */
     // describe('User Info updates', function(){

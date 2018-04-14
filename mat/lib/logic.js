@@ -61,6 +61,23 @@ async function updateShipmentCarrier(updateShipment) {
 }
 
 /**
+ * Updates a shipment's carrier
+ * This will need approval from all participants of the contract
+ * @param {org.mat.ApproveShipments} approveShipments - the shipmentTransaction to be edited
+ * @transaction
+ */
+async function approveShipments(approveShipments) {
+    for(var shipmentIndex in approveShipments.shipmentIndexes) {
+        //TODO item changes owner here
+        approveShipments.contract.shipments[shipmentIndex].status = 'ARRIVED';
+    }
+    return getAssetRegistry('org.mat.Contract')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(approveShipments.contract);
+        });
+}
+
+/**
  * Changes the quantity or unit price of an item request
  * This will need approval from all participants of the contract
  * @param {org.mat.UpdateItemRequest} updateItemRequest - the itemRequestTransaction to be edited
