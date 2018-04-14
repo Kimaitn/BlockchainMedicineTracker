@@ -1,15 +1,25 @@
 'use strict';
 
 /**
+ * Private function that changes the status of a contract to 'WAITING_CONFIRMATION'
+ * @param {org.mat.contract} contract - contract whose status is to be changed
+ */
+function changeContractStatuses(contract) {
+    contract.status = 'WAITING_CONFIRMATION';
+    contract.approvalStatusBuyingBusiness = 'WAITING_CONFIRMATION';
+    contract.approvalStatusSellingBusiness = 'WAITING_CONFIRMATION';
+}
+
+/**
  * Takes in an array of items to be placed on the blockchain for the
  * @param {org.mat.BulkLoad} bulkLoad - The array of items
  * @transaction
  */
-async function Parser(bulkLoad){
+async function bulkLoad(bulkLoad){
     const addResources = await getAssetRegistry('org.mat.Item');
     const resources = [];
     const factory = getFactory();
-    
+
     for(var i = 0; i< bulkLoad.items.length; i++){
         const itemALL = factory.newResource('org.mat', 'Item', bulkLoad.items[i].itemId);
         itemALL.itemTypeUoM = bulkLoad.items[i].itemTypeUoM;
@@ -19,17 +29,7 @@ async function Parser(bulkLoad){
         itemALL.locations = bulkLoad.items[i].locations;
         resources.push(itemALL);
     }
-        await addResources.addAll(resources);
-}
-
-/**
- * Private function that changes the status of a contract to 'WAITING_CONFIRMATION'
- * @param {org.mat.contract} contract - contract whose status is to be changed
- */
-function changeContractStatuses(contract) {
-    contract.status = 'WAITING_CONFIRMATION';
-    contract.approvalStatusBuyingBusiness = 'WAITING_CONFIRMATION';
-    contract.approvalStatusSellingBusiness = 'WAITING_CONFIRMATION';
+    await addResources.addAll(resources);
 }
 
 /**
@@ -56,8 +56,8 @@ async function updateItemOwner(updateItemOwner) {
  * @transaction
  */
 async function updateShipmentCarrier(updateShipment) {
-    updateShipment.contract.shipments[shipmentIndex].carryingBusiness = updateShipment.newCarryingBusiness;
-    updateShipment.contract.shipments[shipmentIndex].status = updateShipment.newStatus;
+    updateShipment.contract.shipments[updateShipment.shipmentIndex].carryingBusiness = updateShipment.newCarryingBusiness;
+    updateShipment.contract.shipments[updateShipment.shipmentIndex].status = updateShipment.newStatus;
     changeContractStatuses(updateShipment.contract);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
@@ -65,7 +65,23 @@ async function updateShipmentCarrier(updateShipment) {
         });
 }
 
-/*global updateItemRequest itemRequestIndex:true, updateShipment:true*/
+/**
+ * Updates a shipment's carrier
+ * This will need approval from all participants of the contract
+ * @param {org.mat.ApproveShipments} approveShipments - the shipmentTransaction to be edited
+ * @transaction
+ */
+async function approveShipments(approveShipments) {
+    approveShipments.shipmentIndexes( (shipmentIndex) => {
+        //TODO item changes owner here
+        approveShipments.contract.shipments[shipmentIndex].status = 'ARRIVED';
+    });
+    return getAssetRegistry('org.mat.Contract')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(approveShipments.contract);
+        });
+}
+
 /**
  * Changes the quantity or unit price of an item request
  * This will need approval from all participants of the contract
@@ -73,9 +89,9 @@ async function updateShipmentCarrier(updateShipment) {
  * @transaction
  */
 async function updateItemRequest(updateItemRequest) {
-    updateItemRequest.contract.requestedItems[itemRequestIndex].unitPrice = updateItemRequest.newUnitPrice;
-    updateItemRequest.contract.requestedItems[itemRequestIndex].quantity = updateItemRequest.newQuantity;
-    changeContractStatuses(updateShipment.contract);
+    updateItemRequest.contract.requestedItems[updateItemRequest.itemRequestIndex].unitPrice = updateItemRequest.newUnitPrice;
+    updateItemRequest.contract.requestedItems[updateItemRequest.itemRequestIndex].quantity = updateItemRequest.newQuantity;
+    changeContractStatuses(updateItemRequest.contract);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateItemRequest.contract);
@@ -88,11 +104,17 @@ async function updateItemRequest(updateItemRequest) {
  * @transaction
  */
 async function approveContractChanges(approveContractChanges) {
-    if(approveContractChanges.acceptingEmployee === approveContractChanges.contract.sellingBusiness) {
+    if(approveContractChanges.contract.sellingBusiness.employees.indexOf(approveContractChanges.acceptingEmployee) >= 0) {
         approveContractChanges.contract.approvalStatusSellingBusiness = 'CONFIRMED';
     }
-    if(approveContractChanges.acceptingEmployee === approveContractChanges.contract.buyingBusiness) {
+    else if(approveContractChanges.contract.buyingBusiness.employees.indexOf(approveContractChanges.acceptingEmployee) >= 0) {
         approveContractChanges.contract.approvalStatusBuyingBusiness = 'CONFIRMED';
+    }
+    if(approveContractChanges.contract.approvalStatusBuyingBusiness === 'CONFIRMED' &&
+        approveContractChanges.contract.approvalStatusBuyingBusiness === 'CONFIRMED'
+    )
+    {
+        approveContractChanges.contract.status = 'CONFIRMED';
     }
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
@@ -151,7 +173,7 @@ async function addShipmentToShipmentList(addShipmentToShipmentList) {
     addShipmentToShipmentList.contract.shipmentList.addAll([addShipmentToShipmentList.newShipment]);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
-            return assetRegistry.update(updateContractShipmentList.contract);
+            return assetRegistry.update(addShipmentToShipmentList.contract);
         });
 }
 
@@ -160,45 +182,49 @@ async function addShipmentToShipmentList(addShipmentToShipmentList) {
  * @param {org.mat.RemoveShipmentFromShipmentList} removeShipmentFromShipmentList - the contractTransaction to be updated
  * @transaction
  */
-async function removeShipmentToShipmentList(removeShipmentToShipmentList) {
-    removeShipmentToShipmentList.contract.shipmentList =
-        removeShipmentToShipmentList.contract.shipmentList.splice(
-            removeShipmentToShipmentList.shipmentIndex,
-            1
-        );
+async function removeShipmentFromShipmentList(removeShipmentFromShipmentList) {
+    removeShipmentFromShipmentList.contract.shipments.splice(
+        removeShipmentFromShipmentList.shipmentIndex,
+        1
+    );
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
-            return assetRegistry.update(updateContractShipmentList.contract);
+            return assetRegistry.update(removeShipmentFromShipmentList.contract);
         });
 }
 
 /**
  * Adds an itemRequest to a contract
- * @param {org.mat.AddItemRequestToRequestedItemsList} addItemRequestToRequestedItemsList - the contractTransaction to be updated
+ * @param {org.mat.AddItemRequestsToRequestedItemsList} addItemRequestsToRequestedItemsList - the contractTransaction to be updated
  * @transaction
  */
-async function addItemRequestToRequestedItemsList(addItemRequestToRequestedItemsList) {
-    addItemRequestToRequestedItemsList.contract.requestedItems = addItemRequestToRequestedItemsList.newItemRequest;
+async function addItemRequestsToRequestedItemsList(addItemRequestsToRequestedItemsList) {
+    addItemRequestsToRequestedItemsList.newItemRequests.forEach((itemRequest) => {
+        addItemRequestsToRequestedItemsList.contract.requestedItems.push(itemRequest);
+    });
+    changeContractStatuses(addItemRequestsToRequestedItemsList.contract);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
-            return assetRegistry.update(updateContractShipmentList.contract);
+            return assetRegistry.update(addItemRequestsToRequestedItemsList.contract);
         });
 }
 
 /**
  * Removes an itemRequest from a contract
- * @param {org.mat.RemoveItemRequestFromRequestedItemsList} removeItemRequestFromRequestedItemsList - the contractTransaction to be updated
+ * @param {org.mat.RemoveItemRequestsFromRequestedItemsList} removeItemRequestsFromRequestedItemsList - the contractTransaction to be updated
  * @transaction
  */
-async function removeItemRequestFromRequestedItemsList(removeItemRequestFromRequestedItemsList) {
-    removeItemRequestFromRequestedItemsList.contract.requestedItems =
-        removeItemRequestFromRequestedItemsList.contract.requestedItems.splice(
-            removeItemRequestFromRequestedItemsList.itemRequestIndex,
+async function removeItemRequestsFromRequestedItemsList(removeItemRequestsFromRequestedItemsList) {
+    removeItemRequestsFromRequestedItemsList.itemRequestIndexes.forEach( (itemRequestIndex) => {
+        removeItemRequestsFromRequestedItemsList.contract.requestedItems.splice(
+            itemRequestIndex,
             1
         );
+    });
+    changeContractStatuses(removeItemRequestsFromRequestedItemsList.contract);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
-            return assetRegistry.update(updateContractShipmentList.contract);
+            return assetRegistry.update(removeItemRequestsFromRequestedItemsList.contract);
         });
 }
 
@@ -235,13 +261,13 @@ async function updateUserPassword(updateUserPassword) {
  */
 async function updateBusinessInfo(updateBusinessInfo) {
     updateBusinessInfo.business.name = updateBusinessInfo.newBusinessName;
-    if(updateBusinessInfo.hasOwnProperty(newPoCName)) {
+    if(updateBusinessInfo.hasOwnProperty('newPoCName')) {
         updateBusinessInfo.business.PoCName = updateBusinessInfo.newPoCName;
     }
-    if(updateBusinessInfo.hasOwnProperty(newPoCEmail)) {
+    if(updateBusinessInfo.hasOwnProperty('newPoCEmail')) {
         updateBusinessInfo.business.PoCEmail = updateBusinessInfo.newPoCEmail;
     }
-    if(updateBusinessInfo.hasOwnProperty(newAddress)) {
+    if(updateBusinessInfo.hasOwnProperty('newAddress')) {
         updateBusinessInfo.business.address = updateBusinessInfo.newAddress;
     }
     return getAssetRegistry('org.mat.Business')
@@ -331,7 +357,7 @@ async function updateEmployeeInfo(updateEmployeeInfo) {
     updateEmployeeInfo.employee.firstName = updateEmployeeInfo.employee.newFirstName;
     updateEmployeeInfo.employee.lastName = updateEmployeeInfo.employee.newLastName;
     updateEmployeeInfo.employee.email = updateEmployeeInfo.employee.newEmail;
-    if(updateEmployeeInfo.hasOwnProperty(newPhoneNumber)) {
+    if(updateEmployeeInfo.hasOwnProperty('newPhoneNumber')) {
         updateEmployeeInfo.employee.phoneNumber = updateEmployeeInfo.employee.newPhoneNumber;
     }
     return getParticipantRegistry('org.mat.Employee')
@@ -386,6 +412,8 @@ async function setupDemo(setupDemo) {
     memployee.phoneNumber = '407-999-9999';
     memployee.worksFor = factory.newRelationship(org, 'Business', 'B001');
 
+    manufacturer.employees = [memployee];
+
     // create user for manufacturer employee
     const muser = factory.newResource(org, 'User', 'BobRoss@gmail.com');
     muser.password = 'BobRoss';
@@ -414,6 +442,8 @@ async function setupDemo(setupDemo) {
     cemployee.employeeType = 'Admin';
     cemployee.phoneNumber = '407-999-9991';
     cemployee.worksFor = factory.newRelationship(org, 'Business', 'B002');
+
+    carrier.employees = [cemployee];
 
     // create user for carrier employee
     const cuser = factory.newResource(org, 'User', 'BobLoss@gmail.com');
@@ -457,6 +487,8 @@ async function setupDemo(setupDemo) {
     demployee2.employeeType = 'Regular';
     demployee2.phoneNumber = '407-999-9993';
     demployee2.worksFor = factory.newRelationship(org, 'Business', 'B003');
+
+    distributor.employees = [demployee, demployee2];
 
     // create user for distributor employee
     const duser2 = factory.newResource(org, 'User', 'BobZoss@gmail.com');
