@@ -404,7 +404,7 @@ async function setupDemo(setupDemo) {
     memployee.email = 'BobRoss@gmail.com';
     memployee.employeeType = 'Admin';
     memployee.phoneNumber = '407-999-9999';
-    memployee.worksFor = manufacturer;
+    memployee.worksFor = manufacturer.businessId;
 
     manufacturer.employees = [memployee];
 
@@ -435,7 +435,7 @@ async function setupDemo(setupDemo) {
     cemployee.email = 'BobLoss@gmail.com';
     cemployee.employeeType = 'Admin';
     cemployee.phoneNumber = '407-999-9991';
-    cemployee.worksFor = carrier;
+    cemployee.worksFor = carrier.businessId;
 
     carrier.employees = [cemployee];
 
@@ -466,7 +466,7 @@ async function setupDemo(setupDemo) {
     demployee.email = 'BobDDoss@gmail.com';
     demployee.employeeType = 'Admin';
     demployee.phoneNumber = '407-999-9992';
-    demployee.worksFor = distributor;
+    demployee.worksFor = distributor.businessId;
 
     // create user for distributor employee
     const duser = factory.newResource(org, 'User', 'BobDDoss@gmail.com');
@@ -480,7 +480,7 @@ async function setupDemo(setupDemo) {
     demployee2.email = 'BobZoss@gmail.com';
     demployee2.employeeType = 'Regular';
     demployee2.phoneNumber = '407-999-9993';
-    demployee2.worksFor = distributor;
+    demployee2.worksFor = distributor.businessId;
 
     distributor.employees = [demployee, demployee2];
 

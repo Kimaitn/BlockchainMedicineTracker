@@ -41,7 +41,7 @@ rule EmployeeCRUDItem
   participant(e): "org.mat.Employee"
   operation: CREATE, READ, UPDATE, DELETE
   resource(i): "org.mat.Item"
-  condition: (e.worksFor == i.currentOwner)
+  condition: (e.worksFor == i.currentOwner.businessId)
   action: ALLOW
   }
 
@@ -51,7 +51,7 @@ rule EmployeeCRUDItem
 //   participant(e): "org.mat.Employee"
 //   operation: READ
 //   resource(i): "org.mat.Item"
-//   condition: (e.worksFor == i.currentOwner)
+//   condition: (e.worksFor == i.currentOwner.businessId)
 //   action: ALLOW
 // }
 
@@ -62,7 +62,7 @@ rule EmployeeCRUDItem
 //   operation: UPDATE
 //   resource(i): "org.mat.Item"
 //   transaction: "org.mat.UpdateItemOwner"
-//   condition: (e.worksFor == i.currentOwner)
+//   condition: (e.worksFor == i.currentOwner.businessId)
 //   action: ALLOW
 // }
 
@@ -72,7 +72,7 @@ rule EmployeeCRUDItem
 //   participant(e): "org.mat.Employee"
 //   operation: CREATE, DELETE
 //   resource(i): "org.mat.Item"
-//   condition: ((e.worksFor == i.currentOwner) && (e.employeeType == "Admin"))
+//   condition: ((e.worksFor == i.currentOwner.businessId) && (e.employeeType == "Admin"))
 //   action: ALLOW
 // }
 
@@ -82,7 +82,7 @@ rule EmployeeCRDContract
   participant(e): "org.mat.Employee"
   operation: CREATE, READ, DELETE
   resource(c): "org.mat.Contract"
-  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  condition: ((e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId))
   action: ALLOW
 }
 
@@ -93,7 +93,7 @@ rule EmployeeUPDATEContractViaUpdateShipment
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.UpdateShipment"
-  condition: ((e.worksFor == c.sellingBusiness))
+  condition: ((e.worksFor == c.sellingBusiness.businessId))
   action: ALLOW
 }
 
@@ -104,7 +104,7 @@ rule EmployeeApproveShipmentViaApproveShipments
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.ApproveShipments"
-  condition: ((e.worksFor == c.sellingBusiness))
+  condition: ((e.worksFor == c.sellingBusiness.businessId))
   action: ALLOW
 }
 
@@ -115,7 +115,7 @@ rule EmployeeUPDATEContractViaUpdateItemRequest
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.UpdateItemRequest"
-  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  condition: ((e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId))
   action: ALLOW
 }
 
@@ -126,7 +126,7 @@ rule AdminEmployeeUPDATEContractViaApproveContractChanges
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.ApproveContractChanges"
-  condition: ((e.employeeType=="Admin") && (e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  condition: ((e.employeeType=="Admin") && (e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId))
   action: ALLOW
 }
 
@@ -137,7 +137,7 @@ rule AdminEmployeeUPDATEContractViaCompleteContract
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.CompleteContract"
-  condition: ((e.employeeType=="Admin") && (e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  condition: ((e.employeeType=="Admin") && (e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId))
   action: ALLOW
 }
 
@@ -148,7 +148,7 @@ rule EmployeeUPDATEContractViaUpdateContractArrivalDateTime
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.UpdateContractArrivalDateTime"
-  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  condition: ((e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId))
   action: ALLOW
 }
 
@@ -159,7 +159,7 @@ rule EmployeeUPDATEContractViaAddShipmentToShipmentList
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.AddShipmentToShipmentList"
-  condition: ((e.worksFor == c.sellingBusiness))
+  condition: ((e.worksFor == c.sellingBusiness.businessId))
   action: ALLOW
 }
 
@@ -170,7 +170,7 @@ rule EmployeeUPDATEContractViaRemoveShipmentFromShipmentList
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.RemoveShipmentFromShipmentList"
-  condition: ((e.worksFor == c.sellingBusiness))
+  condition: ((e.worksFor == c.sellingBusiness.businessId))
   action: ALLOW
 }
 
@@ -181,7 +181,7 @@ rule EmployeeUPDATEContractViaAddItemRequestsToRequestedItemsList
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.AddItemRequestsToRequestedItemsList"
-  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  condition: ((e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId))
   action: ALLOW
 }
 
@@ -192,7 +192,7 @@ rule EmployeeUPDATEContractViaRemoveItemRequestsFromRequestedItems
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.RemoveItemRequestsFromRequestedItemsList"
-  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  condition: ((e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId))
   action: ALLOW
 }
 
@@ -204,7 +204,7 @@ rule EmployeeREADBusiness
   participant(e): "org.mat.Employee" 
   operation: READ
   resource(b): "org.mat.Business"
-  condition: (e.worksFor.businessId == b.businessId)
+  condition: (e.worksFor == b.businessId)
   action: ALLOW
 }
 
@@ -215,7 +215,7 @@ rule EmployeeUPDATEBusinessViaRemoveItemFromInventory
   operation: UPDATE
   resource(b): "org.mat.Business"
   transaction(tx): "org.mat.RemoveItemFromInventory"
-  condition: (e.worksFor == tx.business)
+  condition: (e.worksFor == tx.business.businessId)
   action: ALLOW
 }
 
@@ -226,7 +226,7 @@ rule EmployeeUPDATEBusinessViaAddItemToInventory
   operation: UPDATE
   resource(b): "org.mat.Business"
   transaction(tx): "org.mat.AddItemToInventory"
-  condition: (e.worksFor == tx.business)
+  condition: (e.worksFor == tx.business.businessId)
   action: ALLOW
 }
 
@@ -247,7 +247,7 @@ rule AdminEmployeerRUBusiness
 //   operation: UPDATE
 //   resource(b): "org.mat.Business"
 //   transaction(tx): "org.mat.RemoveEmployeeFromBusiness"
-//   condition: ((e.employeeType == "Admin") && (e.worksFor == tx.business) && (e.worksFor.businessId == b.businessId))
+//   condition: ((e.employeeType == "Admin") && (e.worksFor == tx.business.businessId) && (e.worksFor == b.businessId))
 //   action: ALLOW
 // }
 
@@ -258,7 +258,7 @@ rule AdminEmployeerRUBusiness
 //   operation: UPDATE
 //   resource(b): "org.mat.Business"
 //   transaction(tx): "org.mat.AddEmployeeToBusiness"
-//   condition: ((e.employeeType == "Admin") && (e.worksFor == tx.business) && (e.worksFor.businessId == b.businessId))
+//   condition: ((e.employeeType == "Admin") && (e.worksFor == tx.business.businessId) && (e.worksFor == b.businessId))
 //   action: ALLOW
 // }
 
@@ -269,7 +269,7 @@ rule AdminEmployeerRUBusiness
 //   operation: UPDATE
 //   resource(b): "org.mat.Business"
 //   transaction(tx): "org.mat.UpdateBusinessInfo"
-//   condition: ((e.employeeType == "Admin") && (e.worksFor == tx.business) && (e.worksFor.businessId == b.businessId))
+//   condition: ((e.employeeType == "Admin") && (e.worksFor == tx.business.businessId) && (e.worksFor == b.businessId))
 //   action: ALLOW
 // }
 
@@ -280,7 +280,7 @@ rule AdminEmployeerRUBusiness
 //   operation: UPDATE
 //   resource(b): "org.mat.Business"
 //   transaction(tx): "org.mat.UpdateBusinessAccBalance"
-//   condition: ((e.employeeType == "Admin") && (e.worksFor == tx.business) && (e.worksFor.businessId == b.businessId))
+//   condition: ((e.employeeType == "Admin") && (e.worksFor == tx.business.businessId) && (e.worksFor == b.businessId))
 //   action: ALLOW
 // }
 
