@@ -160,7 +160,6 @@ transaction UpdateShipment extends UpdateContract
   o shipmentStatus newStatus
   o Integer shipmentIndex
 }
-//TODO shipment indes dosent exist
 
 // Allows the owner of a shipment to to be changed
 transaction ApproveShipments extends UpdateContract
