@@ -72,7 +72,7 @@ async function updateShipmentCarrier(updateShipment) {
  * @transaction
  */
 async function approveShipments(approveShipments) {
-    approveShipments.shipmentIndexes( (shipmentIndex) => {
+    approveShipments.shipmentIndexes.forEach((shipmentIndex) => {
         //TODO item changes owner here
         approveShipments.contract.shipments[shipmentIndex].status = 'ARRIVED';
     });
@@ -128,8 +128,9 @@ async function approveContractChanges(approveContractChanges) {
  * @transaction
  */
 function completeContract(completeContract) {
+    const factory = getFactory();
     if(completeContract.contract.approvalStatusSellingBusiness ===
-        completeContract.contract.approvalStatusSellingBusiness ===
+        completeContract.contract.approvalStatusBuyingBusiness ===
         'CONFIRMED')
     {
         return;
@@ -147,6 +148,7 @@ function completeContract(completeContract) {
             
             for(var i =0; i< arrayItems.length; i++){
                 arrayItems[i].locations.push(ship.destinationAddress);
+                arrayItems[i].currentOwner = completeContract.contract.buyingBusiness;
                 var updateItemOwner = factory.newResource('org.mat', 'UpdateItemOwner',completeContract.contract.contractId);
                 updateItemOwner.item = arrayItems[i];
                 updateItemOwner.newOwner = completeContract.contract.buyingBusiness;
