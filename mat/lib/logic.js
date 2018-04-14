@@ -67,7 +67,7 @@ async function updateShipmentCarrier(updateShipment) {
  * @transaction
  */
 async function approveShipments(approveShipments) {
-    approveShipments.shipmentIndexes( (shipmentIndex) => {
+    approveShipments.shipmentIndexes.forEach((shipmentIndex) => {
         //TODO item changes owner here
         approveShipments.contract.shipments[shipmentIndex].status = 'ARRIVED';
     });
