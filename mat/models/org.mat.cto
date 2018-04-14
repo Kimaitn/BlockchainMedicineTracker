@@ -152,12 +152,18 @@ abstract transaction UpdateContract
   --> Contract contract
 }
 
-// ALlows the owner of a shipment to to be changed
+// Allows the owner of a shipment to to be changed
 transaction UpdateShipment extends UpdateContract
 {
   --> Business newCarryingBusiness
   o shipmentStatus newStatus
   o Integer shipmentIndex
+}
+
+// Allows the owner of a shipment to to be changed
+transaction ApproveShipments extends UpdateContract
+{
+  o Integer[] shipmentIndexes
 }
 
 // Bulk loads inventory in
@@ -198,15 +204,15 @@ transaction RemoveShipmentFromShipmentList extends UpdateContract
 }
 
 // Adds an itemRequest to a contract
-transaction AddItemRequestToRequestedItemsList extends UpdateContract
+transaction AddItemRequestsToRequestedItemsList extends UpdateContract
 {
-  o ItemRequest newItemRequest
+  o ItemRequest[] newItemRequests
 }
 
 // Removes an itemRequest from a contract
-transaction RemoveItemRequestFromRequestedItemsList extends UpdateContract
+transaction RemoveItemRequestsFromRequestedItemsList extends UpdateContract
 {
-  o Integer itemRequestindex
+  o Integer[] itemRequestindexes
 }
 
 // Updates user 
