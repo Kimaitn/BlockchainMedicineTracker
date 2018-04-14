@@ -88,12 +88,12 @@ rule EmployeeCRDContract
 
 rule EmployeeUPDATEContractViaUpdateShipment
 {
-  description: "Allow ANY employee to UPDATE a contract that belongs to their business via the UpdateShipment transaction"
+  description: "Allow ANY SELLING business employee to UPDATE a contract that belongs to their business via the UpdateShipment transaction"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.UpdateShipment"
-  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  condition: ((e.worksFor == c.sellingBusiness))
   action: ALLOW
 }
 
@@ -143,23 +143,23 @@ rule EmployeeUPDATEContractViaUpdateContractArrivalDateTime
 
 rule EmployeeUPDATEContractViaAddShipmentToShipmentList
 {
-  description: "Allow ANY employee to UPDATE a contract that belongs to their business via the AddShipmentToShipmentList transaction"
+  description: "Allow ANY SELLING business employee to UPDATE a contract that belongs to their business via the AddShipmentToShipmentList transaction"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.AddShipmentToShipmentList"
-  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  condition: ((e.worksFor == c.sellingBusiness))
   action: ALLOW
 }
 
 rule EmployeeUPDATEContractViaRemoveShipmentFromShipmentList
 {
-  description: "Allow ANY employee to UPDATE a contract that belongs to their business via the RemoveShipmentFromShipmentList transaction"
+  description: "Allow ANY SELLING business employee to UPDATE a contract that belongs to their business via the RemoveShipmentFromShipmentList transaction"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.RemoveShipmentFromShipmentList"
-  condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
+  condition: ((e.worksFor == c.sellingBusiness))
   action: ALLOW
 }
 
