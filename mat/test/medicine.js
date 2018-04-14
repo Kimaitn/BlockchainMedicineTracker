@@ -146,64 +146,77 @@ describe('Medicine Asset Tracking Network', () => {
         it('updateItemRequest should update the itemRequest in a contract', async () => {
             const employee_id = 'B003_E001';
             const contract_id = 'C001';
+            const itemRequestIndex = 0;
 
             // create the transaction
             const updateItemRequest = factory.newTransaction(namespace, 'UpdateItemRequest');
-            updateItemRequest.itemRequestIndex = 0;
+            updateItemRequest.itemRequestIndex = itemRequestIndex;
             updateItemRequest.newUnitPrice = 1;
             updateItemRequest.newQuantity = 2;
             updateItemRequest.contract = factory.newRelationship(namespace, 'Contract', contract_id);
             await businessNetworkConnection.submitTransaction(updateItemRequest);
 
-            // check the contract's approval status has changed
+            // check the contract's itemRequest has been changed
+            // unitPrice 14.2 -> 1
+            // newQuantity 1 -> 2
             const contractRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.Contract');
             const editedContract = await contractRegistry.get(contract_id);
-            editedContract.status.should.equal('CONFIRMED');
-            editedContract.approvalStatusSellingBusiness.should.equal('CONFIRMED');
+            editedContract.requestedItems[itemRequestIndex].unitPrice.should.equal(1);
+            editedContract.requestedItems[itemRequestIndex].quantity.should.equal(2);
+            editedContract.approvalStatusSellingBusiness.should.equal('WAITING_CONFIRMATION');
+            editedContract.approvalStatusBuyingBusiness.should.equal('WAITING_CONFIRMATION');
+            editedContract.status.should.equal('WAITING_CONFIRMATION');
         });
 
-        it('approveContractChanges should confirm a contract\'s changes', async () => {
-            const employee_id = 'B003_E001';
+        it('approveContractChanges should confirm a sellingBusiness\'s contract\'s changes', async () => {
+            const employee_id = 'B001_E001';
             const contract_id = 'C001';
-
-            const changeContractStatuses = factory.newTransaction(namespace, 'ChangeContractStatuses');
-            await businessNetworkConnection.submitTransaction(changeContractStatuses);
 
             // create the transaction
             const approveContractChanges = factory.newTransaction(namespace, 'ApproveContractChanges');
             approveContractChanges.acceptingEmployee = factory.newRelationship(namespace, 'Employee', employee_id);
             approveContractChanges.contract = factory.newRelationship(namespace, 'Contract', contract_id);
-            approveContractChanges.contract.approvalStatusSellingBusiness = 'WAITING_CONFIRMATION';
-            approveContractChanges.contract.status = 'WAITING_CONFIRMATION';
             await businessNetworkConnection.submitTransaction(approveContractChanges);
 
-            // check the contract's approval status has changed
+            // check the contract's sellingBusiness status has changed
+            // because the BuyingBusiness has not been changed, the status is still not confirmed!
             const contractRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.Contract');
             const editedContract = await contractRegistry.get(contract_id);
-            editedContract.status.should.equal('CONFIRMED');
             editedContract.approvalStatusSellingBusiness.should.equal('CONFIRMED');
+            editedContract.status.should.equal('WAITING_CONFIRMATION');
         });
 
         it('approveContractChanges from a different employee should not confirm a contract\'s changes', async () => {
             const employee_id = 'B002_E001';
             const contract_id = 'C001';
 
-            const changeContractStatuses = factory.newTransaction(namespace, 'ChangeContractStatuses');
-            await businessNetworkConnection.submitTransaction(changeContractStatuses);
-
             // create the transaction
             const approveContractChanges = factory.newTransaction(namespace, 'ApproveContractChanges');
             approveContractChanges.acceptingEmployee = factory.newRelationship(namespace, 'Employee', employee_id);
             approveContractChanges.contract = factory.newRelationship(namespace, 'Contract', contract_id);
-            approveContractChanges.contract.approvalStatusSellingBusiness = 'WAITING_CONFIRMATION';
-            approveContractChanges.contract.status = 'WAITING_CONFIRMATION';
             await businessNetworkConnection.submitTransaction(approveContractChanges);
 
             // check the contract's approval status has NOT been changed
             const contractRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.Contract');
             const editedContract = await contractRegistry.get(contract_id);
+            editedContract.approvalStatusBuyingBusiness.should.equal('WAITING_CONFIRMATION');
             editedContract.status.should.equal('WAITING_CONFIRMATION');
-            editedContract.approvalStatusSellingBusiness.should.equal('WAITING_CONFIRMATION');
+        });
+
+        it('approveContractChanges should confirm a buyingBusiness\'s contract\'s changes', async () => {
+            const employee_id = 'B003_E001';
+            const contract_id = 'C001';
+
+            // create the transaction
+            const approveContractChanges = factory.newTransaction(namespace, 'ApproveContractChanges');
+            approveContractChanges.acceptingEmployee = factory.newRelationship(namespace, 'Employee', employee_id);
+            approveContractChanges.contract = factory.newRelationship(namespace, 'Contract', contract_id);
+            await businessNetworkConnection.submitTransaction(approveContractChanges);
+
+            // check the contract's sellingBusiness && overall status has changed
+            const contractRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.Contract');
+            const editedContract = await contractRegistry.get(contract_id);
+            editedContract.status.should.equal('CONFIRMED');
         });
 
         // it('completeContract should .....', function(){
@@ -218,25 +231,30 @@ describe('Medicine Asset Tracking Network', () => {
 
         // });
 
+        // it('addShipmentToShipmentList should add a shipment to a contract\'s shipmentList', function(){
+        //     let result = logic.addShipmentToShipmentList();
+        //     //Test the result against expected result here
+
+        // });
+
+        it('removeShipmentFromShipmentList should remove a shipment from a contract\'s shipmentList', async () => {
+            const employee_id = 'B003_E001';
+            const contract_id = 'C001';
+
+            // create the transaction
+            const removeShipmentFromShipmentList = factory.newTransaction(namespace, 'RemoveShipmentFromShipmentList');
+            removeShipmentFromShipmentList.contract = factory.newRelationship(namespace, 'Contract', contract_id);
+            removeShipmentFromShipmentList.shipmentIndex = 0;
+            await businessNetworkConnection.submitTransaction(removeShipmentFromShipmentList);
+
+            // check the contract's stasuses have changed and the shipment has been removed
+            // Went from 1 shipment to 0 shipments in the contract
+            const contractRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.Contract');
+            const editedContract = await contractRegistry.get(contract_id);
+            editedContract.shipments.length.should.equal(0);
+        });
+
     });
-
-    // /* Shipment change tests */
-    // describe('Shipment updates', function(){
-
-    //     it('addShipmentToShipmentList should add a shipment to a contract\'s shipmentList', function(){
-    //         let result = logic.addShipmentToShipmentList();
-    //         //Test the result against expected result here
-
-    //     });
-
-    //     it('removeShipmentToShipmentList should remove a shipment from a contract\'s shipmentList', function(){
-    //         let result = logic.removeShipmentToShipmentList();
-    //         //Test the result against expected result here
-
-
-    //     });
-
-    // });
 
     // /* itemRequest change tests */
     // describe('Item Request updates', function(){

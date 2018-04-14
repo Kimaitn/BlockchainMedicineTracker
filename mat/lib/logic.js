@@ -60,7 +60,6 @@ async function updateShipmentCarrier(updateShipment) {
         });
 }
 
-/*global updateItemRequest itemRequestIndex:true, updateShipment:true*/
 /**
  * Changes the quantity or unit price of an item request
  * This will need approval from all participants of the contract
@@ -68,9 +67,9 @@ async function updateShipmentCarrier(updateShipment) {
  * @transaction
  */
 async function updateItemRequest(updateItemRequest) {
-    updateItemRequest.contract.requestedItems[itemRequestIndex].unitPrice = updateItemRequest.newUnitPrice;
-    updateItemRequest.contract.requestedItems[itemRequestIndex].quantity = updateItemRequest.newQuantity;
-    changeContractStatuses(updateShipment.contract);
+    updateItemRequest.contract.requestedItems[updateItemRequest.itemRequestIndex].unitPrice = updateItemRequest.newUnitPrice;
+    updateItemRequest.contract.requestedItems[updateItemRequest.itemRequestIndex].quantity = updateItemRequest.newQuantity;
+    changeContractStatuses(updateItemRequest.contract);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateItemRequest.contract);
@@ -86,8 +85,14 @@ async function approveContractChanges(approveContractChanges) {
     if(approveContractChanges.contract.sellingBusiness.employees.indexOf(approveContractChanges.acceptingEmployee) >= 0) {
         approveContractChanges.contract.approvalStatusSellingBusiness = 'CONFIRMED';
     }
-    if(approveContractChanges.contract.buyingBusiness.employees.indexOf(approveContractChanges.acceptingEmployee) >= 0) {
+    else if(approveContractChanges.contract.buyingBusiness.employees.indexOf(approveContractChanges.acceptingEmployee) >= 0) {
         approveContractChanges.contract.approvalStatusBuyingBusiness = 'CONFIRMED';
+    }
+    if(approveContractChanges.contract.approvalStatusBuyingBusiness === 'CONFIRMED' &&
+        approveContractChanges.contract.approvalStatusBuyingBusiness === 'CONFIRMED'
+    )
+    {
+        approveContractChanges.contract.status = 'CONFIRMED';
     }
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
@@ -156,11 +161,10 @@ async function addShipmentToShipmentList(addShipmentToShipmentList) {
  * @transaction
  */
 async function removeShipmentFromShipmentList(removeShipmentFromShipmentList) {
-    removeShipmentFromShipmentList.contract.shipmentList =
-        removeShipmentFromShipmentList.contract.shipmentList.splice(
-            removeShipmentFromShipmentList.shipmentIndex,
-            1
-        );
+    removeShipmentFromShipmentList.contract.shipments.splice(
+        removeShipmentFromShipmentList.shipmentIndex,
+        1
+    );
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(removeShipmentFromShipmentList.contract);
@@ -186,11 +190,10 @@ async function addItemRequestToRequestedItemsList(addItemRequestToRequestedItems
  * @transaction
  */
 async function removeItemRequestFromRequestedItemsList(removeItemRequestFromRequestedItemsList) {
-    removeItemRequestFromRequestedItemsList.contract.requestedItems =
-        removeItemRequestFromRequestedItemsList.contract.requestedItems.splice(
-            removeItemRequestFromRequestedItemsList.itemRequestIndex,
-            1
-        );
+    removeItemRequestFromRequestedItemsList.contract.requestedItems.splice(
+        removeItemRequestFromRequestedItemsList.itemRequestIndex,
+        1
+    );
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(removeItemRequestFromRequestedItemsList.contract);
@@ -442,8 +445,6 @@ async function setupDemo(setupDemo) {
     demployee.phoneNumber = '407-999-9992';
     demployee.worksFor = factory.newRelationship(org, 'Business', 'B003');
 
-    distributor.employees = [demployee];
-
     // create user for distributor employee
     const duser = factory.newResource(org, 'User', 'BobDDoss@gmail.com');
     duser.password = 'BobDDoss';
@@ -458,7 +459,7 @@ async function setupDemo(setupDemo) {
     demployee2.phoneNumber = '407-999-9993';
     demployee2.worksFor = factory.newRelationship(org, 'Business', 'B003');
 
-    distributor.employees = [demployee2];
+    distributor.employees = [demployee, demployee2];
 
     // create user for distributor employee
     const duser2 = factory.newResource(org, 'User', 'BobZoss@gmail.com');
