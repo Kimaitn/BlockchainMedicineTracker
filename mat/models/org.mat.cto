@@ -202,15 +202,15 @@ transaction RemoveShipmentFromShipmentList extends UpdateContract
 }
 
 // Adds an itemRequest to a contract
-transaction AddItemRequestToRequestedItemsList extends UpdateContract
+transaction AddItemRequestsToRequestedItemsList extends UpdateContract
 {
-  o ItemRequest newItemRequest
+  o ItemRequest[] newItemRequests
 }
 
 // Removes an itemRequest from a contract
-transaction RemoveItemRequestFromRequestedItemsList extends UpdateContract
+transaction RemoveItemRequestsFromRequestedItemsList extends UpdateContract
 {
-  o Integer itemRequestindex
+  o Integer[] itemRequestindexes
 }
 
 // Updates user 
