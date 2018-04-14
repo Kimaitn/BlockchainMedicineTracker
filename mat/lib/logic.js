@@ -16,6 +16,7 @@ async function Parser(bulkLoad){
         itemALL.amountOfMedication = bulkLoad.items[i].amountOfMedication;
         itemALL.currentOwner = bulkLoad.items[i].currentOwner;
         itemALL.itemType = bulkLoad.items[i].itemType;
+        itemALL.locations = bulkLoad.items[i].locations;
         resources.push(itemALL);
     }
         await addResources.addAll(resources);
@@ -38,6 +39,10 @@ function changeContractStatuses(contract) {
  */
 async function updateItemOwner(updateItemOwner) {
     updateItemOwner.item.currentOwner = updateItemOwner.newOwner;
+    if(updateItemOwner.address!=null)
+        updateItemOwner.item.locations.push(updateItemOwner.newAddress);
+    else
+        updateItemOwner.item.locations.push(updateItemOwner.newOwner.address);
     return getAssetRegistry('org.mat.Item')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateItemOwner.item);
@@ -302,6 +307,7 @@ async function removeEmployeeFromBusiness(removeEmployeeFromBusiness) {
             return assetRegistry.update(removeEmployeeFromBusiness.business);
         });
 }
+//TODO delete employee 
 
 /**
  * Adds an employee to a business
@@ -466,6 +472,7 @@ async function setupDemo(setupDemo) {
     item.amountOfMedication = 400;
     item.currentOwner = factory.newRelationship(org, 'Business', 'B001');
     item.itemType = factory.newRelationship(org, 'ItemType', 'Adderall');
+    item.locations = item.currentOwner.address;
 
     // create the contract
     const contract = factory.newResource(org, 'Contract', 'C001');
