@@ -104,17 +104,10 @@ async function updateItemRequest(updateItemRequest) {
  * @transaction
  */
 async function approveContractChanges(approveContractChanges) {
-<<<<<<< Updated upstream
     if(approveContractChanges.contract.sellingBusiness.employees.indexOf(approveContractChanges.acceptingEmployee) >= 0) {
         approveContractChanges.contract.approvalStatusSellingBusiness = 'CONFIRMED';
     }
     else if(approveContractChanges.contract.buyingBusiness.employees.indexOf(approveContractChanges.acceptingEmployee) >= 0) {
-=======
-    if(approveContractChanges.acceptingEmployee.worksFor === approveContractChanges.contract.sellingBusiness) {
-        approveContractChanges.contract.approvalStatusSellingBusiness = 'CONFIRMED';
-    }
-    if(approveContractChanges.acceptingEmployee.worksFor === approveContractChanges.contract.buyingBusiness) {
->>>>>>> Stashed changes
         approveContractChanges.contract.approvalStatusBuyingBusiness = 'CONFIRMED';
     }
     if(approveContractChanges.contract.approvalStatusBuyingBusiness === 'CONFIRMED' &&
