@@ -174,24 +174,24 @@ rule EmployeeUPDATEContractViaRemoveShipmentFromShipmentList
   action: ALLOW
 }
 
-rule EmployeeUPDATEContractViaAddItemRequestToRequestedItems
+rule EmployeeUPDATEContractViaAddItemRequestsToRequestedItemsList
 {
   description: "Allow ANY employee to UPDATE a contract that belongs to their business via the AddItemRequestToRequestedItems transaction"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(c): "org.mat.Contract"
-  transaction: "org.mat.AddItemRequestToRequestedItemsList"
+  transaction: "org.mat.AddItemRequestsToRequestedItemsList"
   condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
   action: ALLOW
 }
 
-rule EmployeeUPDATEContractViaRemoveItemRequestFromRequestedItems
+rule EmployeeUPDATEContractViaRemoveItemRequestsFromRequestedItems
 {
   description: "Allow ANY employee to UPDATE a contract that belongs to their business via the RemoveItemRequestFromRequestedItems transaction"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(c): "org.mat.Contract"
-  transaction: "org.mat.RemoveItemRequestFromRequestedItemsList"
+  transaction: "org.mat.RemoveItemRequestsFromRequestedItemsList"
   condition: ((e.worksFor == c.sellingBusiness) || (e.worksFor == c.buyingBusiness))
   action: ALLOW
 }

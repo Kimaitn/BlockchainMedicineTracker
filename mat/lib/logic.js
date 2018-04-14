@@ -1,11 +1,21 @@
 'use strict';
 
 /**
+ * Private function that changes the status of a contract to 'WAITING_CONFIRMATION'
+ * @param {org.mat.contract} contract - contract whose status is to be changed
+ */
+function changeContractStatuses(contract) {
+    contract.status = 'WAITING_CONFIRMATION';
+    contract.approvalStatusBuyingBusiness = 'WAITING_CONFIRMATION';
+    contract.approvalStatusSellingBusiness = 'WAITING_CONFIRMATION';
+}
+
+/**
  * Takes in an array of items to be placed on the blockchain for the
  * @param {org.mat.BulkLoad} bulkLoad - The array of items
  * @transaction
  */
-async function Parser(bulkLoad){
+async function bulkLoad(bulkLoad){
     const addResources = await getAssetRegistry('org.mat.Item');
     const resources = [];
     const factory = getFactory();
@@ -19,16 +29,6 @@ async function Parser(bulkLoad){
         resources.push(itemALL);
     }
     await addResources.addAll(resources);
-}
-
-/**
- * Private function that changes the status of a contract to 'WAITING_CONFIRMATION'
- * @param {org.mat.contract} contract - contract whose status is to be changed
- */
-function changeContractStatuses(contract) {
-    contract.status = 'WAITING_CONFIRMATION';
-    contract.approvalStatusBuyingBusiness = 'WAITING_CONFIRMATION';
-    contract.approvalStatusSellingBusiness = 'WAITING_CONFIRMATION';
 }
 
 /**
@@ -67,10 +67,10 @@ async function updateShipmentCarrier(updateShipment) {
  * @transaction
  */
 async function approveShipments(approveShipments) {
-    for(var shipmentIndex in approveShipments.shipmentIndexes) {
+    approveShipments.shipmentIndexes( (shipmentIndex) => {
         //TODO item changes owner here
         approveShipments.contract.shipments[shipmentIndex].status = 'ARRIVED';
-    }
+    });
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(approveShipments.contract);
@@ -190,30 +190,36 @@ async function removeShipmentFromShipmentList(removeShipmentFromShipmentList) {
 
 /**
  * Adds an itemRequest to a contract
- * @param {org.mat.AddItemRequestToRequestedItemsList} addItemRequestToRequestedItemsList - the contractTransaction to be updated
+ * @param {org.mat.AddItemRequestsToRequestedItemsList} addItemRequestsToRequestedItemsList - the contractTransaction to be updated
  * @transaction
  */
-async function addItemRequestToRequestedItemsList(addItemRequestToRequestedItemsList) {
-    addItemRequestToRequestedItemsList.contract.requestedItems = addItemRequestToRequestedItemsList.newItemRequest;
+async function addItemRequestsToRequestedItemsList(addItemRequestsToRequestedItemsList) {
+    addItemRequestsToRequestedItemsList.newItemRequests.forEach((itemRequest) => {
+        addItemRequestsToRequestedItemsList.contract.requestedItems.push(itemRequest);
+    });
+    changeContractStatuses(addItemRequestsToRequestedItemsList.contract);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
-            return assetRegistry.update(addItemRequestToRequestedItemsList.contract);
+            return assetRegistry.update(addItemRequestsToRequestedItemsList.contract);
         });
 }
 
 /**
  * Removes an itemRequest from a contract
- * @param {org.mat.RemoveItemRequestFromRequestedItemsList} removeItemRequestFromRequestedItemsList - the contractTransaction to be updated
+ * @param {org.mat.RemoveItemRequestsFromRequestedItemsList} removeItemRequestsFromRequestedItemsList - the contractTransaction to be updated
  * @transaction
  */
-async function removeItemRequestFromRequestedItemsList(removeItemRequestFromRequestedItemsList) {
-    removeItemRequestFromRequestedItemsList.contract.requestedItems.splice(
-        removeItemRequestFromRequestedItemsList.itemRequestIndex,
-        1
-    );
+async function removeItemRequestsFromRequestedItemsList(removeItemRequestsFromRequestedItemsList) {
+    removeItemRequestsFromRequestedItemsList.itemRequestIndexes.forEach( (itemRequestIndex) => {
+        removeItemRequestsFromRequestedItemsList.contract.requestedItems.splice(
+            itemRequestIndex,
+            1
+        );
+    });
+    changeContractStatuses(removeItemRequestsFromRequestedItemsList.contract);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
-            return assetRegistry.update(removeItemRequestFromRequestedItemsList.contract);
+            return assetRegistry.update(removeItemRequestsFromRequestedItemsList.contract);
         });
 }
 

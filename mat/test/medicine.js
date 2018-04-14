@@ -255,11 +255,28 @@ describe('Medicine Asset Tracking Network', () => {
         });
 
 
-        // it('addItemRequestToRequestedItemsList should add an itemRequest to a contract', function(){
-        //     let result = logic.addItemRequestToRequestedItemsList();
-        //     //Test the result against expected result here
+        it('addItemRequestsToRequestedItemsList should add itemRequests to a contract', async () => {
+            const employee_id = 'B003_E001';
+            const contract_id = 'C001';
 
-        // });
+            // create the transaction
+            const addItemRequestsToRequestedItemsList = factory.newTransaction(namespace, 'AddItemRequestsToRequestedItemsList');
+            const itemRequest = factory.newConcept(namespace, 'ItemRequest');
+            itemRequest.requestedItem = factory.newRelationship(namespace, 'ItemType', 'Adderall');
+            itemRequest.unitPrice = 2;
+            itemRequest.quantity = 100;
+            addItemRequestsToRequestedItemsList.newItemRequests = [itemRequest];
+            addItemRequestsToRequestedItemsList.contract = factory.newRelationship(namespace, 'Contract', contract_id);
+            await businessNetworkConnection.submitTransaction(addItemRequestsToRequestedItemsList);
+
+            // check the contract's stasuses have changed and the requestedItems have been added to the contract
+            // Went from 1 request to 2 in the contract
+            const contractRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.Contract');
+            const editedContract = await contractRegistry.get(contract_id);
+            editedContract.requestedItems.length.should.equal(2);
+            editedContract.status.should.equal('WAITING_CONFIRMATION');
+
+        });
 
     //     it('removeItemRequestFromRequestedItemsList should remove an itemRequest from a contract', function(){
     //         let result = logic.removeItemRequestFromRequestedItemsList();
