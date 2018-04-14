@@ -528,41 +528,17 @@ async function setupDemo(setupDemo) {
 
     contract.shipments = [shipment];
 
-    // add the manufacturer
-    const manufacturerRegistry = await getAssetRegistry(org + '.Business');
-    await manufacturerRegistry.addAll([manufacturer]);
+    // add the businesses
+    const businessRegistry = await getAssetRegistry(org + '.Business');
+    await businessRegistry.addAll([manufacturer, carrier, distributor]);
 
-    // add the memployee
-    const memployeeRegistry = await getParticipantRegistry(org + '.Employee');
-    await memployeeRegistry.addAll([memployee]);
+    // add the employees
+    const employeeRegistry = await getParticipantRegistry(org + '.Employee');
+    await employeeRegistry.addAll([memployee, cemployee, demployee, demployee2]);
 
-    // add the memployee user
-    const muserRegistry = await getAssetRegistry(org + '.User');
-    await muserRegistry.addAll([muser]);
-
-    // add the carrier
-    const carrierRegistry = await getAssetRegistry(org + '.Business');
-    await carrierRegistry.addAll([carrier]);
-
-    // add the cemployee
-    const cemployeeRegistry = await getParticipantRegistry(org + '.Employee');
-    await cemployeeRegistry.addAll([cemployee]);
-
-    // add the cemployee user
-    const cuserRegistry = await getAssetRegistry(org + '.User');
-    await cuserRegistry.addAll([cuser]);
-
-    // add the distributor
-    const distributorRegistry = await getAssetRegistry(org + '.Business');
-    await distributorRegistry.addAll([distributor]);
-
-    // add the demployee
-    const demployeeRegistry = await getParticipantRegistry(org + '.Employee');
-    await demployeeRegistry.addAll([demployee]);
-
-    // add the cemployee user
-    const duserRegistry = await getAssetRegistry(org + '.User');
-    await duserRegistry.addAll([duser]);
+    // add the users
+    const userRegistry = await getAssetRegistry(org + '.User');
+    await userRegistry.addAll([muser, cuser, duser, duser2]);
 
     // add the itemType
     const itemTypeRegistry = await getAssetRegistry(org + '.ItemType');
