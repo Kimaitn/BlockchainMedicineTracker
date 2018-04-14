@@ -88,11 +88,22 @@ rule EmployeeCRDContract
 
 rule EmployeeUPDATEContractViaUpdateShipment
 {
-  description: "Allow ANY SELLING business employee to UPDATE a contract that belongs to their business via the UpdateShipment transaction"
+  description: "Allow ANY employee to UPDATE a contract that belongs to their business via the UpdateShipment transaction"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.UpdateShipment"
+  condition: ((e.worksFor == c.sellingBusiness))
+  action: ALLOW
+}
+
+rule EmployeeApproveShipmentViaApproveShipments
+{
+  description: "Allow SELLING business employee to APPROVE shipments that that have arrived via the UpdateShipment transaction"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(c): "org.mat.Contract"
+  transaction: "org.mat.ApproveShipments"
   condition: ((e.worksFor == c.sellingBusiness))
   action: ALLOW
 }
