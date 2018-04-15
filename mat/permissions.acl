@@ -41,7 +41,7 @@ rule EmployeeCRUDItem
   participant(e): "org.mat.Employee"
   operation: CREATE, READ, UPDATE, DELETE
   resource(i): "org.mat.Item"
-  condition: (e.worksFor == i.currentOwner.businessId)
+  condition: (e.worksFor == i.currentOwner)
   action: ALLOW
   }
 
@@ -51,7 +51,7 @@ rule EmployeeCRUDItem
 //   participant(e): "org.mat.Employee"
 //   operation: READ
 //   resource(i): "org.mat.Item"
-//   condition: (e.worksFor == i.currentOwner.businessId)
+//   condition: (e.worksFor == i.currentOwner)
 //   action: ALLOW
 // }
 
@@ -62,7 +62,7 @@ rule EmployeeCRUDItem
 //   operation: UPDATE
 //   resource(i): "org.mat.Item"
 //   transaction: "org.mat.UpdateItemOwner"
-//   condition: (e.worksFor == i.currentOwner.businessId)
+//   condition: (e.worksFor == i.currentOwner)
 //   action: ALLOW
 // }
 
@@ -72,7 +72,7 @@ rule EmployeeCRUDItem
 //   participant(e): "org.mat.Employee"
 //   operation: CREATE, DELETE
 //   resource(i): "org.mat.Item"
-//   condition: ((e.worksFor == i.currentOwner.businessId) && (e.employeeType == "Admin"))
+//   condition: ((e.worksFor == i.currentOwner) && (e.employeeType == "Admin"))
 //   action: ALLOW
 // }
 
