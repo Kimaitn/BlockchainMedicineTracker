@@ -197,7 +197,7 @@ async function updateContractArrivalDateTime(updateContractArrivalDateTime) {
  * @transaction
  */
 async function addShipmentToShipmentList(addShipmentToShipmentList) {
-    addShipmentToShipmentList.contract.shipmentList.addAll([addShipmentToShipmentList.newShipment]);
+    addShipmentToShipmentList.contract.shipments.push(addShipmentToShipmentList.newShipment);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(addShipmentToShipmentList.contract);
