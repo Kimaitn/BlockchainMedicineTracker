@@ -11,6 +11,18 @@ function changeContractStatuses(contract) {
 }
 
 /**
+ * Private function that changes the status of a contract to 'WAITING_CONFIRMATION'
+ * @param {org.mat.Employee} employee - contract whose status is to be changed
+ */
+function changeEmployeeEmail(employee, newEmail){
+    employee.email = newEmail;
+    return getParticipantRegistry('org.mat.Employee')
+       .then(function (participantRegistry){
+           return partcipantRegistry.update(employee);
+       });
+}
+
+/**
  * Takes in an array of items to be placed on the blockchain for the
  * @param {org.mat.BulkLoad} bulkLoad - The array of items
  * @transaction
@@ -250,6 +262,9 @@ async function removeItemRequestsFromRequestedItemsList(removeItemRequestsFromRe
  */
 async function updateUserEmail(updateUserEmail) {
     updateUserEmail.user.userEmail = updateUserEmail.newUserEmail;
+    const registry = await getParticipantRegistry('org.mat.Employee');
+    const employee = await registry.get(updateUserEmail.user.employeeId);
+    changeEmployeeEmail(employee, updateUserEmail.newUserEmail);
     return getAssetRegistry('org.mat.User')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateUserEmail.user);
@@ -383,11 +398,11 @@ async function addEmployeeToBusiness(addEmployeeToBusiness) {
 * @transaction
 */
 async function updateEmployeeInfo(updateEmployeeInfo) {
-    updateEmployeeInfo.employee.firstName = updateEmployeeInfo.employee.newFirstName;
-    updateEmployeeInfo.employee.lastName = updateEmployeeInfo.employee.newLastName;
-    updateEmployeeInfo.employee.email = updateEmployeeInfo.employee.newEmail;
+    updateEmployeeInfo.employee.firstName = updateEmployeeInfo.newFirstName;
+    updateEmployeeInfo.employee.lastName = updateEmployeeInfo.newLastName;
+    updateEmployeeInfo.employee.email = updateEmployeeInfo.newEmail;
     if(updateEmployeeInfo.hasOwnProperty('newPhoneNumber')) {
-        updateEmployeeInfo.employee.phoneNumber = updateEmployeeInfo.employee.newPhoneNumber;
+        updateEmployeeInfo.employee.phoneNumber = updateEmployeeInfo.newPhoneNumber;
     }
     return getParticipantRegistry('org.mat.Employee')
         .then(function (assetRegistry) {
