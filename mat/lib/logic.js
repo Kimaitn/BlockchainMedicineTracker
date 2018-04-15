@@ -449,6 +449,7 @@ async function setupDemo(setupDemo) {
     mAddress.zip = 'D02 Y754';
     manufacturer.address = mAddress;
     manufacturer.accountBalance = 23.03;
+    manufacturer.inventory = [];
 
     // create employee for manufacturer
     const memployee = factory.newResource(org, 'Employee', 'B001_E001');
@@ -511,6 +512,7 @@ async function setupDemo(setupDemo) {
     dAddress.zip = '02895';
     distributor.address = dAddress;
     distributor.accountBalance = 645.64;
+    distributor.inventory = [];
 
     // create employee for distributor
     const demployee = factory.newResource(org, 'Employee', 'B003_E001');
@@ -552,6 +554,9 @@ async function setupDemo(setupDemo) {
     item.currentOwner = factory.newRelationship(org, 'Business', 'B001');
     item.itemType = factory.newRelationship(org, 'ItemType', 'Adderall');
     item.locations = [manufacturer.address];
+
+    // add the item to the manufacturer's inventory
+    manufacturer.inventory.push(item);
 
     // create the contract
     const contract = factory.newResource(org, 'Contract', 'C001');
@@ -601,6 +606,7 @@ async function setupDemo(setupDemo) {
     // add the item
     const itemRegistry = await getAssetRegistry(org + '.Item');
     await itemRegistry.addAll([item]);
+
 
     // add the itemRequest - are now concepts
     //const itemRequestRegistry = await getAssetRegistry(org + '.ItemRequest');
