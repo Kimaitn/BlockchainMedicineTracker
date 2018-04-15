@@ -416,7 +416,7 @@ async function updateEmployeeInfo(updateEmployeeInfo) {
 * @transaction
 */
 async function updateEmployeeType(updateEmployeeType) {
-    updateEmployeeType.employee.employeeType = updateEmployeeType.employee.newEmployeeType;
+    updateEmployeeType.employee.employeeType = updateEmployeeType.newEmployeeType;
     return getParticipantRegistry('org.mat.Employee')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateEmployeeType.employee);
