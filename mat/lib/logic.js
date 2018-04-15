@@ -147,10 +147,10 @@ function completeContract(completeContract) {
             var arrayItems = shipment.items;
             arrayItems.forEach(function(items){
                 items.locations.push(shipment.destinationAddress);
-                items.currentOwner = completeContract.contract.buyingBusiness;
+                items.currentOwner = completeContract.contract.buyingBusiness.businessId;
                 var updateItemOwner = factory.newResource('org.mat', 'UpdateItemOwner',completeContract.contract.contractId);
                 updateItemOwner.item = items;
-                updateItemOwner.newOwner = completeContract.contract.buyingBusiness;
+                updateItemOwner.newOwner = completeContract.contract.buyingBusiness.businessId;
                 getAssetRegistry('org.mat.Item')
                     .then(function (assetRegistry) {
                         return assetRegistry.update(updateItemOwner.item);
@@ -520,7 +520,7 @@ async function setupDemo(setupDemo) {
     const item = factory.newResource(org, 'Item', 'I00001');
     item.itemTypeUoM = 'g';
     item.amountOfMedication = 400;
-    item.currentOwner = factory.newRelationship(org, 'Business', 'B001');
+    item.currentOwner = manufacturer.businessId;
     item.itemType = factory.newRelationship(org, 'ItemType', 'Adderall');
     item.locations = [manufacturer.address];
 

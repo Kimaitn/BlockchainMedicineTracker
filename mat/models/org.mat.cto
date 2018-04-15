@@ -79,7 +79,7 @@ asset Item identified by itemId
   o String itemId
   o UoM itemTypeUoM
   o Double amountOfMedication
-  --> Business currentOwner
+  o String currentOwner
   --> ItemType itemType
   o Address[] locations
 }
@@ -141,7 +141,7 @@ participant Employee identified by employeeId
 // Allows the owner of an item to be changed
 transaction UpdateItemOwner
 {
-  --> Business newOwner
+  o String newOwner
   --> Item item
   o Address newAddress optional
 }
