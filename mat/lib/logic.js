@@ -344,6 +344,10 @@ async function addItemToInventory(addItemToInventory) {
  * @transaction
  */
 async function removeEmployeeFromBusiness(removeEmployeeFromBusiness) {
+    getParticipantRegistry('org.mat.Employee')
+        .then(function (participantRegistry) {
+            return participantRegistry.remove(removeEmployeeFromBusiness.removeEmployee);
+        });
     var index = removeEmployeeFromBusiness.business.employees.indexOf(removeEmployeeFromBusiness.removeEmployee);
     if(index>-1) {
         removeEmployeeFromBusiness.business.employees.splice(index, 1);
