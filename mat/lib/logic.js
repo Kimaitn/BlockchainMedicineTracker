@@ -148,8 +148,6 @@ function completeContract(completeContract) {
             arrayItems.forEach(function(items){
                 items.locations.push(shipment.destinationAddress);
                 items.currentOwner = completeContract.contract.buyingBusiness.businessId;
-                var updateItemOwner = factory.newResource('org.mat', 'UpdateItemOwner',completeContract.contract.contractId);
-                updateItemOwner.item = items;
                 getAssetRegistry('org.mat.Item')
                     .then(function (assetRegistry) {
                         return assetRegistry.update(updateItemOwner.item);
@@ -328,20 +326,16 @@ async function removeItemFromInventory(removeItemFromInventory) {
  * @transaction
  */
 async function addItemToInventory(addItemToInventory) {
-    const factory = getFactory();
+    addItemToInventory.addItem.currentOwner = addItemToInventory.business.businessId;
+    getAssetRegistry('org.mat.Item')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(addItemToInventory.addItem);
+        });
     addItemToInventory.business.inventory.push(addItemToInventory.addItem);
     return getAssetRegistry('org.mat.Business')
         .then(function (assetRegistry) {
             return assetRegistry.update(addItemToInventory.business);
         });
-        addItemToInventory.addItem.currentOwner = addItemToInventory.business.businessId;
-        var updateItemOwner = factory.newResource('org.mat', 'UpdateItemOwner',addItemToInventory.business.businessId);
-            updateItemOwner.item = addItemToInventory.addItem;
-            updateItemOwner.newOwner = addItemToInventory.business.businessId;
-            getAssetRegistry('org.mat.Item')
-                .then(function (assetRegistry) {
-                    return assetRegistry.update(updateItemOwner.item);
-                });
 }
 
 /**
