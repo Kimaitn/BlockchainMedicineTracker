@@ -51,10 +51,13 @@ async function bulkLoad(bulkLoad){
  */
 async function updateItemOwner(updateItemOwner) {
     updateItemOwner.item.currentOwner = updateItemOwner.newOwner;
-    if(updateItemOwner.address!=null)
+    if(updateItemOwner.newAddress!=null)
         updateItemOwner.item.locations.push(updateItemOwner.newAddress);
-    else
-        updateItemOwner.item.locations.push(updateItemOwner.newOwner.address);
+    else{
+        const registry = await getAssetRegistry('org.mat.Business');
+        const owner = await registry.get(updateItemOwner.newOwner);
+        updateItemOwner.item.locations.push(owner.address);
+    }
     return getAssetRegistry('org.mat.Item')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateItemOwner.item);
