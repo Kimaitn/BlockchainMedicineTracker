@@ -212,7 +212,7 @@ transaction AddItemRequestsToRequestedItemsList extends UpdateContract
 // Removes an itemRequest from a contract
 transaction RemoveItemRequestsFromRequestedItemsList extends UpdateContract
 {
-  o Integer[] itemRequestindexes
+  o Integer[] itemRequestIndexes
 }
 
 // Updates user 
