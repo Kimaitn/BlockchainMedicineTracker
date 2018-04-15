@@ -50,9 +50,8 @@ concept Address
 }
 
 // Packages of items to be delivered between businesses
-concept Shipment 
+concept Shipment
 {
- // o Integer shipmentIndex
   o shipmentStatus status
   o Address destinationAddress
   o Address sourceAddress
