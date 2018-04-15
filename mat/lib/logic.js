@@ -365,6 +365,11 @@ async function removeEmployeeFromBusiness(removeEmployeeFromBusiness) {
  * @transaction
  */
 async function addEmployeeToBusiness(addEmployeeToBusiness) {
+    addEmployeeToBusiness.addEmployee.worksFor = addEmployeeToBusiness.business.businessId;
+    getParticipantRegistry('org.mat.Employee')
+        .then(function (participantRegistry) {
+            return participantRegistry.update(addEmployeeToBusiness.addEmployee);
+        });
     addEmployeeToBusiness.business.employees.push(addEmployeeToBusiness.addEmployee);
     return getAssetRegistry('org.mat.Business')
         .then(function (assetRegistry) {
