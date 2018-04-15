@@ -81,6 +81,7 @@ asset Item identified by itemId
   o Double amountOfMedication
   --> Business currentOwner
   --> ItemType itemType
+  o Address[] locations
 }
 
 // An agreement for shipping goods between two businesses
@@ -113,7 +114,7 @@ asset Business identified by businessId
   o BusinessType businessType
   o String PoCName optional
   o String PoCEmail optional
-  o Address address optional
+  o Address address 
   o Double accountBalance
   --> Item[] inventory optional
   --> Employee[] employees optional
@@ -142,6 +143,7 @@ transaction UpdateItemOwner
 {
   --> Business newOwner
   --> Item item
+  o Address newAddress optional
 }
 
 // Updates a contract if need be
