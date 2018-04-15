@@ -11,18 +11,6 @@ function changeContractStatuses(contract) {
 }
 
 /**
- * Private function that changes the status of a contract to 'WAITING_CONFIRMATION'
- * @param {org.mat.Employee} employee - contract whose status is to be changed
- */
-function changeEmployeeEmail(employee, newEmail){
-    employee.email = newEmail;
-    return getParticipantRegistry('org.mat.Employee')
-       .then(function (participantRegistry){
-           return partcipantRegistry.update(employee);
-       });
-}
-
-/**
  * Takes in an array of items to be placed on the blockchain for the
  * @param {org.mat.BulkLoad} bulkLoad - The array of items
  * @transaction
@@ -264,14 +252,17 @@ async function removeItemRequestsFromRequestedItemsList(removeItemRequestsFromRe
  * @transaction
  */
 async function updateUserEmail(updateUserEmail) {
-    updateUserEmail.user.userEmail = updateUserEmail.newUserEmail;
-    const registry = await getParticipantRegistry('org.mat.Employee');
-    const employee = await registry.get(updateUserEmail.user.employeeId);
-    changeEmployeeEmail(employee, updateUserEmail.newUserEmail);
-    return getAssetRegistry('org.mat.User')
-        .then(function (assetRegistry) {
-            return assetRegistry.update(updateUserEmail.user);
-        });
+    const factory = getFactory();
+    const updateUser = factory.newResource('org.mat', 'User', updateUserEmail.newUserEmail);
+    updateUser.password = updateUserEmail.user.password;
+  	updateUser.employeeId = updateUserEmail.user.employeeId;
+    const userRegistry = await getAssetRegistry('org.mat.User');
+    await userRegistry.remove(updateUserEmail.user);
+    await userRegistry.add(updateUser);
+    const employeeRegistry = await getParticipantRegistry('org.mat.Employee');
+    const employee = await employeeRegistry.get(updateUser.employeeId);
+    employee.email = updateUserEmail.newUserEmail;
+    await employeeRegistry.update(employee);
 }
 
 /**
