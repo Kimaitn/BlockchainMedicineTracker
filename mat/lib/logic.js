@@ -143,20 +143,19 @@ function completeContract(completeContract) {
         completeContract.contract.status = 'COMPLETED';
         const shipments = completeContract.contract.shipments;
           
-        shipments.forEach(function(ship){
-            var arrayItems = ship.items;
-            
-            for(var i =0; i< arrayItems.length; i++){
-                arrayItems[i].locations.push(ship.destinationAddress);
-                arrayItems[i].currentOwner = completeContract.contract.buyingBusiness;
+        shipments.forEach(function(shipment){
+            var arrayItems = shipment.items;
+            arrayItems.forEach(function(items){
+                items.locations.push(shipment.destinationAddress);
+                items.currentOwner = completeContract.contract.buyingBusiness;
                 var updateItemOwner = factory.newResource('org.mat', 'UpdateItemOwner',completeContract.contract.contractId);
-                updateItemOwner.item = arrayItems[i];
+                updateItemOwner.item = items;
                 updateItemOwner.newOwner = completeContract.contract.buyingBusiness;
                 getAssetRegistry('org.mat.Item')
                     .then(function (assetRegistry) {
                         return assetRegistry.update(updateItemOwner.item);
-                    });
-            }
+                });
+            });
         });
     }
     else {
@@ -516,10 +515,9 @@ async function setupDemo(setupDemo) {
 
     // create itemType
     const itemType = factory.newResource(org, 'ItemType', 'Adderall');
-    
+
     // create item
     const item = factory.newResource(org, 'Item', 'I00001');
-    const iAddress = factory.newConcept(org, 'Address');
     item.itemTypeUoM = 'g';
     item.amountOfMedication = 400;
     item.currentOwner = factory.newRelationship(org, 'Business', 'B001');
