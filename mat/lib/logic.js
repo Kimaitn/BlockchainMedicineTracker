@@ -263,6 +263,12 @@ async function updateUserEmail(updateUserEmail) {
     const employee = await employeeRegistry.get(updateUser.employeeId);
     employee.email = updateUserEmail.newUserEmail;
     await employeeRegistry.update(employee);
+    const businessRegistry = await getAssetRegistry('org.mat.Business');
+    const business = await businessRegistry.get(employee.worksFor);
+    if(business.PoCEmail === updateUserEmail.user.userEmail){
+        business.PoCEmail = updateUserEmail.newUserEmail;
+        await businessRegistry.update(business);
+    }
 }
 
 /**
