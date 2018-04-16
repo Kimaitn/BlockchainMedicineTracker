@@ -5,7 +5,6 @@
  * @param {org.mat.contract} contract - contract whose status is to be changed
  */
 function changeContractStatuses(contract) {
-    contract.status = 'WAITING_CONFIRMATION';
     contract.approvalStatusBuyingBusiness = 'WAITING_CONFIRMATION';
     contract.approvalStatusSellingBusiness = 'WAITING_CONFIRMATION';
 }
@@ -122,7 +121,7 @@ async function approveContractChanges(approveContractChanges) {
         approveContractChanges.contract.approvalStatusBuyingBusiness = 'CONFIRMED';
     }
     if(approveContractChanges.contract.approvalStatusBuyingBusiness === 'CONFIRMED' &&
-        approveContractChanges.contract.approvalStatusBuyingBusiness === 'CONFIRMED'
+        approveContractChanges.contract.approvalStatusSellingBusiness === 'CONFIRMED'
     )
     {
         approveContractChanges.contract.status = 'CONFIRMED';
@@ -140,12 +139,6 @@ async function approveContractChanges(approveContractChanges) {
  */
 function completeContract(completeContract) {
     const factory = getFactory();
-    if(completeContract.contract.approvalStatusSellingBusiness ===
-        completeContract.contract.approvalStatusBuyingBusiness ===
-        'CONFIRMED')
-    {
-        return;
-    }
     if(completeContract.contract.shipments.every((shipment) => {
         return shipment.status === 'ARRIVED';
     }))
