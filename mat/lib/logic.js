@@ -226,6 +226,7 @@ async function updateContractArrivalDateTime(updateContractArrivalDateTime) {
  */
 async function addShipmentToShipmentList(addShipmentToShipmentList) {
     addShipmentToShipmentList.contract.shipments.push(addShipmentToShipmentList.newShipment);
+    changeContractStatuses(addShipmentToShipmentList.contract);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(addShipmentToShipmentList.contract);
@@ -242,6 +243,7 @@ async function removeShipmentFromShipmentList(removeShipmentFromShipmentList) {
         removeShipmentFromShipmentList.shipmentIndex,
         1
     );
+    changeContractStatuses(removeShipmentFromShipmentList.contract);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(removeShipmentFromShipmentList.contract);
