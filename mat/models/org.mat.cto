@@ -142,6 +142,7 @@ participant Employee identified by employeeId
 transaction UpdateItemOwner
 {
   o String newOwner
+  --> Business currentOwner
   --> Item item
   o Address newAddress optional
 }

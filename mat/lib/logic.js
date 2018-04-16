@@ -38,12 +38,20 @@ async function bulkLoad(bulkLoad){
  * @transaction
  */
 async function updateItemOwner(updateItemOwner) {
+    const businessRegistry = await getAssetRegistry('org.mat.Business');
+    var index = updateItemOwner.currentOwner.inventory.indexOf(updateItemOwner.item);
+    if(index>-1) {
+        updateItemOwner.currentOwner.inventory.splice(index, 1);
+    }
+    const newBusiness = await businessRegistry.get(updateItemOwner.newOwner);
+    newBusiness.inventory.push(updateItemOwner.item);
+    await businessRegistry.updateAll([updateItemOwner.currentOwner, newBusiness]);
     updateItemOwner.item.currentOwner = updateItemOwner.newOwner;
-    if(updateItemOwner.newAddress!=null)
+    if(updateItemOwner.newAddress!==null){
         updateItemOwner.item.locations.push(updateItemOwner.newAddress);
+    }
     else{
-        const registry = await getAssetRegistry('org.mat.Business');
-        const owner = await registry.get(updateItemOwner.newOwner);
+        const owner = await businessRegistry.get(updateItemOwner.newOwner);
         updateItemOwner.item.locations.push(owner.address);
     }
     return getAssetRegistry('org.mat.Item')
@@ -138,14 +146,12 @@ function completeContract(completeContract) {
     {
         return;
     }
-    
     if(completeContract.contract.shipments.every((shipment) => {
         return shipment.status === 'ARRIVED';
     }))
     {
         completeContract.contract.status = 'COMPLETED';
         const shipments = completeContract.contract.shipments;
-          
         shipments.forEach(function(shipment){
             var arrayItems = shipment.items;
             arrayItems.forEach(function(items){
@@ -154,7 +160,7 @@ function completeContract(completeContract) {
                 getAssetRegistry('org.mat.Item')
                     .then(function (assetRegistry) {
                         return assetRegistry.update(updateItemOwner.item);
-                });
+                    });
             });
         });
     }
@@ -255,7 +261,7 @@ async function updateUserEmail(updateUserEmail) {
     const factory = getFactory();
     const updateUser = factory.newResource('org.mat', 'User', updateUserEmail.newUserEmail);
     updateUser.password = updateUserEmail.user.password;
-  	updateUser.employeeId = updateUserEmail.user.employeeId;
+    updateUser.employeeId = updateUserEmail.user.employeeId;
     const userRegistry = await getAssetRegistry('org.mat.User');
     await userRegistry.remove(updateUserEmail.user);
     await userRegistry.add(updateUser);
@@ -372,7 +378,6 @@ async function removeEmployeeFromBusiness(removeEmployeeFromBusiness) {
             return assetRegistry.update(removeEmployeeFromBusiness.business);
         });
 }
-//TODO delete employee 
 
 /**
  * Adds an employee to a business
