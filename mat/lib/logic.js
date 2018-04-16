@@ -133,29 +133,67 @@ async function approveContractChanges(approveContractChanges) {
 }
 
 /**
+ * Upadates status of contract to Cancelled
+ * @param {org.mat.CancelContract} cancelContract - the contractTransaction to be cancelled
+ * @transaction
+ */
+async function cancelContract(cancelContract) {
+    if(cancelContract.contract.status === 'CONFIRMED' || cancelContract.contract.status === 'COMPLETED'){
+        return;
+    }
+    else{
+        if(cancelContract.contract.sellingBusiness.employees.indexOf(cancelContract.acceptingEmployee) >= 0) {
+            cancelContract.contract.approvalStatusSellingBusiness = 'CANCELLED';
+            cancelContract.contract.status = 'CANCELLED';
+        }
+        else if(cancelContract.contract.buyingBusiness.employees.indexOf(cancelContract.acceptingEmployee) >= 0) {
+            cancelContract.contract.approvalStatusBuyingBusiness = 'CANCELLED';
+            cancelContract.contract.status = 'CANCELLED';
+        }
+        return getAssetRegistry('org.mat.Contract')
+            .then(function (assetRegistry) {
+                if(cancelContract.contract.approvalStatusBuyingBusiness === 'CANCELLED' &&
+                cancelContract.contract.approvalStatusSellingBusiness === 'CANCELLED'
+                )
+                {
+                    return assetRegistry.remove(cancelContract.contract);
+                }
+                else{
+                    return assetRegistry.update(cancelContract.contract);
+                }
+            });
+    }
+}
+
+/**
  * Confirms a contract's changes
  * @param {org.mat.CompleteContract} completeContract - the contractTransaction to be approved
  * @transaction
  */
 function completeContract(completeContract) {
     const factory = getFactory();
-    if(completeContract.contract.shipments.every((shipment) => {
-        return shipment.status === 'ARRIVED';
-    }))
+    if(completeContract.contract.approvalStatusBuyingBusiness === 'CONFIRMED' &&
+        completeContract.contract.approvalStatusSellingBusiness === 'CONFIRMED'
+    )
     {
-        completeContract.contract.status = 'COMPLETED';
-        const shipments = completeContract.contract.shipments;
-        shipments.forEach(function(shipment){
-            var arrayItems = shipment.items;
-            arrayItems.forEach(function(items){
-                items.locations.push(shipment.destinationAddress);
-                items.currentOwner = completeContract.contract.buyingBusiness.businessId;
-                getAssetRegistry('org.mat.Item')
-                    .then(function (assetRegistry) {
-                        return assetRegistry.update(updateItemOwner.item);
-                    });
+        if(completeContract.contract.shipments.every((shipment) => {
+            return shipment.status === 'ARRIVED';
+        }))
+        {
+            completeContract.contract.status = 'COMPLETED';
+            const shipments = completeContract.contract.shipments;
+            shipments.forEach(function(shipment){
+                var arrayItems = shipment.items;
+                arrayItems.forEach(function(items){
+                    items.locations.push(shipment.destinationAddress);
+                    items.currentOwner = completeContract.contract.buyingBusiness.businessId;
+                    getAssetRegistry('org.mat.Item')
+                        .then(function (assetRegistry) {
+                            return assetRegistry.update(updateItemOwner.item);
+                        });
+                });
             });
-        });
+        }
     }
     else {
         return;

@@ -14,6 +14,7 @@ enum contractStatus
   o WAITING_CONFIRMATION
   o CONFIRMED
   o COMPLETED
+  o CANCELLED
 }
 
 // Business type
@@ -177,6 +178,12 @@ transaction UpdateItemRequest extends UpdateContract
 
 // Approves a contract's changes
 transaction ApproveContractChanges extends UpdateContract
+{
+  --> Employee acceptingEmployee
+}
+
+// Cancel a contract
+transaction  CancelContract extends UpdateContract
 {
   --> Employee acceptingEmployee
 }
