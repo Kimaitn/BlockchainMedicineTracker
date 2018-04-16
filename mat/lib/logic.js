@@ -46,12 +46,11 @@ async function updateItemOwner(updateItemOwner) {
     newBusiness.inventory.push(updateItemOwner.item);
     await businessRegistry.updateAll([updateItemOwner.currentOwner, newBusiness]);
     updateItemOwner.item.currentOwner = updateItemOwner.newOwner;
-    if(updateItemOwner.newAddress!==null){
+    if(updateItemOwner.newAddress !== undefined){
         updateItemOwner.item.locations.push(updateItemOwner.newAddress);
     }
     else{
-        const owner = await businessRegistry.get(updateItemOwner.newOwner);
-        updateItemOwner.item.locations.push(owner.address);
+        updateItemOwner.item.locations.push(newBusiness.address);
     }
     return getAssetRegistry('org.mat.Item')
         .then(function (assetRegistry) {
@@ -436,6 +435,16 @@ async function addEmployeeToBusiness(addEmployeeToBusiness) {
 * @transaction
 */
 async function updateEmployeeInfo(updateEmployeeInfo) {
+    const businessRegistry = await getAssetRegistry('org.mat.Business');
+    const business = await businessRegistry.get(updateEmployeeInfo.employee.worksFor);
+    if(business.PoCName === (updateEmployeeInfo.employee.firstName + ' ' + updateEmployeeInfo.employee.lastName)){
+        business.PoCName = (updateEmployeeInfo.newFirstName + ' ' + updateEmployeeInfo.newLastName);
+        await businessRegistry.update(business);
+    }
+    if(business.PoCEmail === updateEmployeeInfo.employee.email){
+        business.PoCEmail = updateEmployeeInfo.newEmail;
+        await businessRegistry.update(business);
+    }
     updateEmployeeInfo.employee.firstName = updateEmployeeInfo.newFirstName;
     updateEmployeeInfo.employee.lastName = updateEmployeeInfo.newLastName;
     updateEmployeeInfo.employee.email = updateEmployeeInfo.newEmail;
