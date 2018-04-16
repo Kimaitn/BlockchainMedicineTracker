@@ -185,7 +185,7 @@ transaction ApproveContractChanges extends UpdateContract
 // Cancel a contract
 transaction  CancelContract extends UpdateContract
 {
-  --> Employee acceptingEmployee
+  --> Employee denyingEmployee
 }
 
 // Complete a contract

@@ -133,7 +133,7 @@ async function approveContractChanges(approveContractChanges) {
 }
 
 /**
- * Upadates status of contract to Cancelled
+ * Upadates status of contract to be cancelled if employee of the business buying or selling denys it
  * @param {org.mat.CancelContract} cancelContract - the contractTransaction to be cancelled
  * @transaction
  */
@@ -142,11 +142,11 @@ async function cancelContract(cancelContract) {
         return;
     }
     else{
-        if(cancelContract.contract.sellingBusiness.employees.indexOf(cancelContract.acceptingEmployee) >= 0) {
+        if(cancelContract.contract.sellingBusiness.employees.indexOf(cancelContract.denyingEmployee) >= 0) {
             cancelContract.contract.approvalStatusSellingBusiness = 'CANCELLED';
             cancelContract.contract.status = 'CANCELLED';
         }
-        else if(cancelContract.contract.buyingBusiness.employees.indexOf(cancelContract.acceptingEmployee) >= 0) {
+        else if(cancelContract.contract.buyingBusiness.employees.indexOf(cancelContract.denyingEmployee) >= 0) {
             cancelContract.contract.approvalStatusBuyingBusiness = 'CANCELLED';
             cancelContract.contract.status = 'CANCELLED';
         }
