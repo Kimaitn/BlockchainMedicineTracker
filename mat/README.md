@@ -80,3 +80,7 @@ composer network ping --card admin@mat-network
 `composer-rest-server --card admin@mat-network -m true`
 
 You will need to import your identity card to use the REST server.
+
+#CURRENT WAY OF CONNECTING FABRIC
+    1) Use AWS
+    2) Follow Varun's script.com tutorial
