@@ -132,7 +132,7 @@ async function approveContractChanges(approveContractChanges) {
 }
 
 /**
- * Upadates status of contract to be cancelled if employee of the business buying or selling denys it
+ * Denies status of contract to be cancelled if employee of the business buying or selling denys it
  * @param {org.mat.CancelContract} cancelContract - the contractTransaction to be cancelled
  * @transaction
  */
