@@ -25,10 +25,20 @@ async function bulkLoad(bulkLoad){
         itemALL.amountOfMedication = bulkLoad.items[i].amountOfMedication;
         itemALL.currentOwner = bulkLoad.items[i].currentOwner;
         itemALL.itemType = bulkLoad.items[i].itemType;
-        itemALL.locations = bulkLoad.items[i].locations;
+        if(bulkLoad.items[i].locations.length > 0){
+            itemALL.locations = (bulkLoad.items[i].locations);
+        }
+        else{
+            itemALL.locations = [bulkLoad.addingBusiness.address];
+        }
         resources.push(itemALL);
+        bulkLoad.addingBusiness.inventory.push(itemALL);
     }
     await addResources.addAll(resources);
+    return getAssetRegistry('org.mat.Business')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(bulkLoad.addingBusiness);
+        });
 }
 
 /**

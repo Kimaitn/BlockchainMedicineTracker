@@ -267,6 +267,7 @@ transaction UpdateBusinessAccBalance extends UpdateBusiness
 transaction BulkLoad
 {
   o Item[] items
+  -->Business addingBusiness
 }
 
 // Removes an item from a business's inventory
