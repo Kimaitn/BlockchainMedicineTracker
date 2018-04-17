@@ -132,7 +132,7 @@ async function approveContractChanges(approveContractChanges) {
 }
 
 /**
- * Denies status of contract to be cancelled if employee of the business buying or selling denys it
+ * Updates status of contract to be denied if employee of the business buying or selling denys it
  * @param {org.mat.CancelContract} cancelContract - the contractTransaction to be cancelled
  * @transaction
  */
@@ -145,7 +145,7 @@ async function cancelContract(cancelContract) {
             cancelContract.contract.approvalStatusSellingBusiness = 'CANCELLED';
             cancelContract.contract.status = 'CANCELLED';
         }
-        else if(cancelContract.contract.buyingBusiness.employees.indexOf(cancelContract.denyingEmployee) >= 0) {
+        else if(cancelContract.contract.sellingBusiness.employees.indexOf(cancelContract.denyingEmployee) >= 0) {
             cancelContract.contract.approvalStatusBuyingBusiness = 'CANCELLED';
             cancelContract.contract.status = 'CANCELLED';
         }
@@ -595,7 +595,7 @@ async function setupDemo(setupDemo) {
     const item = factory.newResource(org, 'Item', 'I00001');
     item.itemTypeUoM = 'g';
     item.amountOfMedication = 400;
-    item.currentOwner = factory.newRelationship(org, 'Business', 'B001');
+    item.currentOwner = manufacturer.businessId;
     item.itemType = factory.newRelationship(org, 'ItemType', 'Adderall');
     item.locations = [manufacturer.address];
 
