@@ -8,7 +8,7 @@ services:
       - FABRIC_CA_SERVER_CA_NAME=ca.org1.example.com
     ports:
       - "7054:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/ebc9c4ca8fd4b85df89a701d1e0e8226f61fd0f509da0169306598921f1f6c0f_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/<CA_CERT> -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca.org1.example.com
@@ -34,7 +34,7 @@ services:
     container_name: peer0.org1.example.com
     image: hyperledger/fabric-peer:$ARCH-1.1.0
     extra_hosts: 
-      - "orderer.example.com:172.31.7.175"
+      - "orderer.example.com:<PEER-1-IP>"
     environment:
       - CORE_LOGGING_LEVEL=debug
       - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG

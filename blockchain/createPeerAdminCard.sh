@@ -122,8 +122,8 @@ cat << EOF > DevServer_connection.json
             "eventUrl": "grpc://${HOST}:8053"
         },
         "peer2.org1.example.com": {
-            "url": "grpc://172.31.1.6:9051",
-            "eventUrl": "grpc://172.31.1.6:9053"
+            "url": "grpc://<PEER-2-IP>:9051",
+            "eventUrl": "grpc://<PEER-2-IP>:9053"
         }
     },
     "certificateAuthorities": {
@@ -135,7 +135,7 @@ cat << EOF > DevServer_connection.json
 }
 EOF
 
-PRIVATE_KEY="${DIR}"/composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/bae38d0d8b55da0d39b2d5c21c6a774b372d4b99f4b73975895a2db5837a6012_sk
+PRIVATE_KEY="${DIR}"/composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/<KEYSTORE>
 CERT="${DIR}"/composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem
 
 if [ "${NOIMPORT}" != "true" ]; then
