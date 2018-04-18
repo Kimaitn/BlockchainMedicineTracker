@@ -126,7 +126,7 @@ rule AdminEmployeeUPDATEContractViaApproveContractChanges
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.ApproveContractChanges"
-  condition: ((e.employeeType=="Admin") && (e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId))
+  condition: ((e.employeeType=="Admin") && ((e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId)))
   action: ALLOW
 }
 
@@ -137,7 +137,7 @@ rule AdminEmployeeUPDATEContractViaCancelContract
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.CancelContract"
-  condition: ((e.employeeType=="Admin") && (e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId))
+  condition: ((e.employeeType=="Admin") && ((e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId)))
   action: ALLOW
 }
 
