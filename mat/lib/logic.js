@@ -124,10 +124,10 @@ async function updateItemRequest(updateItemRequest) {
  * @transaction
  */
 async function approveContractChanges(approveContractChanges) {
-    if(approveContractChanges.contract.sellingBusiness.employees.indexOf(approveContractChanges.acceptingEmployee) >= 0) {
+    if(approveContractChanges.contract.sellingBusiness.businessId === approveContractChanges.acceptingEmployee.worksFor) {
         approveContractChanges.contract.approvalStatusSellingBusiness = 'CONFIRMED';
     }
-    else if(approveContractChanges.contract.buyingBusiness.employees.indexOf(approveContractChanges.acceptingEmployee) >= 0) {
+    else if(approveContractChanges.contract.buyingBusiness.businessId === approveContractChanges.acceptingEmployee.worksFor) {
         approveContractChanges.contract.approvalStatusBuyingBusiness = 'CONFIRMED';
     }
     if(approveContractChanges.contract.approvalStatusBuyingBusiness === 'CONFIRMED' &&
@@ -152,11 +152,11 @@ async function cancelContract(cancelContract) {
         return;
     }
     else{
-        if(cancelContract.contract.sellingBusiness.employees.indexOf(cancelContract.denyingEmployee) >= 0) {
+        if(cancelContract.contract.sellingBusiness.businessId === cancelContract.denyingEmployee.worksFor) {
             cancelContract.contract.approvalStatusSellingBusiness = 'CANCELLED';
             cancelContract.contract.status = 'CANCELLED';
         }
-        else if(cancelContract.contract.sellingBusiness.employees.indexOf(cancelContract.denyingEmployee) >= 0) {
+        else if(cancelContract.contract.sellingBusiness.businessId === cancelContract.denyingEmployee.worksFor) {
             cancelContract.contract.approvalStatusBuyingBusiness = 'CANCELLED';
             cancelContract.contract.status = 'CANCELLED';
         }
