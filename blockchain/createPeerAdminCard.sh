@@ -90,7 +90,9 @@ cat << EOF > DevServer_connection.json
             "peers": {
                 "peer0.org1.example.com": {},
                 "peer1.org1.example.com": {},
-                "peer2.org1.example.com": {}
+                "peer2.org1.example.com": {},
+                "peer3.org1.example.com": {},
+                "peer4.org1.example.com": {}
             }
         }
     },
@@ -100,7 +102,9 @@ cat << EOF > DevServer_connection.json
             "peers": [
                 "peer0.org1.example.com",
                 "peer1.org1.example.com",
-                "peer2.org1.example.com"
+                "peer2.org1.example.com",
+                "peer3.org1.example.com",
+                "peer4.org1.example.com"
             ],
             "certificateAuthorities": [
                 "ca.org1.example.com"
@@ -109,26 +113,34 @@ cat << EOF > DevServer_connection.json
     },
     "orderers": {
         "orderer.example.com": {
-            "url": "grpc://${HOST}:7050"
+            "url": "grpc://<PEER-0-IP>:5050"
         }
     },
     "peers": {
         "peer0.org1.example.com": {
-            "url": "grpc://${HOST}:7051",
-            "eventUrl": "grpc://${HOST}:7053"
+            "url": "grpc://<PEER-0-IP>:5051",
+            "eventUrl": "grpc://<PEER-0-IP>:5053"
         },
         "peer1.org1.example.com": {
-            "url": "grpc://${HOST}:8051",
-            "eventUrl": "grpc://${HOST}:8053"
+            "url": "grpc://<PEER-1-IP>:6051",
+            "eventUrl": "grpc://<PEER-1-IP>:6053"
         },
         "peer2.org1.example.com": {
-            "url": "grpc://<PEER-2-IP>:9051",
-            "eventUrl": "grpc://<PEER-2-IP>:9053"
+            "url": "grpc://<PEER-2-IP>:7051",
+            "eventUrl": "grpc://<PEER-2-IP>:7053"
+        },
+         "peer3.org1.example.com": {
+            "url": "grpc://<PEER-3-IP>:8051",
+            "eventUrl": "grpc://<PEER-3-IP>:8053"
+        },
+         "peer4.org1.example.com": {
+            "url": "grpc://<PEER-4-IP>:9051",
+            "eventUrl": "grpc://<PEER-4-IP>:9053"
         }
     },
     "certificateAuthorities": {
         "ca.org1.example.com": {
-            "url": "http://${HOST}:7054",
+            "url": "http://<PEER-0-IP>:5054",
             "caName": "ca.org1.example.com"
         }
     }
