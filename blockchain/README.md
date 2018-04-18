@@ -38,11 +38,11 @@ Within the `blockchain` folder on machine 1:
 
 1. Within the `composer` folder, run `./begin.sh`.  This will generate all the necessary certificates and place them in the `cryto-config` folder.
 1. EDIT THE FOLLOWING TWO FILES:
-  * `docker-compose.yml`
-    - find `<CA_CERT>` and replace it with the full name of the `_sk` file in `composer/crypto-config/peerOrganizations/org1.example.com/ca/`
+  * **docker-compose.yml**
+    - find `<CA_CERT>` and replace it with the full name of the _sk file in `composer/crypto-config/peerOrganizations/org1.example.com/ca/`.
     - find `<PEER-1-IP>` and replace it with machine one's IP address.  This will specify what IP `orderer.example.com` will point to.
-  * `createPeerAdminCard.sh`
-    - find `<KEYSTORE>` and replace it with the full name of the `_sk` file in  `composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/` in `./createPeerAdminCard.sh`
+  * **createPeerAdminCard.sh**
+    - find `<KEYSTORE>` and replace it with the full name of the _sk file in  `composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/`.
     - find `<PEER-2-IP>` and replace it with machine two's IP address.  This will specify what IP `peer2` will be at.
 1. Use the `scp` command to copy the `blockchain` folder onto machine two.  Replace `${PEER-IP}` with machine two's IP.
 1. On the first machine: `./startFabric.sh && ./createPeerAdminCard.sh`
