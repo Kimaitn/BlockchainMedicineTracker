@@ -142,7 +142,7 @@ participant Employee identified by employeeId
 // Allows the owner of an item to be changed
 transaction UpdateItemOwner
 {
-  o String newOwner
+  --> Business newOwner
   --> Business currentOwner
   --> Item item
   o Address newAddress optional

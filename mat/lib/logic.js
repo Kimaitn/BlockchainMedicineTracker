@@ -53,15 +53,14 @@ async function updateItemOwner(updateItemOwner) {
     if(index>-1) {
         updateItemOwner.currentOwner.inventory.splice(index, 1);
     }
-    const newBusiness = await businessRegistry.get(updateItemOwner.newOwner);
-    newBusiness.inventory.push(updateItemOwner.item);
-    await businessRegistry.updateAll([updateItemOwner.currentOwner, newBusiness]);
-    updateItemOwner.item.currentOwner = updateItemOwner.newOwner;
-    if(updateItemOwner.newAddress !== undefined){
+    updateItemOwner.newOwner.inventory.push(updateItemOwner.item);
+    await businessRegistry.updateAll([updateItemOwner.currentOwner, updateItemOwner.newOwner]);
+    updateItemOwner.item.currentOwner = updateItemOwner.newOwner.businessId;
+    if(updateItemOwner.newAddress != undefined){
         updateItemOwner.item.locations.push(updateItemOwner.newAddress);
     }
     else{
-        updateItemOwner.item.locations.push(newBusiness.address);
+        updateItemOwner.item.locations.push(updateItemOwner.newOwner.address);
     }
     return getAssetRegistry('org.mat.Item')
         .then(function (assetRegistry) {
