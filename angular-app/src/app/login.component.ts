@@ -4,6 +4,8 @@ import { Md5 } from 'ts-md5/dist/md5';
 import { LoginService } from './Login.service';
 import { Router } from "@angular/router";
 import 'rxjs/add/operator/toPromise';
+import { Address, Users, Employee, BusinessType, EmployeeType, Business, Item, ItemType, Contract } from './models';
+
 //declare var toload.index.init:any;
 
 	
@@ -45,7 +47,6 @@ export class LoginComponent implements AfterViewInit  {
     }
 	
 	ngAfterViewInit() {
-		console.log("herree");
 		var height = window.innerHeight-130;
 		var fullsize = document.getElementsByClassName("fullsize");
 		for(var i = 0; i<fullsize.length; i++){
@@ -54,28 +55,31 @@ export class LoginComponent implements AfterViewInit  {
 		var bheight = (height/2) - (document.getElementById("signin").clientHeight/2);
 		document.getElementById("signin").style.marginTop = bheight+"px";
 		document.getElementById("signinleft").style.height = document.getElementById("signinform").clientHeight+"px";
-		//this.loadAll();
 	}
 	
 	signIn(){
 		
 		var inputemail = (<HTMLInputElement>document.getElementById("inputEmail")).value;
 		var inputpassword = (<HTMLInputElement>document.getElementById("inputPassword")).value;
-		//console.log(inputemail+" "+inputpassword);
 		var inputpassword2 = Md5.hashStr(inputpassword);
-		//console.log(inputpassword2);
-		this.isUser(inputemail, inputpassword2);
+		this.isUser(inputemail.toLowerCase(), inputpassword2);
 		
 	}
 	
 	signUp(){
 		
-
+		/* Start SignUp Form Validation Section */
 		var inputemail = (<HTMLInputElement>document.getElementById("signupinputEmail")).value;
 		var inputpassword = (<HTMLInputElement>document.getElementById("signupinputPassword")).value;
 		var inputpasswordR = (<HTMLInputElement>document.getElementById("signupinputRPassword")).value;
 		var inputname = (<HTMLInputElement>document.getElementById("signupinputCompany")).value;
 		var inputtype = (<HTMLInputElement>document.getElementById("signupinputRole")).value;
+		var inputaddressstreet = (<HTMLInputElement>document.getElementById("signupinputAddressStreet")).value;
+		var inputaddresscity = (<HTMLInputElement>document.getElementById("signupinputAddressCity")).value;
+		var inputaddressstate = (<HTMLInputElement>document.getElementById("signupinputAddressState")).value;
+		var inputaddresscountry = (<HTMLInputElement>document.getElementById("signupinputAddressCountry")).value;
+		var inputfirstname = (<HTMLInputElement>document.getElementById("signupinputEmployeeFName")).value;
+		var inputlastname = (<HTMLInputElement>document.getElementById("signupinputEmployeeLName")).value;
 		
 		
 		if(inputpassword == ""){
@@ -96,7 +100,42 @@ export class LoginComponent implements AfterViewInit  {
 		} else {
 			(<HTMLInputElement>document.getElementById("signupinputCompany")).style.borderBottomColor = "";
 		}
-		
+		if(inputname == ""){
+			(<HTMLInputElement>document.getElementById("signupinputAddressStreet")).style.borderBottomColor = "Red";
+			return;
+		} else {
+			(<HTMLInputElement>document.getElementById("signupinputAddressStreet")).style.borderBottomColor = "";
+		}
+		if(inputname == ""){
+			(<HTMLInputElement>document.getElementById("signupinputAddressState")).style.borderBottomColor = "Red";
+			return;
+		} else {
+			(<HTMLInputElement>document.getElementById("signupinputAddressState")).style.borderBottomColor = "";
+		}
+		if(inputname == ""){
+			(<HTMLInputElement>document.getElementById("signupinputAddressCity")).style.borderBottomColor = "Red";
+			return;
+		} else {
+			(<HTMLInputElement>document.getElementById("signupinputAddressCity")).style.borderBottomColor = "";
+		}
+		if(inputname == ""){
+			(<HTMLInputElement>document.getElementById("signupinputAddressCountry")).style.borderBottomColor = "Red";
+			return;
+		} else {
+			(<HTMLInputElement>document.getElementById("signupinputAddressCountry")).style.borderBottomColor = "";
+		}
+		if(inputname == ""){
+			(<HTMLInputElement>document.getElementById("signupinputEmployeeFName")).style.borderBottomColor = "Red";
+			return;
+		} else {
+			(<HTMLInputElement>document.getElementById("signupinputEmployeeFName")).style.borderBottomColor = "";
+		}
+		if(inputname == ""){
+			(<HTMLInputElement>document.getElementById("signupinputEmployeeLName")).style.borderBottomColor = "Red";
+			return;
+		} else {
+			(<HTMLInputElement>document.getElementById("signupinputEmployeeLName")).style.borderBottomColor = "";
+		}
 		if(inputemail.indexOf("@")==-1||inputemail.indexOf(".")==-1||inputemail == ""){
 			(<HTMLInputElement>document.getElementById("signupinputEmail")).style.borderBottomColor = "Red";
 			return;
@@ -112,21 +151,62 @@ export class LoginComponent implements AfterViewInit  {
 			(<HTMLInputElement>document.getElementById("signupinputPassword")).style.borderBottomColor = "";
 			(<HTMLInputElement>document.getElementById("signupinputRPassword")).style.borderBottomColor = "";
 		}
+		/* End SignUp Form Validation Section */
 		
 		
-		//console.log(inputemail+" "+inputpassword);
 		var inputpassword2 = Md5.hashStr(inputpassword);
-		
-		var business = new Object();
-		business.PoCEmail = inputemail;
-		business.PoCPassword = inputpassword2;
+		var address: Address;
+		address = new Address();
+		address.street = inputaddressstreet;
+		address.city = inputaddresscity; 
+		address.country = inputaddresscountry;
+		address.state = inputaddressstate;
+		address.zip = ""; //TO-DO ADD THIS
+		var addressstr = JSON.stringify(address);
+		//this.addAddress(address);
+
+		//var businessType: BusinessType;
+		//businessType = new BusinessType();
+		//businessType.type = inputtype;
+		//var businessTypeStr = JSON.stringify(businessType);
+
+		var business: Business;
+		business = new Business();
+		business.businessId = inputname+inputaddressstreet;
+		business.PoCEmail = inputemail.toLowerCase();
+		business.PoCName = inputfirstname+" "+inputlastname;
 		business.name = inputname;
-		business.BusinessType = inputtype;
-		
-		//console.log(business);
-		//console.log(inputpassword2);
-		//this.isUser(inputemail, inputpassword2);
+		business.businessType = inputtype;
+		business.address = address;
+		business.accountBalance = 0;
+		business.inventory = [];
+		business.employees = [];
 		this.addBusiness(business);
+
+		//var employeeType: EmployeeType;
+		//employeeType = new EmployeeType();
+		//employeeType.type = "Admin";
+		//var employeeTypeStr = JSON.stringify(employeeType);
+
+		var employee: Employee;
+		employee = new Employee();
+		employee.employeeId = inputname+"."+inputfirstname+"."+inputlastname+"."+inputemail;
+		employee.firstName = inputfirstname;
+		employee.lastName = inputlastname;
+		employee.email = inputemail.toLowerCase();
+		employee.employeeType = "Admin";
+		//TO-DO ADD PHONE NUMBER OPTIONAL
+		employee.worksFor = "org.mat.Business#"+business.businessId;
+		this.addEmployee(employee);
+		
+		var user: Users;
+		user = new Users();
+		user.employeeId = inputname+"."+inputfirstname+"."+inputlastname+"."+inputemail;
+		user.userEmail = inputemail.toLowerCase();
+		user.password = inputpassword2 as string;
+		this.addUser(user);
+
+		
 		this.toggleSignup(false);
 		
 	}
@@ -191,12 +271,14 @@ export class LoginComponent implements AfterViewInit  {
 		});
 
 	  }
-	
+
 	addBusiness(business): Promise<any>  {
 		return this.serviceLogin.addBusiness(business)
 		.toPromise()
 		.then((result) => {
 				this.errorMessage = null;
+				console.log("Added Business");
+				console.log(result);
 		})
 		.then(() => {
 		}).catch((error) => {
@@ -205,45 +287,97 @@ export class LoginComponent implements AfterViewInit  {
 			}
 			else if (error == '500 - Internal Server Error') {
 			  this.errorMessage = "Input error";
+			  setTimeout(this.addBusiness(business), 1000);
 			}
 			else{
 				this.errorMessage = error;
 			}
 		});
+	}
 
-	  }
+	addEmployee(employee): Promise<any>  {
+		return this.serviceLogin.addEmployee(employee)
+		.toPromise()
+		.then((result) => {
+				this.errorMessage = null;
+				console.log("Added Employee");
+				console.log(result);
+		})
+		.then(() => {
+		}).catch((error) => {
+			if(error == 'Server error'){
+				this.errorMessage = "Could not connect to REST server. Please check your configuration details";
+			}
+			else if (error == '500 - Internal Server Error') {
+			  this.errorMessage = "Input error";
+			  setTimeout(this.addEmployee(employee), 1000);
+			}
+			else{
+				this.errorMessage = error;
+			}
+		});
+	}
+
+	addUser(user): Promise<any>  {
+		return this.serviceLogin.addUser(user)
+		.toPromise()
+		.then((result) => {
+				this.errorMessage = null;
+				console.log("Added User");
+				console.log(result);
+		})
+		.then(() => {
+		}).catch((error) => {
+			if(error == 'Server error'){
+				this.errorMessage = "Could not connect to REST server. Please check your configuration details";
+			}
+			else if (error == '500 - Internal Server Error') {
+			  this.errorMessage = "Input error";
+			  setTimeout(this.addUser(user), 1000);
+			}
+			else{
+				this.errorMessage = error;
+			}
+		});
+	}
 	
 	isUser(_email, _password): Promise<any>  {
     
     //retrieve all residents
 		let usersList = [];
-		return this.serviceLogin.getAllBusinesses()
+		return this.serviceLogin.getUser(_email)
 		.toPromise()
 		.then((result) => {
 				this.errorMessage = null;
-			  result.forEach(user => {
-				usersList.push(user);
-			  });     
+			 result.forEach(user => {
+			 	usersList.push(user);
+			  });
+			 //console.log(result);
+			 //usersList.push(result[0]);     
 		})
 		.then(() => {
 			
-		  //console.log("Is there a user");
 		  var foundany = false;
 		  for (let user of usersList) {
-			if(user.PoCEmail==_email.toLowerCase()){
-				//console.log("FOUND THE SAME USER");
+		  	//console.log(user);
+		  	 //console.log(_email.toLowerCase());
+		  	 //console.log(user.userEmail);
+		  	if(user.userEmail.toLowerCase()==_email.toLowerCase()){
 				foundany = true;
-				if(user.PoCPassword==_password){
-					//console.log("FOUND THE SAME PASSWORD");
-					localStorage.setItem('email', user.PoCEmail);
-					localStorage.setItem('id', user.businessId);
-					localStorage.setItem('name', user.name);
-					localStorage.setItem('type', user.BusinessType);
-					this.router.navigate(['/dashboard']);
+				console.log("idk");
+				if(user.password==_password){
+					console.log("FOUND");
+					localStorage.setItem('email', user.userEmail);
+					localStorage.setItem('id', user.employeeId);
+					//console.log(user);
+					//localStorage.setItem('name', user.employeeId.split(".")[0]); //TO-FIX make this less ghetto
+					//localStorage.setItem('actualname', user.employeeId.split(".")[1]+" "+user.employeeId.split(".")[2]); //TO-FIX make this less ghetto
+					//localStorage.setItem('type', user.BusinessType);
+					this.loadInfo(user.employeeId);
+					//this.router.navigate(['/dashboard']);
 					
 					break;
 				} else {
-					//console.log("Different Password now");
 					this.incorrect = true;
 				}
 			}
@@ -258,6 +392,7 @@ export class LoginComponent implements AfterViewInit  {
 			}
 			else if (error == '500 - Internal Server Error') {
 			  this.errorMessage = "Input error";
+			  setTimeout(this.isUser(_email, _password), 1000);
 			}
 			else{
 				this.errorMessage = error;
@@ -265,4 +400,81 @@ export class LoginComponent implements AfterViewInit  {
 		});
 
 	  }
+
+	  loadInfo(_id): Promise<any>  {
+    	let usersList = [];
+		return this.serviceLogin.getEmployee(_id)
+		.toPromise()
+		.then((result) => {
+			this.errorMessage = null;
+			//result.forEach(user => {
+			//	usersList.push(user);
+			//});
+			usersList.push(result[0]);     
+		})
+		.then(() => {	
+			for (let user of usersList) {
+				//console.log("wow");
+				//console.log(user);
+				localStorage.setItem('employeetype', user.employeeType);
+				localStorage.setItem('actualname', user.firstName+" "+user.lastName); //TO-FIX make this less ghetto
+				//TO-FIX make this less ghetto
+				//console.log(decodeURIComponent(user.worksFor.split("#")[1]));
+				this.loadBusinessInfo(decodeURIComponent(user.worksFor.split("#")[1]));
+				break;
+			}
+		}).catch((error) => {
+			if(error == 'Server error'){
+				this.errorMessage = "Could not connect to REST server. Please check your configuration details";
+			}
+			else if (error == '500 - Internal Server Error') {
+			  this.errorMessage = "Input error";
+			  setTimeout(this.loadInfo(_id), 1000);
+			}
+			else{
+				this.errorMessage = error;
+			}
+		});
+
+	}
+
+	loadBusinessInfo(_id): Promise<any>  {
+    	let usersList = [];
+		return this.serviceLogin.getBusiness(_id)
+		.toPromise()
+		.then((result) => {
+			this.errorMessage = null;
+			//result.forEach(user => {
+			//	usersList.push(user);
+				usersList.push(result[0]);
+				//console.log(result);
+			//});     
+		})
+		.then(() => {	
+			for (let user of usersList) {
+				//console.log("wow2");
+				//console.log(user);
+				localStorage.setItem('type', user.businessType);
+				localStorage.setItem('businessName', user.name);
+				localStorage.setItem('name', user.name);
+				localStorage.setItem('businessid', user.businessId);
+				//console.log("sup");
+				//console.log(user); 
+				this.router.navigate(['/dashboard']);
+				break;
+			}
+		}).catch((error) => {
+			if(error == 'Server error'){
+				this.errorMessage = "Could not connect to REST server. Please check your configuration details";
+			}
+			else if (error == '500 - Internal Server Error') {
+				setTimeout(this.loadBusinessInfo(_id), 1000);
+			  this.errorMessage = "Input error";
+			}
+			else{
+				this.errorMessage = error;
+			}
+		});
+
+	}
  }

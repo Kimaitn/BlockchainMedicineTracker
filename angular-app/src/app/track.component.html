@@ -1,13 +1,14 @@
 <div id='main'>
     <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class='color4' style='position: fixed; top: 0; right: 0; left: 0; bottom: 0; width: 100%;height: 100%;z-index: -1'></div>
     <div class='fullsize color4' *ngIf="showMedicine==false">
 		<div class='container'>
 			<form id='trackform' class="form-signin"  (submit)="submitMedicine(medicine.value)">
 				<h2 class="form-signin-heading">Track Your Medicine</h2>
-				<label for="inputMedicine" class="sr-only">Medicine Barcode Number</label>
+				<label for="inputMedicine" class="sr-only">Medicine ID</label>
 				<a href='trackffilledin.html'><button class="btn btn-lg btn-primary btn-block buttons" type="submit">Look Up</button>
 				</a>
-				<input type="text" id="inputMedicine" class="form-control inputs" placeholder="Medicine Barcode Number" required autofocus #medicine>
+				<input type="text" id="inputMedicine" class="form-control inputs" placeholder="Medicine ID" required autofocus #medicine>
 				
 				<a href='#' id='needhelp'>Need Help?</a>
 			</form>
@@ -20,7 +21,7 @@
 				<div class='row'>
 					<div id='medinfo' class='col-md-4'>
 						<h3 style='margin-bottom: 20px;'>Medicine Details</h3>
-						<h4 class='lessbigh4'>Active Ingredients: <span>{{medname}}</span></h4>
+						<h4 class='lessbigh4'>Active Ingredients: <span>{{medname.split("#")[1].split("%20").join(" ")}}</span></h4>
 						<h4 class='lessbigh4'>Amount: <span>{{medamount}}{{UoM}}</span></h4>
 						
 						
@@ -30,7 +31,7 @@
 						<table class="table">
 						  <thead>
 							<tr>
-							  <th scope="col">#</th>
+							  <!--<th scope="col">#</th>-->
 							  <th scope="col">From</th>
 							  <th scope="col">To</th>
 							  <th scope="col">Date</th>
@@ -38,10 +39,10 @@
 						  </thead>
 						  <tbody>
 							<tr *ngFor="let contract of contracts">
-							  <th scope="row">{{contract.contractId}}</th>
-							  <td>{{contract.sellingBusiness.name}}</td>
-							  <td>{{contract.buyingBusiness.name}}</td>
-							  <td>{{contract.date}}</td>
+							 <!-- <th scope="row">{{contract.contractId}}</th>-->
+							  <th scope="row">{{contract.sellingBusiness.split("#")[1].split("%20").join(" ")}}</th>
+							  <td>{{contract.buyingBusiness.split("#")[1].split("%20").join(" ")}}</td>
+							  <td>{{contract.arrivalDateTime}}</td>
 							</tr>
 						  </tbody>
 						</table>

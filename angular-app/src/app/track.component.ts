@@ -78,18 +78,29 @@ export class TrackComponent implements AfterViewInit  {
 				this.errorMessage = null;
 			  result.forEach(item => {
 				itemsList.push(item);
-			  });
+			  });     
+			  //console.log("WHAT");
+			  //console.log(result);
+			  //console.log(itemsList)
 		})
 		.then(() => {
 
 		  for (let item of itemsList) {
-
+			//console.log("in for loop")
+			//asd
+			//console.log("sup");
+			//console.log(item);
+			//console.log(item.itemId);
+			//console.log(medicine);
+			//console.log("asdjioj");
+			//console.log(item.itemId==medicine);
 			if(item.itemId==medicine){
-
+				console.log(item.itemId);
+				console.log(item.itemType);
 				this.medname = item.itemType;
 				this.medamount = item.amountOfMedication;
 				this.UoM = item.itemTypeUoM;
-				//this.loadContracts(medicine);
+				this.loadContracts(medicine);
 				//todo remove old data from table
 				this.showMedicine = true;
 				break;
@@ -131,13 +142,17 @@ export class TrackComponent implements AfterViewInit  {
 			//console.log(contract);
 			//console.log(contract.ItemType.itemTypeMedId);
 			//console.log(medicine);
-			if(contract.ItemType.itemTypeMedId==medicine){
-				//console.log("here")
-				if(contract.sellingBusiness.BusinessType == "Carrier")
+			//console.log("SJNFDiuHFSDIUH");
+			console.log(contract.requestedItems[0].requestedItem.split("#")[1].split("%20").join(" "));
+			console.log(medicine);
+			if(contract.requestedItems[0].requestedItem.split("#")[1].split("%20").join(" ")==medicine){
+				console.log("here")
+				//if(contract.sellingBusiness.BusinessType == "Carrier")
 					contract.icon = "truck";
-				else
-					contract.icon = "flask";
-				this.contracts.push(contract);
+				//else
+				//	contract.icon = "flask";
+				if(contract.status=="CONFIRMED")
+					this.contracts.push(contract);
 				//console.log("asd");
 				//console.log(contract);
 				//console.log(this.contracts);
