@@ -1,3 +1,11 @@
+rule System {
+    description: "Grant all read access to system resources"
+    participant: "org.**"
+    operation: READ
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
 rule NetworkAdminUser
 {
   description:  "Network admin is given business and network permissions"
@@ -326,3 +334,4 @@ rule AdminEmployeeUPDATEEmployeeType
   condition: ((e.employeeType == "Admin") && (e.worksFor == tx.worksFor) && (e.worksFor == oe.worksFor))
   action: ALLOW
 }
+

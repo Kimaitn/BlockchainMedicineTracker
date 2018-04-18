@@ -25,11 +25,12 @@ async function bulkLoad(bulkLoad){
         itemALL.amountOfMedication = bulkLoad.items[i].amountOfMedication;
         itemALL.currentOwner = bulkLoad.items[i].currentOwner;
         itemALL.itemType = bulkLoad.items[i].itemType;
+        itemAll.locations = [];
         if(bulkLoad.items[i].locations.length > 0){
-            itemALL.locations = (bulkLoad.items[i].locations);
+            itemALL.locations.push(bulkLoad.items[i].locations);
         }
         else{
-            itemALL.locations = [bulkLoad.addingBusiness.address];
+            itemALL.locations.push(bulkLoad.addingBusiness.address);
         }
         resources.push(itemALL);
         bulkLoad.addingBusiness.inventory.push(itemALL);
