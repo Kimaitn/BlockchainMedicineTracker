@@ -2,6 +2,8 @@ export class Address {
 	city: string;
 	country: string;
 	street: string;
+	street2: string;
+	state: string;
 	zip: string;
 }
 
@@ -27,36 +29,40 @@ export class ItemType {
 
 export class Item {
 	itemId: string;
-	itemTypeUoM: UoM;
+	itemTypeUoM: string;
 	amountOfMedication: number;
 	currentOwner: string;
-	itemType: ItemType;
+	itemType: string;
+	str: string;
 }
 
 export class Shipment {
-	shipmentId: string;
 	status: Status;
-	currentOwner: string;
+	carryingBusiness: string;
 	destination: Address;
 	source: Address;
-	contract: string;
+	//contract: string;
 	items: string[];
 }
 
 export class ItemRequest {
 	itemRequestId: string;
-	item: string;
+	requestedItem: string;
 	unitPrice: number;
 	quantity: number;
 }
 
 export class Contract {
 	contractId: string;
-	status: Status;
-	requestItems: string[];
+	status: string;
+	approvalStatusSellingBusiness: string;
+	approvalStatusBuyingBusiness: string;
+	arrivalDateTime: Date;
+	requestedItems: ItemRequest[];
 	sellingBusiness: string;
-	buyBusiness: string;
+	buyingBusiness: string;
 	shipments: string[];
+	str: string;
 }
 
 export class Users {
@@ -72,13 +78,14 @@ export class LogInChecker {
 export class Business {
 	businessId: string;
 	name: string;
-	businessType: BusinessType;
-	pocName: string;
-	pocEmail: string;
-	address: Address;
+	businessType: string; //changed to string
+	PoCName: string;
+	PoCEmail: string;
+	address: Address; //replaced with string for now -rather than Address
 	accountBalance: number;
 	inventory: string[];
 	employees: string[];
+	str: string;
 }
 
 export class Employee {
@@ -86,7 +93,7 @@ export class Employee {
 	firstName: string;
 	lastName: string;
 	email: string;
-	employeeType: EmployeeType;
+	employeeType: string; //changed from EmployeeType
 	phoneNumber: string;
 	worksFor: string;
 }
@@ -103,3 +110,20 @@ export class ShipmentTransaction {
 	shipment: string;
 }
 
+export class AddItemToInventory {
+	addItem: string;
+	business: string;
+	transactionId: string;
+}
+
+export class RemoveItemFromInventory {
+	removeItem: string;
+	business: string;
+}
+
+export class UpdateItemOwner {
+	newOwner: string;
+	item: string;
+	newAddress: Address;
+	currentOwner: string;
+}

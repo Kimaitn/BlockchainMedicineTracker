@@ -34,20 +34,50 @@
 				</div>
 				<form id='signinform2' class="form-signin col-md-8">
 					<h2 class="form-signin-heading" style='margin-top: 50px;'>Sign Up</h2>
+					<div class='form-group row'>
+						<div class='col-xs-6 col-sm-6 col-md-6 col-lg-6'>
+							<input type="input" id="signupinputEmployeeFName" class="form-control inputs" placeholder="First Name" required>
+						</div>
+						<div class='col-xs-6 col-sm-6 col-md-6 col-lg-6'>
+							<input type="input" id="signupinputEmployeeLName" class="form-control inputs" placeholder="Last Name" required>
+						</div>
+					</div>
 					<label for="signupinputEmail" class="sr-only">Email address</label>
 					<input type="email" id="signupinputEmail" class="form-control inputs" placeholder="Email address" required autofocus>
-					<label for="signupinputPassword" class="sr-only">Password</label>
-					<input type="password" id="signupinputPassword" class="form-control inputs" placeholder="Password" required>
-					<label for="signupinputRPassword" class="sr-only">Retype Password</label>
-					<input type="password" id="signupinputRPassword" class="form-control inputs" placeholder="Retype Password" required>
+					<div class='form-group row'>
+						<div class='col-xs-6 col-sm-6 col-md-6 col-lg-6'>
+							<label for="signupinputPassword" class="sr-only">Password</label>
+							<input type="password" id="signupinputPassword" class="form-control inputs" placeholder="Password" required>
+						</div>
+						<div class='col-xs-6 col-sm-6 col-md-6 col-lg-6'>
+							<label for="signupinputRPassword" class="sr-only">Retype Password</label>
+							<input type="password" id="signupinputRPassword" class="form-control inputs" placeholder="Retype Password" required>
+						</div>
+					</div>
 					<label for="signupinputCompany" class="sr-only">Company Name</label>
-					<input type="input" id="signupinputCompany" class="form-control inputs" placeholder="Company" required>
+					<input type="input" id="signupinputCompany" class="form-control inputs" placeholder="Company Name" required>
+					
+					<div class='form-group row'>
+						<div class='col-xs-6 col-sm-6 col-md-6 col-lg-6'>
+							<input type="input" id="signupinputAddressStreet" class="form-control inputs" placeholder="Street" required>
+						</div>
+						<div class='col-xs-2 col-sm-2 col-md-2 col-lg-2'>
+							<input type="input" id="signupinputAddressCity" class="form-control inputs" placeholder="City" required>
+						</div>
+						<div class='col-xs-2 col-sm-2 col-md-2 col-lg-2'>
+							<input type="input" id="signupinputAddressState" class="form-control inputs" placeholder="State" required>
+						</div>
+						<div class='col-xs-2 col-sm-2 col-md-2 col-lg-2'>
+							<input type="input" id="signupinputAddressCountry" class="form-control inputs" placeholder="Country" required>
+						</div>
+					</div>
 					<label for="signupinputRole" class="sr-only">Company Role</label>
 					<select class="form-control inputs" id='signupinputRole' required>
 					  <option value='Manufacturer'>Manufacturer</option>
 					  <option value='Carrier'>Carrier</option>
 					  <option value='Distributor'>Distributor</option>
 					</select>
+
 					<a href='#' id='signinspace'> </a>
 					<button class="btn btn-lg btn-primary btn-block" type="submit" style='margin-bottom: 50px;' (click)="signUp()">Sign Up</button>
 				</form>
