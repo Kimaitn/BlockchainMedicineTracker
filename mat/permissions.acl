@@ -1,7 +1,7 @@
-rule System {
-    description: "Grant all read access to system resources"
-    participant: "org.**"
-    operation: READ
+rule SystemACL {
+    description:  "System ACL to permit all access"
+    participant: "org.hyperledger.composer.system.Participant"
+    operation: ALL
     resource: "org.hyperledger.composer.system.**"
     action: ALLOW
 }
