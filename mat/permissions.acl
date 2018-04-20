@@ -561,6 +561,26 @@ rule AdminEmployeeCRUDUser
   action: ALLOW
 }
 
+rule AdminEmployeeCreateParticipants
+{
+  description: "Allow an ADMIN employee to CRUD a user"
+  participant(e): "org.mat.Employee"
+  operation: CREATE
+  resource(u): "org.hyperledger.composer.system.AddParticipant"
+  condition: (e.employeeType == "Admin")
+  action: ALLOW
+}
+
+rule AdminEmployeeCRUDEmployees
+{
+  description: "Allow an ADMIN employee to CRUD a user"
+  participant(e): "org.mat.Employee"
+  operation: CREATE, READ, UPDATE, DELETE
+  resource(r): "org.mat.Employee"
+  condition: ((e.employeeType == "Admin") && (e.worksFor == r.worksFor))
+  action: ALLOW
+}
+
 rule EmployeeUPDATEEmployeeInfo
 {
   description: "Allow ANY employee to UPDATE their employee info"
