@@ -141,14 +141,14 @@ rule EmployeeCRContract
   action: ALLOW
 }
 
-/*rule LogInCheckerUPDATEUserViaUpdateUserEmail
+rule LogInCheckerUPDATEUserViaUpdateUserEmail
 {
   description: "Allow LogInChecker to UPDATE a user email via the UpdateUserEmail transaction"
-  participant(e): "org.mat.LoginChecker"
-  operation: CREATE, UPDATE
-  resource(c): "org.mat.UpdateUserEmail"
+  participant: "org.mat.LoginChecker"
+  operation: READ
+  resource: "org.mat.User"
   action: ALLOW
-}*/
+}
 
 rule EmployeeUPDATEContractViaUpdateShipment
 {
