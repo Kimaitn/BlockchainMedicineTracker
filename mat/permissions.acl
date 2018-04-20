@@ -137,7 +137,7 @@ rule EmployeeCRContract
   participant(e): "org.mat.Employee"
   operation: CREATE, READ
   resource(c): "org.mat.Contract"
-  condition: ((e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId))
+  condition: ((e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId) || (e.worksFor == c.shipments[0].carryingBusiness.businessId))
   action: ALLOW
 }
 
@@ -189,6 +189,27 @@ rule EmployeeCreateApproveShipments
   operation: CREATE
   resource(c): "org.mat.ApproveShipments"
   condition: ((e.worksFor == c.contract.buyingBusiness.businessId))
+  action: ALLOW
+}
+
+rule EmployeeApproveShipmentStatusViaUpdateShipmentStatus
+{
+  description: "Allow buying business employee to APPROVE shipments that that have arrived via the apporveShiipments transaction"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(c): "org.mat.Contract"
+  transaction: "org.mat.UpdateShipmentStatus"
+  condition: ((e.worksFor == c.shipments[0].carryingBusiness.businessId))
+  action: ALLOW
+}
+
+rule EmployeeApproveShipmentStatusViaCreateUpdateShipmentStatus
+{
+  description: "Allow buying business employee to APPROVE shipments that that have arrived via the apporveShiipments transaction"
+  participant(e): "org.mat.Employee"
+  operation: CREATE
+  resource(c): "org.mat.UpdateShipmentStatus"
+  condition: ((e.worksFor == c.contract.shipments[0].carryingBusiness.businessId))
   action: ALLOW
 }
 
