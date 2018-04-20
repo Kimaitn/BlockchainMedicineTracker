@@ -10,6 +10,20 @@ function changeContractStatuses(contract) {
 }
 
 /**
+ * Private function that updates the inventory of the business'
+ * @param {org.mat.business} business - business that need updating
+ */
+async function itemOwner(buyingBusiness, sellingBusiness, item){
+    const businessRegistry = await getAssetRegistry('org.mat.Business');
+    var index = sellingBusiness.inventory.indexOf(item);
+    if(index>-1) {
+        sellingBusiness.inventory.splice(index, 1);
+    }
+    buyingBusiness.inventory.push(item);
+    await businessRegistry.updateAll([sellingBusiness, buyingBusiness]);
+}
+
+/**
  * Takes in an array of items to be placed on the blockchain for the
  * @param {org.mat.BulkLoad} bulkLoad - The array of items
  * @transaction
@@ -25,7 +39,7 @@ async function bulkLoad(bulkLoad){
         itemALL.amountOfMedication = bulkLoad.items[i].amountOfMedication;
         itemALL.currentOwner = bulkLoad.items[i].currentOwner;
         itemALL.itemType = bulkLoad.items[i].itemType;
-        itemAll.locations = [];
+        itemALL.locations = [];
         if(bulkLoad.items[i].locations.length > 0){
             itemALL.locations.push(bulkLoad.items[i].locations);
         }
@@ -179,8 +193,10 @@ async function cancelContract(cancelContract) {
  * @param {org.mat.CompleteContract} completeContract - the contractTransaction to be approved
  * @transaction
  */
-function completeContract(completeContract) {
+async function completeContract(completeContract) {
     const factory = getFactory();
+    const resources = [];
+    const itemRegistry = await getAssetRegistry('org.mat.Item');
     if(completeContract.contract.approvalStatusBuyingBusiness === 'CONFIRMED' &&
         completeContract.contract.approvalStatusSellingBusiness === 'CONFIRMED'
     )
@@ -196,12 +212,11 @@ function completeContract(completeContract) {
                 arrayItems.forEach(function(items){
                     items.locations.push(shipment.destinationAddress);
                     items.currentOwner = completeContract.contract.buyingBusiness.businessId;
-                    getAssetRegistry('org.mat.Item')
-                        .then(function (assetRegistry) {
-                            return assetRegistry.update(updateItemOwner.item);
-                        });
+                    itemOwner(completeContract.contract.buyingBusiness, completeContract.contract.sellingBusiness, items);
+                    resources.push(items);
                 });
             });
+            await itemRegistry.updateAll(resources);
         }
     }
     else {
