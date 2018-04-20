@@ -463,7 +463,7 @@ rule AdminEmployeerRUBusiness
   participant(e): "org.mat.Employee"
   operation: READ, UPDATE
   resource(b): "org.mat.Business"
-  condition: ((e.employeeType == "Admin") && (e.worksFor == ("org.mat.Business#"+b.businessId)))
+  condition: ((e.employeeType == "Admin") && (e.worksFor == b.businessId))
   action: ALLOW
 }
 
@@ -584,7 +584,7 @@ rule EmployeeCreateEmployeeInfo
 
 rule AdminEmployeeUPDATEEmployeeType
 {
-  description: "Allow ANY employee with type Admin to UPDATE their employee info"
+  description: "Allow ANY employee with type Admin to UPDATE Employee Type"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(oe): "org.mat.Employee"
@@ -595,7 +595,7 @@ rule AdminEmployeeUPDATEEmployeeType
 
 rule AdminEmployeeCreateEmployeeType
 {
-  description: "Allow ANY employee with type Admin to UPDATE their employee info"
+  description: "Allow ANY employee with type Admin to UPDATE Employee Type"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(r): "org.mat.UpdateEmployeeType"
@@ -610,5 +610,47 @@ rule AdminEmployeeCreateBulkLoad
   operation: CREATE
   resource(r): "org.mat.BulkLoad"
   condition: (e.worksFor == r.addingBusiness.businessId)
+  action: ALLOW
+}
+
+rule UsersUpdatesPasswordViaTransactionUpdatePassword
+{
+  description: "Allow ANY user to update their own password"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(oe): "org.mat.User"
+  transaction: "org.mat.UpdateEmployeeType"
+  condition: (e.employeeId == oe.employeeId)
+  action: ALLOW
+}
+
+rule UsersUpdatesPassword
+{
+  description: "Allow ANY user to update their own password"
+  participant(e): "org.mat.Employee"
+  operation: CREATE
+  resource(oe): "org.mat.UpdateUserPassword"
+  condition: (e.employeeId == oe.user.employeeId)
+  action: ALLOW
+}
+
+rule UsersUpdatesEmailViaTransactionUpdateUserEmail
+{
+  description: "Allow ANY user to update their own password"
+  participant(e): "org.mat.Employee"
+  operation: CREATE
+  resource(oe): "org.mat.User"
+  transaction: "org.mat.UpdateUserEmail"
+  condition: (e.employeeId == oe.user.employeeId)
+  action: ALLOW
+}
+
+rule UsersUpdatesEmail
+{
+  description: "Allow ANY user to update their own password"
+  participant(e): "org.mat.Employee"
+  operation: CREATE
+  resource(oe): "org.mat.UpdateUserEmail"
+  condition: (e.employeeId == oe.user.employeeId)
   action: ALLOW
 }
