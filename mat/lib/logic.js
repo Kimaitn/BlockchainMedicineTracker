@@ -144,7 +144,10 @@ async function approveContractChanges(approveContractChanges) {
         approveContractChanges.contract.approvalStatusBuyingBusiness = 'CONFIRMED';
     }
     if(approveContractChanges.contract.approvalStatusBuyingBusiness === 'CONFIRMED' &&
-        approveContractChanges.contract.approvalStatusSellingBusiness === 'CONFIRMED'
+        approveContractChanges.contract.approvalStatusSellingBusiness === 'CONFIRMED' &&
+        approveContractChanges.contract.shipments.every((shipment) => {
+            return shipment.status === 'ACCEPTED';
+        })
     )
     {
         approveContractChanges.contract.status = 'CONFIRMED';
@@ -190,6 +193,27 @@ async function cancelContract(cancelContract) {
 
 /**
  * Confirms a contract's changes
+ * @param {org.mat.UpdateShipmentStatus} updateShipmentStatus - the contractTransaction to be approved
+ * @transaction
+ */
+async function updateShipmentStatus(updateShipmentStatus){
+    updateShipmentStatus.shipmentIndexes.forEach((shipmentIndex) => {
+        updateShipmentStatus.contract.shipments[shipmentIndex].status = updateShipmentStatus.newStatus;
+    });
+    if(updateShipmentStatus.contract.shipments.every((shipment) => {
+        return shipment.status === 'ACCEPTED';
+    }))
+    {
+        updateShipmentStatus.contract.status = 'CONFIRMED';
+    }
+    return getAssetRegistry('org.mat.Contract')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(updateShipmentStatus.contract);
+        });
+}
+
+/**
+ * Confirms a contract's changes
  * @param {org.mat.CompleteContract} completeContract - the contractTransaction to be approved
  * @transaction
  */
@@ -202,7 +226,7 @@ async function completeContract(completeContract) {
     )
     {
         if(completeContract.contract.shipments.every((shipment) => {
-            return shipment.status === 'ARRIVED';
+            return shipment.statusReceiver === 'ARRIVED';
         }))
         {
             completeContract.contract.status = 'COMPLETED';

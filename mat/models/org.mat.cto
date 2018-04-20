@@ -3,9 +3,18 @@ namespace org.mat
 // Status of a shipment
 enum shipmentStatus 
 {
+  o ACCEPTED
+  o WAITING_CONFIRMATION
   o IN_TRANSIT
   o ARRIVED
   o CANCELLED
+}
+
+// Status of shipment for receiver
+enum receiverStatus 
+{
+  o ARRIVED
+  o NOT_ARRIVED
 }
 
 // Status of a contract
@@ -56,6 +65,7 @@ concept Shipment
   o shipmentStatus status
   o Address destinationAddress
   o Address sourceAddress
+  o receiverStatus statusReceiver
   --> Business carryingBusiness
   --> Item[] items
 }
@@ -222,6 +232,14 @@ transaction RemoveItemRequestsFromRequestedItemsList extends UpdateContract
 {
   o Integer[] itemRequestIndexes
 }
+
+// Allows the carrier business to update the status of the shipment on the contract
+transaction UpdateShipmentStatus extends UpdateContract
+{
+  o shipmentStatus newStatus
+  o Integer[] shipmentIndexes
+}
+
 
 // Updates user 
 abstract transaction UpdateUser
