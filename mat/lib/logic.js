@@ -107,7 +107,7 @@ async function updateShipmentCarrier(updateShipment) {
 async function approveShipments(approveShipments) {
     approveShipments.shipmentIndexes.forEach((shipmentIndex) => {
         //TODO item changes owner here
-        approveShipments.contract.shipments[shipmentIndex].status = 'ARRIVED';
+        approveShipments.contract.shipments[shipmentIndex].statusReceiver = 'ARRIVED';
     });
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
@@ -192,8 +192,8 @@ async function cancelContract(cancelContract) {
 }
 
 /**
- * Confirms a contract's changes
- * @param {org.mat.UpdateShipmentStatus} updateShipmentStatus - the contractTransaction to be approved
+ * Confirms a the status of the shipment by the carrying business
+ * @param {org.mat.UpdateShipmentStatus} updateShipmentStatus - the status of the shipment on the contract
  * @transaction
  */
 async function updateShipmentStatus(updateShipmentStatus){

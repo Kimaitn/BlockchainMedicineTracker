@@ -172,7 +172,7 @@ transaction UpdateShipment extends UpdateContract
   o Integer shipmentIndex
 }
 
-// Allows the owner of a shipment to to be changed
+// Allows the buying business to approve that the shipments have arrived
 transaction ApproveShipments extends UpdateContract
 {
   o Integer[] shipmentIndexes
@@ -239,7 +239,6 @@ transaction UpdateShipmentStatus extends UpdateContract
   o shipmentStatus newStatus
   o Integer[] shipmentIndexes
 }
-
 
 // Updates user 
 abstract transaction UpdateUser
