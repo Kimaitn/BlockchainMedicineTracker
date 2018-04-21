@@ -65,7 +65,7 @@ concept Shipment
   o shipmentStatus status
   o Address destinationAddress
   o Address sourceAddress
-  o receiverStatus statusReceiver
+  o receiverStatus approvalStatusReceivingBusiness
   --> Business carryingBusiness
   --> Item[] items
 }
@@ -107,6 +107,7 @@ asset Contract identified by contractId
   o ItemRequest[] requestedItems
   --> Business sellingBusiness
   --> Business buyingBusiness
+  --> Business carryingBusiness
 }
 
 // The basic User class that will be using the system
@@ -234,10 +235,11 @@ transaction RemoveItemRequestsFromRequestedItemsList extends UpdateContract
 }
 
 // Allows the carrier business to update the status of the shipment on the contract
-transaction UpdateShipmentStatus extends UpdateContract
+transaction UpdateShipmentStatusViaCarrierBusiness extends UpdateContract
 {
   o shipmentStatus newStatus
   o Integer[] shipmentIndexes
+  --> Employee carrierEmployee
 }
 
 // Updates user 

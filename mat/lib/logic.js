@@ -99,14 +99,13 @@ async function updateShipmentCarrier(updateShipment) {
 }
 
 /**
- * Updates a shipment's carrier
- * This will need approval from all participants of the contract
+ * Lets buying business approve the shipments
  * @param {org.mat.ApproveShipmentsByBuyingBusiness} approveShipmentsByBuyingBusiness - the shipmentTransaction to be edited
  * @transaction
  */
-async function approveShipments(approveShipmentsByBuyingBusiness) {
+async function approveShipmentsByBuyingBusiness(approveShipmentsByBuyingBusiness) {
     approveShipmentsByBuyingBusiness.shipmentIndexes.forEach((shipmentIndex) => {
-        approveShipmentsByBuyingBusiness.contract.shipments[shipmentIndex].statusReceiver = 'ARRIVED';
+        approveShipmentsByBuyingBusiness.contract.shipments[shipmentIndex].approvalStatusReceivingBusiness = 'ARRIVED';
     });
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
@@ -192,16 +191,18 @@ async function cancelContract(cancelContract) {
 
 /**
  * Confirms the status of the shipment by the carrying business
- * @param {org.mat.UpdateShipmentStatus} updateShipmentStatus - the status of the shipment on the contract
+ * @param {org.mat.UpdateShipmentStatusViaCarrierBusiness} updateShipmentStatusViaCarrierBusiness - the status of the shipment on the contract
  * @transaction
  */
-async function updateShipmentStatus(updateShipmentStatus){
-    updateShipmentStatus.shipmentIndexes.forEach((shipmentIndex) => {
-        updateShipmentStatus.contract.shipments[shipmentIndex].status = updateShipmentStatus.newStatus;
+async function updateShipmentStatusViaCarrierBusiness(updateShipmentStatusViaCarrierBusiness){
+    updateShipmentStatusViaCarrierBusiness.shipmentIndexes.forEach((shipmentIndex) => {
+        if(updateShipmentStatusViaCarrierBusiness.contract.shipments[shipmentIndex].carryingBusiness.employees.indexOf(updateShipmentStatusViaCarrierBusiness.carrierEmployee) > -1){
+        updateShipmentStatusViaCarrierBusiness.contract.shipments[shipmentIndex].status = updateShipmentStatusViaCarrierBusiness.newStatus;
+        }
     });
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
-            return assetRegistry.update(updateShipmentStatus.contract);
+            return assetRegistry.update(updateShipmentStatusViaCarrierBusiness.contract);
         });
 }
 
@@ -219,7 +220,7 @@ async function completeContract(completeContract) {
     )
     {
         if(completeContract.contract.shipments.every((shipment) => {
-            return shipment.statusReceiver === 'ARRIVED';
+            return shipment.approvalStatusReceivingBusiness === 'ARRIVED';
         }))
         {
             completeContract.contract.status = 'COMPLETED';
