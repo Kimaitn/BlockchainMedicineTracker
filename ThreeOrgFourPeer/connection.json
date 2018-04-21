@@ -1,0 +1,160 @@
+{
+    "name": "mat-network",
+    "x-type": "hlfv1",
+    "version": "1.0.0",
+    "channels": {
+        "mychannel": {
+            "orderers": [
+                "orderer1.mat.com",
+                "orderer2.mat.com",
+                "orderer3.mat.com"
+            ],
+            "peers": {
+                "peer0.org1.mat.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "eventSource": true
+                },
+                "peer0.org2.mat.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "eventSource": true
+                },
+                "peer0.org3.mat.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "eventSource": true
+                },
+                "peer1.org3.mat.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "eventSource": true
+                }
+            }
+        }
+    },
+    "organizations": {
+        "Org1": {
+            "mspid": "Org1MSP",
+            "peers": [
+                "peer0.org1.mat.com"
+            ],
+            "certificateAuthorities": [
+                "ca.org1.mat.com"
+            ]
+        },
+        "Org2": {
+            "mspid": "Org2MSP",
+            "peers": [
+                "peer0.org2.mat.com"
+            ],
+            "certificateAuthorities": [
+                "ca.org2.mat.com"
+            ]
+        },
+        "Org3": {
+            "mspid": "Org3MSP",
+            "peers": [
+                "peer0.org3.mat.com",
+                "peer1.org3.mat.com"
+            ],
+            "certificateAuthorities": [
+                "ca.org3.mat.com"
+            ]
+        }
+    },
+    "orderers": {
+        "orderer1.mat.com": {
+            "url": "grpcs://18.188.189.121:7050",
+            "grpcOptions": {
+                "ssl-target-name-override": "orderer1.mat.com"
+            },
+            "tlsCACerts": {
+                "pem": "INSERT_ORDERER1_CA_CERT"
+            }
+        },
+        "orderer2.mat.com": {
+            "url": "grpcs://18.217.37.105:7050",
+            "grpcOptions": {
+                "ssl-target-name-override": "orderer2.mat.com"
+            },
+            "tlsCACerts": {
+                "pem": "INSERT_ORDERER2_CA_CERT"
+            }
+        },
+        "orderer3.mat.com": {
+            "url": "grpcs://18.216.31.113:7050",
+            "grpcOptions": {
+                "ssl-target-name-override": "orderer3.mat.com"
+            },
+            "tlsCACerts": {
+                "pem": "INSERT_ORDERER3_CA_CERT"
+            }
+        }
+    },
+    "peers": {
+        "peer0.org1.mat.com": {
+            "url": "grpcs://18.188.189.121:7051",
+            "eventUrl": "grpcs://18.188.189.121:7053",
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.org1.mat.com"
+            },
+            "tlsCACerts": {
+                "pem": "INSERT_ORG1_CA_CERT"
+            }
+        },
+        "peer0.org2.mat.com": {
+            "url": "grpcs://18.217.37.105:7051",
+            "eventUrl": "grpcs://18.217.37.105:7053",
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.org2.mat.com"
+            },
+            "tlsCACerts": {
+                "pem": "INSERT_ORG2_CA_CERT"
+            }
+        },
+        "peer0.org3.mat.com": {
+            "url": "grpcs://18.216.31.113:7051",
+            "eventUrl": "grpcs://18.216.31.113:7053",
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.org2.mat.com"
+            },
+            "tlsCACerts": {
+                "pem": "INSERT_ORG3_CA_CERT"
+            }
+        },
+        "peer1.org3.mat.com": {
+            "url": "grpcs://18.216.31.113:8051",
+            "eventUrl": "grpcs://18.216.31.113:8053",
+            "grpcOptions": {
+                "ssl-target-name-override": "peer1.org2.mat.com"
+            },
+            "tlsCACerts": {
+                "pem": "INSERT_ORG3_CA_CERT"
+            }
+        }
+    },
+    "certificateAuthorities": {
+        "ca.org1.mat.com": {
+            "url": "https://18.188.189.121:7054",
+            "caName": "ca-org1",
+            "httpOptions": {
+                "verify": false
+            }
+        },
+        "ca.org2.mat.com": {
+            "url": "https://18.217.37.105:7054",
+            "caName": "ca-org2",
+            "httpOptions": {
+                "verify": false
+            }
+        },
+        "ca.org3.mat.com": {
+            "url": "https://18.216.31.113:7054",
+            "caName": "ca-org3",
+            "httpOptions": {
+                "verify": false
+            }
+        }
+    }
+}
