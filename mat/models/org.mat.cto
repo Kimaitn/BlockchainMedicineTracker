@@ -173,7 +173,7 @@ transaction UpdateShipment extends UpdateContract
 }
 
 // Allows the buying business to approve that the shipments have arrived
-transaction ApproveShipments extends UpdateContract
+transaction ApproveShipmentsByBuyingBusiness extends UpdateContract
 {
   o Integer[] shipmentIndexes
 }

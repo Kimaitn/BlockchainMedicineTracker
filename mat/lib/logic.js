@@ -10,10 +10,10 @@ function changeContractStatuses(contract) {
 }
 
 /**
- * Private function that updates the inventory of the business'
+ * Private function that updates the inventory of a business
  * @param {org.mat.business} business - business that need updating
  */
-async function itemOwner(buyingBusiness, sellingBusiness, item){
+async function changeItemOwner(buyingBusiness, sellingBusiness, item){
     const businessRegistry = await getAssetRegistry('org.mat.Business');
     var index = sellingBusiness.inventory.indexOf(item);
     if(index>-1) {
@@ -101,17 +101,16 @@ async function updateShipmentCarrier(updateShipment) {
 /**
  * Updates a shipment's carrier
  * This will need approval from all participants of the contract
- * @param {org.mat.ApproveShipments} approveShipments - the shipmentTransaction to be edited
+ * @param {org.mat.ApproveShipmentsByBuyingBusiness} approveShipmentsByBuyingBusiness - the shipmentTransaction to be edited
  * @transaction
  */
-async function approveShipments(approveShipments) {
-    approveShipments.shipmentIndexes.forEach((shipmentIndex) => {
-        //TODO item changes owner here
-        approveShipments.contract.shipments[shipmentIndex].statusReceiver = 'ARRIVED';
+async function approveShipments(approveShipmentsByBuyingBusiness) {
+    approveShipmentsByBuyingBusiness.shipmentIndexes.forEach((shipmentIndex) => {
+        approveShipmentsByBuyingBusiness.contract.shipments[shipmentIndex].statusReceiver = 'ARRIVED';
     });
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
-            return assetRegistry.update(approveShipments.contract);
+            return assetRegistry.update(approveShipmentsByBuyingBusiness.contract);
         });
 }
 
@@ -192,7 +191,7 @@ async function cancelContract(cancelContract) {
 }
 
 /**
- * Confirms a the status of the shipment by the carrying business
+ * Confirms the status of the shipment by the carrying business
  * @param {org.mat.UpdateShipmentStatus} updateShipmentStatus - the status of the shipment on the contract
  * @transaction
  */
@@ -200,12 +199,6 @@ async function updateShipmentStatus(updateShipmentStatus){
     updateShipmentStatus.shipmentIndexes.forEach((shipmentIndex) => {
         updateShipmentStatus.contract.shipments[shipmentIndex].status = updateShipmentStatus.newStatus;
     });
-    if(updateShipmentStatus.contract.shipments.every((shipment) => {
-        return shipment.status === 'ACCEPTED';
-    }))
-    {
-        updateShipmentStatus.contract.status = 'CONFIRMED';
-    }
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateShipmentStatus.contract);
@@ -236,7 +229,7 @@ async function completeContract(completeContract) {
                 arrayItems.forEach(function(items){
                     items.locations.push(shipment.destinationAddress);
                     items.currentOwner = completeContract.contract.buyingBusiness.businessId;
-                    itemOwner(completeContract.contract.buyingBusiness, completeContract.contract.sellingBusiness, items);
+                    changeItemOwner(completeContract.contract.buyingBusiness, completeContract.contract.sellingBusiness, items);
                     resources.push(items);
                 });
             });
