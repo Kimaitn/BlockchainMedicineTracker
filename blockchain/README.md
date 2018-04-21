@@ -9,6 +9,7 @@ When this project was last deployed, it utilized the following:
 * Two t2.medium ec2 Linux instances
 * Fabric v 1.1
 * Composer v 0.19
+* Docker v 18.03.0-ce
 
 ## Important Commands
 Before beginning the tutorial, certain commands will prove to be helpful, and labeling them beforehand will help in readability.
