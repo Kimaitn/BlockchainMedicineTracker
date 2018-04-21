@@ -109,26 +109,26 @@ cat << EOF > DevServer_connection.json
     },
     "orderers": {
         "orderer.example.com": {
-            "url": "grpc://${HOST}:7050"
+            "url": "grpc://18.188.189.121:7050"
         }
     },
     "peers": {
         "peer0.org1.example.com": {
-            "url": "grpc://${HOST}:7051",
-            "eventUrl": "grpc://${HOST}:7053"
+            "url": "grpc://18.188.189.121:7051",
+            "eventUrl": "grpc://18.188.189.121:7053"
         },
         "peer1.org1.example.com": {
-            "url": "grpc://${HOST}:8051",
-            "eventUrl": "grpc://${HOST}:8053"
+            "url": "grpc://18.188.189.121:8051",
+            "eventUrl": "grpc://18.188.189.121:8053"
         },
         "peer2.org1.example.com": {
-            "url": "grpc://<PEER-2-IP>:9051",
-            "eventUrl": "grpc://<PEER-2-IP>:9053"
+            "url": "grpc://18.217.37.105:9051",
+            "eventUrl": "grpc://18.217.37.105:9053"
         }
     },
     "certificateAuthorities": {
         "ca.org1.example.com": {
-            "url": "http://${HOST}:7054",
+            "url": "http://18.188.189.121:7054",
             "caName": "ca.org1.example.com"
         }
     }
@@ -153,8 +153,9 @@ if [ "${NOIMPORT}" != "true" ]; then
 
     "${HL_COMPOSER_CLI}"  card import --file /tmp/PeerAdmin@hlfv1.card 
     "${HL_COMPOSER_CLI}"  card list
-    echo "Hyperledger Composer PeerAdmin card has been imported, host of fabric specified as '${HOST}'"
+    echo "Hyperledger Composer PeerAdmin card has been imported, host of fabric specified as '18.188.189.121'"
     rm /tmp/PeerAdmin@hlfv1.card
 else
-    echo "Hyperledger Composer PeerAdmin card has been created, host of fabric specified as '${HOST}'"
+    echo "Hyperledger Composer PeerAdmin card has been created, host of fabric specified as '18.188.189.121'"
 fi
+

@@ -48,13 +48,13 @@ Compile your bna file and put it into the blockchain folder (this is just for ea
 
 
 
-5. Inside the `blockchain` folder run `./deploy.sh` this will create `crypto-config` 
+5. Inside the `blockchain` folder run `./deploy.sh 18.217.37.105` this will create `crypto-config` 
 
 On your terminal for your local machine run- 
 `scp -i avi.pem -r ubuntu@ec2-18-188-189-121.us-east-2.compute.amazonaws.com:/home/ubuntu/blockchain $HOME/Downloads`
 
 6. then 
-`scp -i avi.pem -r $HOME/Downloads ubuntu@ec2-18-188-189-121.us-east-2.compute.amazonaws.com:/home/ubuntu`
+`scp -i avi.pem -r $HOME/Downloads/blockchain ubuntu@ec2-18-188-189-121.us-east-2.compute.amazonaws.com:/home/ubuntu`
 
 This will copy over the folder from machine 1 to machine 2
 
