@@ -15,7 +15,7 @@ rule System {
     action: ALLOW
 }
 
-rule ParticipantsSeeThemSelves {
+rule ParticipantsSeeThemselves {
     description: "Let participants see themselves"
     participant(p): "org.hyperledger.composer.system.Participant"
     operation: ALL
@@ -52,23 +52,13 @@ rule AdminEmployeeCREATEtransactions
   action: ALLOW
 }
 
-
 rule AdminEmployeeCREATEAssets
 {
-  description: "Allow ANY employee with type Admin to Create a transaction"
+  description: "Allow ANY employee with type Admin to CREATE an asset"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(oe): "org.hyperledger.composer.system.AddAsset"
   condition: (e.employeeType == "Admin")
-  action: ALLOW
-}
-
-rule EmployeeREADAccess
-{
-  description: "Allow employee READ access "
-  participant: "org.mat.Employee"
-  operation: READ
-  resource: "org.hyperledger.composer.system.**"
   action: ALLOW
 }
 
@@ -81,13 +71,14 @@ rule LoginCheckerREADUser
   action: ALLOW
 }
 
-rule EmployeeNoReadUser
+rule EmployeesOnlyRUTheirOwnUserInfo
 {
-  description: "lets the employee not verify the user"
-  participant: "org.mat.Employee"
-  operation: READ
-  resource: "org.mat.User"
-  action: DENY
+  description: "Makes sure that employees can not see the user information"
+  participant(e): "org.mat.Employee"
+  operation: READ, UPDATE
+  resource(r): "org.mat.User"
+  condition: (e.employeeId == r.employeeId)
+  action: ALLOW
 }  
   
 rule AdminEmployeeCRUDItemType
@@ -110,11 +101,11 @@ rule EmployeeCRUDItem
   action: ALLOW
   }
 
-rule EmployeeCreateItemViaUpdateItemOwner
+rule EmployeeCREATEItemViaUpdateItemOwner
 {
-  description: "Allow ANY employee to UPDATE an item that belongs to their business via the UpdateItemOwner transaction"
+  description: "Allow ANY employee to CREATE an the transaction updateItemOwner"
   participant(e): "org.mat.Employee"
-  operation: UPDATE
+  operation: CREATE
   resource(i): "org.mat.UpdateItemOwner"
   condition: (e.worksFor == i.currentOwner.businessId)
   action: ALLOW
@@ -122,7 +113,7 @@ rule EmployeeCreateItemViaUpdateItemOwner
 
 rule EmployeeUPDATEItemViaUpdateItemOwner
 {
-  description: "Allow ANY employee to UPDATE an item that belongs to their business via the UpdateItemOwner transaction"
+  description: "Allow ANY employee to change ownership of items owned by their business to another business"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(i): "org.mat.Item"
@@ -161,7 +152,7 @@ rule EmployeeUPDATEContractViaUpdateShipment
   action: ALLOW
 }
 
-rule EmployeeCREATEContractViaUpdateShipment
+rule EmployeeCREATETransactionUpdateShipment
 {
   description: "Allow ANY employee to UPDATE a contract that belongs to their business via the UpdateShipment transaction"
   participant(e): "org.mat.Employee"
@@ -171,30 +162,30 @@ rule EmployeeCREATEContractViaUpdateShipment
   action: ALLOW
 }
 
-rule EmployeeApproveShipmentViaApproveShipments
+rule EmployeeApproveShipmentViaApproveShipmentsByBuyingBusiness
 {
   description: "Allow buying business employee to APPROVE shipments that that have arrived via the apporveShiipments transaction"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(c): "org.mat.Contract"
-  transaction: "org.mat.ApproveShipments"
+  transaction: "org.mat.ApproveShipmentsByBuyingBusiness"
   condition: ((e.worksFor == c.buyingBusiness.businessId))
   action: ALLOW
 }
 
-rule EmployeeCreateApproveShipments
+rule EmployeeCREATETransactionApproveShipmentsByBuyingBusiness
 {
-  description: "Allow buying business employee to APPROVE shipments that that have arrived via the apporveShiipments transaction"
+  description: "Allow buying business employee to CREATE the apporveShiipments transaction"
   participant(e): "org.mat.Employee"
   operation: CREATE
-  resource(c): "org.mat.ApproveShipments"
+  resource(c): "org.mat.ApproveShipmentsByBuyingBusiness"
   condition: ((e.worksFor == c.contract.buyingBusiness.businessId))
   action: ALLOW
 }
 
 rule EmployeeApproveShipmentStatusViaUpdateShipmentStatus
 {
-  description: "Allow buying business employee to APPROVE shipments that that have arrived via the apporveShiipments transaction"
+  description: "Allow carrying business employee to UPDATE the stuats of the shipment"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(c): "org.mat.Contract"
@@ -205,7 +196,7 @@ rule EmployeeApproveShipmentStatusViaUpdateShipmentStatus
 
 rule EmployeeApproveShipmentStatusViaCreateUpdateShipmentStatus
 {
-  description: "Allow buying business employee to APPROVE shipments that that have arrived via the apporveShiipments transaction"
+  description: "Allow carrying business employee to CREATE transaction UpdateShipmentStatus"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(c): "org.mat.UpdateShipmentStatus"
@@ -224,11 +215,11 @@ rule EmployeeUPDATEContractViaUpdateItemRequest
   action: ALLOW
 }
 
-rule EmployeeCreateUpdateItemRequest
+rule EmployeeCRUDTransactionUpdateItemRequest
 {
   description: "Allow ANY employee to UPDATE a contract that belongs to their business via the UpdateItemRequest transaction"
   participant(e): "org.mat.Employee"
-  operation: CREATE
+  operation: CREATE, READ, UPDATE, DELETE
   resource(c): "org.mat.UpdateItemRequest"
   condition: ((e.worksFor == c.contract.sellingBusiness.businessId) || (e.worksFor == c.contract.buyingBusiness.businessId))
   action: ALLOW
@@ -238,16 +229,16 @@ rule AdminEmployeeUPDATEContractViaApproveContractChanges
 {
   description: "Allow an Admin employee to UPDATE a contract that belongs to their business via the ApproveContractChanges transaction"
   participant(e): "org.mat.Employee"
-  operation: UPDATE, CREATE
+  operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.ApproveContractChanges"
   condition: ((e.employeeType=="Admin") && ((e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId)))
   action: ALLOW
 }
 
-rule AdminEmployeeCREATEApproveContractChanges
+rule AdminEmployeeCREATETransactionApproveContractChanges
 {
-  description: "Allow an Admin employee to UPDATE a contract that belongs to their business via the ApproveContractChanges transaction"
+  description: "Allow an Admin employee to CREATE the ApproveContractChanges transaction"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(c): "org.mat.ApproveContractChanges"
@@ -268,7 +259,7 @@ rule AdminEmployeeUPDATEContractViaCancelContract
 
 rule AdminEmployeeCreateCancelContract
 {
-  description: "Allow an Admin employee to deny a contract that belongs to their business via the CancelContract transaction"
+  description: "Allow an Admin employee to CREATE the CancelContract transaction"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(c): "org.mat.CancelContract"
@@ -289,7 +280,7 @@ rule AdminEmployeeUPDATEContractViaCompleteContract
 
 rule AdminEmployeeCreateCompleteContract
 {
-  description: "Allow an Admin employee to UPDATE a contract that belongs to their business via the CompleteContract transaction"
+  description: "Allow an Admin employee to CREATE the CompleteContract transaction"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(c): "org.mat.CompleteContract"
@@ -310,7 +301,7 @@ rule EmployeeUPDATEContractViaUpdateContractArrivalDateTime
 
 rule EmployeeCREATEContractViaUpdateContractArrivalDateTime
 {
-  description: "Allow ANY employee to UPDATE a contract that belongs to their business via the UpdateContractArrivalDateTime transaction"
+  description: "Allow ANY employee to CREATE the UpdateContractArrivalDateTime transaction"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(c): "org.mat.UpdateContractArrivalDateTime"
@@ -332,7 +323,7 @@ rule EmployeeUPDATEContractViaAddShipmentToShipmentList
 
 rule EmployeeCREATEContractAddShipmentToShipmentList
 {
-  description: "Allow ANY SELLING business employee to CREATE a contract that belongs to their business via the AddShipmentToShipmentList transaction"
+  description: "Allow ANY SELLING business employee to CREATE the AddShipmentToShipmentList transaction"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(c): "org.mat.AddShipmentToShipmentList"
@@ -351,9 +342,9 @@ rule EmployeeUPDATEContractViaRemoveShipmentFromShipmentList
   action: ALLOW
 }
 
-rule EmployeeCreateRemoveShipmentFromShipmentList
+rule EmployeeCREATERemoveShipmentFromShipmentListTransaction
 {
-  description: "Allow ANY SELLING business employee to UPDATE a contract that belongs to their business via the RemoveShipmentFromShipmentList transaction"
+  description: "Allow ANY SELLING business employee to CREATE the RemoveShipmentFromShipmentList transaction"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(c): "org.mat.RemoveShipmentFromShipmentList"
@@ -372,9 +363,9 @@ rule EmployeeUPDATEContractViaAddItemRequestsToRequestedItemsList
   action: ALLOW
 }
 
-rule EmployeeCreateAddItemRequestsToRequestedItemsList
+rule EmployeeCREATEAddItemRequestsToRequestedItemsListTransaction
 {
-  description: "Allow ANY employee to CREATE a contract that belongs to their business via the AddItemRequestToRequestedItems transaction"
+  description: "Allow ANY employee to CREATE the AddItemRequestToRequestedItems transaction"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(c): "org.mat.AddItemRequestsToRequestedItemsList"
@@ -393,9 +384,9 @@ rule EmployeeUPDATEContractViaRemoveItemRequestsFromRequestedItems
   action: ALLOW
 }
 
-rule EmployeeCreateRemoveItemRequestsFromRequestedItems
+rule EmployeeCREATERemoveItemRequestsFromRequestedItemsTransaction
 {
-  description: "Allow ANY employee to CREATE a contract that belongs to their business via the RemoveItemRequestFromRequestedItems transaction"
+  description: "Allow ANY employee to CREATE the RemoveItemRequestFromRequestedItems transaction"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(c): "org.mat.RemoveItemRequestsFromRequestedItemsList"
@@ -426,9 +417,9 @@ rule EmployeeUPDATEBusinessViaRemoveItemFromInventory
   action: ALLOW
 }
 
-rule EmployeeCREATEBusinessViaRemoveItemFromInventory
+rule EmployeeCREATEBusinessViaRemoveItemFromInventoryTransaction
 {
-  description: "Allow ANY employee to remove from a business's inventory that belongs to their business via RemoveItemFromInventory"
+  description: "Allow ANY employee to CREATE the RemoveItemFromInventory transaction"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(b): "org.mat.RemoveItemFromInventory"
@@ -438,7 +429,7 @@ rule EmployeeCREATEBusinessViaRemoveItemFromInventory
 
 rule EmployeeUPDATEBusinessViaAddItemToInventory
 {
-  description: "Allow ANY employee to UPDATE a business that belongs to their business via RemoveItemFromInventory"
+  description: "Allow ANY employee to UPDATE a business that belongs to their business via AddItemToInventory"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(b): "org.mat.Business"
@@ -447,9 +438,9 @@ rule EmployeeUPDATEBusinessViaAddItemToInventory
   action: ALLOW
 }
 
-rule EmployeeCreateAddItemToInventory
+rule EmployeeCREATEAddItemToInventoryTransaction
 {
-  description: "Allow ANY employee to CREATE a business that belongs to their business via RemoveItemFromInventory"
+  description: "Allow ANY employee to CREATE the AddItemToInvetory transaction"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(b): "org.mat.AddItemToInventory"
@@ -457,19 +448,19 @@ rule EmployeeCreateAddItemToInventory
   action: ALLOW
 }
 
-rule AdminEmployeerRUBusiness
+rule AdminEmployeerUPDATEBusiness
 {
-  description: "Allow an ADMIN employee to READ and UPDATE a business"
+  description: "Allow an ADMIN employee to UPDATE a business through the various transactions"
   participant(e): "org.mat.Employee"
-  operation: READ, UPDATE
+  operation: UPDATE
   resource(b): "org.mat.Business"
   condition: ((e.employeeType == "Admin") && (e.worksFor == b.businessId))
   action: ALLOW
 }
 
-rule AdminEmployeeCREATEBusinessViaRemoveEmployeeFromBusiness
+rule AdminEmployeeCREATERemoveEmployeeFromBusinessTransaction
 {
-  description: "Allow an ADMIN employee to UPDATE a business via RemoveEmployeeFromBusiness"
+  description: "Allow an ADMIN employee to CREATE the RemoveEmployeeFromBusiness transaction"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(b): "org.mat.RemoveEmployeeFromBusiness"
@@ -488,9 +479,9 @@ rule AdminEmployeeUPDATEBusinessViaRemoveEmployeeFromBusiness
   action: ALLOW
 }
 
-rule AdminEmployeeCREATEBusinessViaAddEmployeeToBusiness
+rule AdminEmployeeCREATEAddEmployeeToBusinessTransaction
 {
-  description: "Allow an ADMIN employee to UPDATE a business via AddEmployeeToBusiness"
+  description: "Allow an ADMIN employee to CREATE the AddEmployeeToBusiness transaction"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(b): "org.mat.AddEmployeeToBusiness"
@@ -509,9 +500,9 @@ rule AdminEmployeeUPDATEBusinessViaAddEmployeeToBusiness
   action: ALLOW
 }
 
-rule AdminEmployeeCreateBusinessViaUpdateBusinessInfo
+rule AdminEmployeeCREATEUpdateBusinessInfoTransaction
 {
-  description: "Allow an ADMIN employee to UPDATE a business via AddEmployeeToBusiness"
+  description: "Allow an ADMIN employee to CREATE the UpdateBusinessInfo transaction"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(b): "org.mat.UpdateBusinessInfo"
@@ -521,7 +512,7 @@ rule AdminEmployeeCreateBusinessViaUpdateBusinessInfo
 
 rule AdminEmployeeUPDATEBusinessViaUpdateBusinessInfo
 {
-  description: "Allow an ADMIN employee to UPDATE a business via AddEmployeeToBusiness"
+  description: "Allow an ADMIN employee to UPDATE a business via UpdateBusinessInfo"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(b): "org.mat.Business"
@@ -541,9 +532,9 @@ rule AdminEmployeeUPDATEBusinessViaUpdateBusinessAccBalance
   action: ALLOW
 }
 
-rule AdminEmployeeCREATEBusinessViaUpdateBusinessAccBalance
+rule AdminEmployeeCREATEUpdateBusinessAccBalanceTransaction
 {
-  description: "Allow an ADMIN employee to UPDATE a business via UpdateBusinessAccBalance"
+  description: "Allow an ADMIN employee to CREATE the UpdateBusinessAccBalance transaction"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(b): "org.mat.UpdateBusinessAccBalance"
@@ -551,17 +542,7 @@ rule AdminEmployeeCREATEBusinessViaUpdateBusinessAccBalance
   action: ALLOW
 }
 
-rule AdminEmployeeCRUDUser
-{
-  description: "Allow an ADMIN employee to CRUD a user"
-  participant(e): "org.mat.Employee"
-  operation: CREATE, READ, UPDATE, DELETE
-  resource(u): "org.mat.User"
-  condition: (e.employeeType == "Admin")
-  action: ALLOW
-}
-
-rule AdminEmployeeCreateParticipants
+rule AdminEmployeeCREATEParticipants
 {
   description: "Allow an ADMIN employee to CRUD a user"
   participant(e): "org.mat.Employee"
@@ -592,7 +573,7 @@ rule EmployeeUPDATEEmployeeInfo
   action: ALLOW
 }
 
-rule EmployeeCreateEmployeeInfo
+rule EmployeeCREATETEmployeeInfoTransaction
 {
   description: "Allow ANY employee to CREATE transaction their employee info"
   participant(e): "org.mat.Employee"
@@ -602,7 +583,7 @@ rule EmployeeCreateEmployeeInfo
   action: ALLOW
 }
 
-rule AdminEmployeeUPDATEEmployeeType
+rule AdminEmployeeUPDATEEmployeeTypeViaUpdateEmployeeType
 {
   description: "Allow ANY employee with type Admin to UPDATE Employee Type"
   participant(e): "org.mat.Employee"
@@ -613,9 +594,9 @@ rule AdminEmployeeUPDATEEmployeeType
   action: ALLOW
 }
 
-rule AdminEmployeeCreateEmployeeType
+rule AdminEmployeeCREATEUpdateEmployeeTypeTransaction
 {
-  description: "Allow ANY employee with type Admin to UPDATE Employee Type"
+  description: "Allow ANY employee with type Admin to CREATE the transaction UpdateEmployeeType"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(r): "org.mat.UpdateEmployeeType"
@@ -623,9 +604,9 @@ rule AdminEmployeeCreateEmployeeType
   action: ALLOW
 }
 
-rule AdminEmployeeCreateBulkLoad
+rule AdminEmployeeCREATEBulkLoadTransaction
 {
-  description: "Allow ANY employee to use BulkLoad"
+  description: "Allow ANY employee to use BulkLoad on their own business"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(r): "org.mat.BulkLoad"
@@ -635,7 +616,7 @@ rule AdminEmployeeCreateBulkLoad
 
 rule UsersUpdatesPasswordViaTransactionUpdatePassword
 {
-  description: "Allow ANY user to update their own password"
+  description: "Allow ANY user to UPDATE their own password"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(oe): "org.mat.User"
@@ -646,7 +627,7 @@ rule UsersUpdatesPasswordViaTransactionUpdatePassword
 
 rule UsersUpdatesPassword
 {
-  description: "Allow ANY user to update their own password"
+  description: "Allow ANY user to CREATE the transaction UpdateUserPassword"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(oe): "org.mat.UpdateUserPassword"
@@ -656,9 +637,9 @@ rule UsersUpdatesPassword
 
 rule UsersUpdatesEmailViaTransactionUpdateUserEmail
 {
-  description: "Allow ANY user to update their own password"
+  description: "Allow ANY user to UPDATE their own email"
   participant(e): "org.mat.Employee"
-  operation: CREATE
+  operation: UPDATE
   resource(oe): "org.mat.User"
   transaction: "org.mat.UpdateUserEmail"
   condition: (e.employeeId == oe.user.employeeId)
@@ -667,7 +648,7 @@ rule UsersUpdatesEmailViaTransactionUpdateUserEmail
 
 rule UsersUpdatesEmail
 {
-  description: "Allow ANY user to update their own password"
+  description: "Allow ANY user to CREATE the UpdateUserEmail transaction"
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(oe): "org.mat.UpdateUserEmail"
