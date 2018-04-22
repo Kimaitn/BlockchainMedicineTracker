@@ -212,18 +212,28 @@ async function completeContract(completeContract) {
             shipments.forEach(function(shipment){
                 var arrayItems = shipment.items;
                 arrayItems.forEach(function(items){
-                    items.locations.push(shipment.destinationAddress);
-                    items.currentOwner = completeContract.contract.buyingBusiness.businessId;
-                    var index = completeContract.contract.sellingBusiness.inventory.indexOf(items);
-                    if(index>-1) {
-                        completeContract.contract.sellingBusiness.inventory.splice(index, 1);
+                    if(completeContract.invokingEmployee.worksFor == completeContract.contract.buyingBusiness.businessId){
+          				completeContract.contract.buyingBusiness.inventory.push(items);
+          				businessRegistry.update(completeContract.contract.buyingBusiness);
+          			}
+                    else{
+                        items.locations.push(shipment.destinationAddress);
+                        items.currentOwner = completeContract.contract.buyingBusiness.businessId;
+                        itemRegistry.update(items);
+                        resources.push(items);
                     }
-                    completeContract.contract.buyingBusiness.inventory.push(items);
-                    businessRegistry.updateAll([completeContract.contract.sellingBusiness, completeContract.contract.buyingBusiness]);
-                    resources.push(items);
                 });
             });
-            await itemRegistry.updateAll(resources);
+            if(completeContract.invokingEmployee.worksFor == completeContract.contract.sellingBusiness.businessId){
+              	for(var i = 0; i<resources.length; i++){
+            		var index = completeContract.contract.sellingBusiness.inventory.indexOf(resources[i]);
+                	if(index>-1) {
+                       	completeContract.contract.sellingBusiness.inventory.splice(index, 1);
+                 	}
+                  	businessRegistry.update(completeContract.contract.sellingBusiness);
+                }
+                return;
+             }
         }
     }
     else {

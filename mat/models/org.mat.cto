@@ -204,6 +204,7 @@ transaction  CancelContract extends UpdateContract
 // Complete a contract
 transaction CompleteContract extends UpdateContract
 {
+  --> Employee invokingEmployee
 }
 
 // Updates the arrival time of a shipment on a contract
