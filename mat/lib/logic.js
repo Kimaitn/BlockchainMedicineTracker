@@ -669,8 +669,6 @@ async function setupDemo(setupDemo) {
     itemRequest.unitPrice = 14.2;
     itemRequest.quantity = 2;
 
-    contract.requestedItems = [itemRequest];
-
     // create the shipment concept
     const shipment = factory.newConcept(org, 'Shipment', 'S001');
     shipment.status = 'IN_TRANSIT';
