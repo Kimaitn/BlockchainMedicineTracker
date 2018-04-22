@@ -122,22 +122,22 @@ rule EmployeeUPDATEItemViaUpdateItemOwner
   action: ALLOW
 }
 
-rule EmployeeCRContract
+rule EmployeeCRUContract
 {
-  description: "Allow ANY employee to CR a contract that belongs to their business"
+  description: "Allow ANY employee to CRU a contract that belongs to their business"
   participant(e): "org.mat.Employee"
-  operation: CREATE, READ
+  operation: CREATE, READ, UPDATE
   resource(c): "org.mat.Contract"
   condition: ((e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId))
   action: ALLOW
 }
 
-rule EmployeeREADContrat
+rule CarryingBusinessEmployeeRUShipment
 {
-  description: "Allow ANY employee to Read a contract that belongs to their business"
+  description: "Allow ANY employee that works for the carrying business READ and UPDATE shipments"
   participant(e): "org.mat.Employee"
-  operation: READ
-  resource(c): "org.mat.Contract"
+  operation: READ, UPDATE
+  resource(c): "org.mat.Shipment"
   condition: (e.worksFor == c.carryingBusiness.businessId)
   action: ALLOW
 }
@@ -191,7 +191,7 @@ rule EmployeeApproveShipmentStatusViaUpdateShipmentStatusViaCarrierBusiness
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction(tx): "org.mat.UpdateShipmentStatusViaCarrierBusiness"
-  condition: (e.worksFor == tx.carrierEmployee.worksFor)
+  condition: (e.worksFor == tx.shipment.carryingBusiness.businessId)
   action: ALLOW
 }
 
@@ -201,7 +201,17 @@ rule EmployeeApproveShipmentStatusViaCreateUpdateShipmentStatus
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(c): "org.mat.UpdateShipmentStatusViaCarrierBusiness"
-  condition: (e.worksFor == c.carrierEmployee.worksFor)
+  condition: (e.worksFor == c.carryingBusiness.businessId)
+  action: ALLOW
+}
+
+rule EmployeeCRUDShipmentsPartOfTheContract
+{
+  description: "Allow ANY employee to read shipments that are part of the contrat they are part of"
+  participant(e): "org.mat.Employee"
+  operation: ALL
+  resource(c): "org.mat.Shipment"
+  condition: ((e.worksFor == c.sendingBusiness) || (e.worksFor == c.receivingBusiness))
   action: ALLOW
 }
 

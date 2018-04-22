@@ -89,13 +89,15 @@ async function updateItemOwner(updateItemOwner) {
  * @transaction
  */
 async function updateShipmentCarrier(updateShipment) {
-    updateShipment.contract.shipments[updateShipment.shipmentIndex].carryingBusiness = updateShipment.newCarryingBusiness;
-    updateShipment.contract.shipments[updateShipment.shipmentIndex].status = updateShipment.newStatus;
+    if(updateShipment.contract.status === 'CONFIRMED' || updateShipment.contract.status === 'COMPLETED'){
+        return;
+    }
+    const shipmentRegistry = await getAssetRegistry('org.mat.Shipment');
+    const shipment = await shipmentRegistry.get(updateShipment.contract.shipments[updateShipment.shipmentIndex].shipmentId);
+    shipment.carryingBusiness = updateShipment.newCarryingBusiness;
+    shipment.status = updateShipment.newStatus;
     changeContractStatuses(updateShipment.contract);
-    return getAssetRegistry('org.mat.Contract')
-        .then(function (assetRegistry) {
-            return assetRegistry.update(updateShipment.contract);
-        });
+    await shipmentRegistry.update(shipment);
 }
 
 /**
@@ -104,13 +106,13 @@ async function updateShipmentCarrier(updateShipment) {
  * @transaction
  */
 async function approveShipmentsByBuyingBusiness(approveShipmentsByBuyingBusiness) {
+    var shipments = [];
+    const shipmentRegistry = await getAssetRegistry('org.mat.Shipment');
     approveShipmentsByBuyingBusiness.shipmentIndexes.forEach((shipmentIndex) => {
         approveShipmentsByBuyingBusiness.contract.shipments[shipmentIndex].approvalStatusReceivingBusiness = 'ARRIVED';
-    });
-    return getAssetRegistry('org.mat.Contract')
-        .then(function (assetRegistry) {
-            return assetRegistry.update(approveShipmentsByBuyingBusiness.contract);
-        });
+        shipments.push(approveShipmentsByBuyingBusiness.contract.shipments[shipmentIndex]);
+  });
+    await shipmentRegistry.updateAll(shipments);
 }
 
 /**
@@ -188,22 +190,17 @@ async function cancelContract(cancelContract) {
             });
     }
 }
-
+//TODO shippers hiearchy of changing shipment status
+//shipment should not be editable after accepted
 /**
  * Confirms the status of the shipment by the carrying business
  * @param {org.mat.UpdateShipmentStatusViaCarrierBusiness} updateShipmentStatusViaCarrierBusiness - the status of the shipment on the contract
  * @transaction
  */
 async function updateShipmentStatusViaCarrierBusiness(updateShipmentStatusViaCarrierBusiness){
-    updateShipmentStatusViaCarrierBusiness.shipmentIndexes.forEach((shipmentIndex) => {
-        if(updateShipmentStatusViaCarrierBusiness.contract.shipments[shipmentIndex].carryingBusiness.employees.indexOf(updateShipmentStatusViaCarrierBusiness.carrierEmployee) > -1){
-        updateShipmentStatusViaCarrierBusiness.contract.shipments[shipmentIndex].status = updateShipmentStatusViaCarrierBusiness.newStatus;
-        }
-    });
-    return getAssetRegistry('org.mat.Contract')
-        .then(function (assetRegistry) {
-            return assetRegistry.update(updateShipmentStatusViaCarrierBusiness.contract);
-        });
+    const shipmentRegistry = await getAssetRegistry('org.mat.Shipment');
+    updateShipmentStatusViaCarrierBusiness.shipment.status = updateShipmentStatusViaCarrierBusiness.newStatus;
+    await shipmentRegistry.update(updateShipmentStatusViaCarrierBusiness.shipment);
 }
 
 /**
@@ -267,6 +264,11 @@ async function updateContractArrivalDateTime(updateContractArrivalDateTime) {
  * @transaction
  */
 async function addShipmentToShipmentList(addShipmentToShipmentList) {
+    if(addShipmentToShipmentList.contract.status === 'CONFIRMED' || addShipmentToShipmentList.contract.status === 'COMPLETED'){
+        return;
+    }
+    const shipmentRegistry = await getAssetRegistry('org.mat.Shipment');
+    await shipmentRegistry.add(addShipmentToShipmentList.newShipment)
     addShipmentToShipmentList.contract.shipments.push(addShipmentToShipmentList.newShipment);
     changeContractStatuses(addShipmentToShipmentList.contract);
     return getAssetRegistry('org.mat.Contract')
@@ -281,6 +283,11 @@ async function addShipmentToShipmentList(addShipmentToShipmentList) {
  * @transaction
  */
 async function removeShipmentFromShipmentList(removeShipmentFromShipmentList) {
+    if(removeShipmentFromShipmentList.contract.status === 'CONFIRMED' || removeShipmentFromShipmentList.contract.status === 'COMPLETED'){
+        return;
+    }
+    const shipmentRegistry = await getAssetRegistry('org.mat.Shipment');
+    await shipmentRegistry.remove(removeShipmentFromShipmentList.contract.shipments[removeShipmentFromShipmentList.shipmentIndex])
     removeShipmentFromShipmentList.contract.shipments.splice(
         removeShipmentFromShipmentList.shipmentIndex,
         1

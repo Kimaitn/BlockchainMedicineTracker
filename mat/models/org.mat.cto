@@ -3,8 +3,8 @@ namespace org.mat
 // Status of a shipment
 enum shipmentStatus 
 {
-  o ACCEPTED
   o WAITING_CONFIRMATION
+  o ACCEPTED
   o IN_TRANSIT
   o ARRIVED
   o CANCELLED
@@ -60,12 +60,15 @@ concept Address
 }
 
 // Packages of items to be delivered between businesses
-concept Shipment
+asset Shipment identified by shipmentId
 {
+  o String shipmentId
   o shipmentStatus status
   o Address destinationAddress
   o Address sourceAddress
   o receiverStatus approvalStatusReceivingBusiness
+  o String sendingBusiness
+  o String receivingBusiness
   --> Business carryingBusiness
   --> Item[] items
 }
@@ -103,11 +106,10 @@ asset Contract identified by contractId
   o contractStatus approvalStatusBuyingBusiness
   o contractStatus status
   o DateTime arrivalDateTime
-  o Shipment[] shipments optional
+  --> Shipment[] shipments 
   o ItemRequest[] requestedItems
   --> Business sellingBusiness
   --> Business buyingBusiness
-  --> Business carryingBusiness
 }
 
 // The basic User class that will be using the system
@@ -213,7 +215,7 @@ transaction UpdateContractArrivalDateTime extends UpdateContract
 // Adds a shipment to a contract
 transaction AddShipmentToShipmentList extends UpdateContract
 {
-  o Shipment newShipment
+ o Shipment newShipment
 }
 
 // Removes a shipment in a contract
@@ -234,12 +236,17 @@ transaction RemoveItemRequestsFromRequestedItemsList extends UpdateContract
   o Integer[] itemRequestIndexes
 }
 
+// Updates Shipment by Carrier 
+abstract transaction shipmentUpdate
+{
+  --> Shipment shipment
+}
+
+
 // Allows the carrier business to update the status of the shipment on the contract
-transaction UpdateShipmentStatusViaCarrierBusiness extends UpdateContract
+transaction UpdateShipmentStatusViaCarrierBusiness extends shipmentUpdate
 {
   o shipmentStatus newStatus
-  o Integer[] shipmentIndexes
-  --> Employee carrierEmployee
 }
 
 // Updates user 
