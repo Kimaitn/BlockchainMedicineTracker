@@ -180,11 +180,11 @@ export class LoginComponent implements AfterViewInit  {
 		business.address = address;
 		business.accountBalance = 0;
 		business.inventory = [];
-		business.employees = [];
+		business.employees = ["resource:org.mat.Employee#"+encodeURIComponent(inputname+"."+inputfirstname+"."+inputlastname+"."+inputemail)];
 		this.addBusiness(business);
 
 		//var employeeType: EmployeeType;
-		//employeeType = new EmployeeType();
+		           //employeeType = new EmployeeType();
 		//employeeType.type = "Admin";
 		//var employeeTypeStr = JSON.stringify(employeeType);
 
@@ -235,6 +235,34 @@ export class LoginComponent implements AfterViewInit  {
 				document.getElementById("signinleft").style.height = document.getElementById("signinform").clientHeight+"px";
 			}
 		}, 0);
+	}
+
+	eq(arg1, arg2) {
+		if(arg1==arg2)
+			return true;
+		if(arg1===arg2)
+			return true;
+		if("resource:"+arg1==arg2)
+			return true;
+		if(arg1=="resource:"+arg2)
+			return true;
+		if(arg1.split("#").length>1 && arg1.split("#")[1]==arg2)
+			return true;
+		if(arg2.split("#").length>1 && arg1==arg2.split("#")[1])
+			return true;
+		if(encodeURIComponent(arg1)==arg2)
+			return true;
+		if(arg1==encodeURIComponent(arg2))
+			return true;
+		if(arg1.split("#").length>1 && encodeURIComponent(arg1.split("#")[1])==arg2)
+			return true;
+		if(arg2.split("#").length>1 && arg1==encodeURIComponent(arg2.split("#")[1]))
+			return true;
+		if(arg1.split("#").length>1 && arg1.split("#")[1]==encodeURIComponent(arg2))
+			return true;
+		if(arg2.split("#").length>1 && encodeURIComponent(arg1)==arg2.split("#")[1])
+			return true;
+		return false;
 	}
 	
 	//this was a test
@@ -345,7 +373,7 @@ export class LoginComponent implements AfterViewInit  {
     
     //retrieve all residents
 		let usersList = [];
-		return this.serviceLogin.getUser(_email)
+		return this.serviceLogin.getAllUsers()
 		.toPromise()
 		.then((result) => {
 				this.errorMessage = null;

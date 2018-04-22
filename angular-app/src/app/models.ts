@@ -34,13 +34,14 @@ export class Item {
 	currentOwner: string;
 	itemType: string;
 	str: string;
+	locations: Address[];
 }
 
 export class Shipment {
-	status: Status;
+	status: string;
 	carryingBusiness: string;
-	destination: Address;
-	source: Address;
+	destinationAddress: Address;
+	sourceAddress: Address;
 	//contract: string;
 	items: string[];
 }
@@ -126,4 +127,14 @@ export class UpdateItemOwner {
 	item: string;
 	newAddress: Address;
 	currentOwner: string;
+}
+
+export class AddShipment {
+	newShipment: Shipment;
+	contract: string;
+}
+
+export class RemoveShipment {
+	shipmentIndex: number;
+	contract: string;
 }

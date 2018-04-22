@@ -8,7 +8,14 @@
 		cursor: pointer;
 		text-decoration: underline;
 	}
+
+	.toastify {
+		z-index: 200;
+		z-index: 200!important;
+	}
 </style>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
 <div class='color4' style='position: fixed; top: 0; right: 0; left: 0; bottom: 0; width: 100%;height: 100%;z-index: -1'></div>
  <div style='width: 300px; background-color: #484848; position: fixed; left: 0; top: 0; bottom: 0; color: white; z-index: 50;'>
 	<img src='https://www.signicat.com/wp-content/uploads/2014/06/default-profile-picture.png' width="120px" height="120px" style='display: block; width: 120px; margin: 0 auto; margin-top: 50px;'/>		
@@ -49,13 +56,13 @@
 		</style>
 		<ul class="list-unstyled components">
             <li *ngIf="onItemsOwned"  class="active navlinks"><a>Items Owned</a></li>
-            <li *ngIf="!onItemsOwned" (click)="onItemsOwned = true; onContracts = false; onShipments = false; onBusiness=false" class="navlinks"><a>Items Owned</a></li>
+            <li *ngIf="!onItemsOwned" (click)="onItemsOwned = true; onContracts = false; onShipments = false; onBusiness=false;" class="navlinks"><a>Items Owned</a></li>
             <li *ngIf="onContracts" class='active navlinks'><a >Contracts</a></li>
             <li *ngIf="!onContracts" (click)="onItemsOwned = false; onContracts = true; onShipments = false; onBusiness=false" class='navlinks'><a>Contracts</a></li>
             <li *ngIf="onShipments" class='active navlinks'><a >Shipments</a></li>
             <li *ngIf="!onShipments" (click)="onItemsOwned = false; onContracts = false; onShipments = true; onBusiness=false" class='navlinks'><a>Shipments</a></li>
-            <li *ngIf="onBusiness" class='active navlinks'><a >Business</a></li>
-            <li *ngIf="!onBusiness" (click)="onItemsOwned = false; onContracts = false; onShipments = false; onBusiness=true" class='navlinks'><a>Business</a></li>
+            <li *ngIf="false" class='active navlinks'><a >Business</a></li>
+            <li *ngIf="false" (click)="onItemsOwned = false; onContracts = false; onShipments = false; onBusiness=true" class='navlinks'><a>Business</a></li>
 
         </ul>
 	</nav>
@@ -141,7 +148,8 @@
 								  <!--<th scope="row">{{contract.id}}</th>-->
 								  <th scope="row">{{contract.status}}<br>
 								  <button type="button" class="btn btn-success" style='background-color: #8bc34a !important; border: none;' (click)='updateContract(contract.str, true)'>&#10004;</button>
-								  <button type="button" class="btn btn-danger" style='background-color: #f44336 !important; border: none;' (click)='updateContract(contract.str, false)'>&#10005;</button></th>
+								  <button type="button" class="btn btn-danger" style='background-color: #f44336 !important; border: none;' (click)='updateContract(contract.str, false)'>&#10005;</button>
+								  <button data-toggle="modal" href="#myModal5" type="button" class="btn btn-danger" style='background-color: #ffa726 !important; border: none;' (click)='editContract(contract.str)'>Edit</button></th>
 								  <td>{{contract.sellingBusiness.split("#")[1].split("%20").join(" ")}}</td>
 								  <td>{{contract.buyingBusiness.split("#")[1].split("%20").join(" ")}}</td>
 								  <td>{{contract.requestedItems[0].requestedItem.split("#")[1].split("%20").join(" ")}}</td> <!--TO-DO make it add multiple items -->
@@ -174,22 +182,30 @@
 								<tr>
 								  <!--<th scope="col">ID</th>-->
 								  <th scope="col">Status</th>
-								  <th scope="col">Seller</th>
-								  <th scope="col">Buyer</th>
-								  <th scope="col">Medicine</th>
-								  <th scope="col">UnitPrice</th>
-								  <th scope="col">Quantity</th>
+								  <th scope="col">Carrying Business</th>
+								  <th scope="col">Source</th>
+								  <th scope="col">Destination</th>
+								  <th scope="col">Item</th>
 								</tr>
 							  </thead>
 							  <tbody>
-								<tr *ngFor="let contract of contracts">
+								<tr *ngFor="let shipment of shipments">
 								  <!--<th scope="row">{{contract.contractId}}</th>-->
-								  <th scope="row">{{contract.status}}</th>
-								  <td>{{contract.sellingBusiness.split("#")[1].split("%20").join(" ")}}</td>
-								  <td>{{contract.buyingBusiness.split("#")[1].split("%20").join(" ")}}</td>
-								  <td>{{contract.requestedItems[0].requestedItem.split("#")[1].split("%20").join(" ")}}</td> <!--TO-DO make it add multiple items -->
-								  <td>{{contract.requestedItems[0].unitPrice}}</td>
-								  <td>{{contract.requestedItems[0].quantity}}</td>
+								  <th scope="row">{{shipment.shipments[0].status}}</th>
+								  <td>{{shipment.shipments[0].carryingBusiness.split("#")[1].split("%20").join(" ")}}</td>
+								  <td>{{addressToString(shipment.shipments[0].sourceAddress)}}</td>
+								  <td>{{addressToString(shipment.shipments[0].destinationAddress)}}</td> <!--TO-DO make it add multiple items -->
+								  <td>{{shipment.shipments[0].items[0].split("#")[1].split("%20").join(" ")}}</td>
+								</tr>
+								<tr *ngFor="let shipment of pendingshipments">
+								  <!--<th scope="row">{{contract.contractId}}</th>-->
+								  <th scope="row">{{shipment.shipments[0].status}}<br>
+								  <button type="button" class="btn btn-success" style='background-color: #8bc34a !important; border: none;' (click)='updateShipment(shipment.str, true)'>Arrived &#10004;</button>
+								  <button type="button" class="btn btn-danger" style='background-color: #f44336 !important; border: none;' (click)='updateShipment(shipment.str, false)'>Cancel &#10005;</button></th>
+								  <td>{{shipment.shipments[0].carryingBusiness.split("#")[1].split("%20").join(" ")}}</td>
+								  <td>{{addressToString(shipment.shipments[0].sourceAddress)}}</td>
+								  <td>{{addressToString(shipment.shipments[0].destinationAddress)}}</td> <!--TO-DO make it add multiple items -->
+								  <td>{{shipment.shipments[0].items[0].split("#")[1].split("%20").join(" ")}}</td>
 								</tr>
 							  </tbody>
 							</table>
@@ -317,33 +333,53 @@
 				<div class="form-group">
 					<label for="SellingBusiness">Which Contract:</label>
 					<select class="form-control" id='WhichContract' ><!--disabled="true"-->
-					  <option *ngFor="let b of contracts" value='{{b.contractId}}'>{{b.contractId}}</option>
+					  <option *ngFor="let b of contracts" value='{{b.str}}'>{{b.contractId}}</option>
 					</select>
 					<!--<input class="form-control" id='SellingBusiness' type='text' placeholder='Selling Business'/>-->
 				</div><div class="form-group">
-					<label for="BuyingBusiness">Buying Business:</label>
+					<label for="CarryingBusiness">Carrying Business:</label>
 					<!--<input class="form-control" id='BuyingBusiness' type='text' placeholder='Buying Business'/>-->
-					<select class="form-control" id='BuyingBusiness'>
+					<select class="form-control" id='CarryingBusiness'>
 					  <option *ngFor="let b of allbusinesses" value='{{b.str}}'>{{b.name.split("%20").join(" ")}}</option>
 					</select>
-				</div><div class="form-group">
-					<label for="ItemBuy">What Item:</label>
-					<!--<input class="form-control" id='ItemBuy' type='text' placeholder='Item'/>-->
-					<select class="form-control" id='ItemBuy'>
-					  <option *ngFor="let i of itemtypes" value='{{i.itemTypeName}}'>{{i.itemTypeName}}</option>
-					</select>
-				</div><div class="form-group">
-					<label for="UnitPrice">Unit Price:</label>
-					<input class="form-control" id='UnitPrice' type='number' placeholder='Unit Price'/>
-				</div><div class="form-group">
-					<label for="Quantity">Quantity:</label>
-					<input class="form-control" id='Quantity' type='number' placeholder='Quantity'/>
 				</div>
         	</form>
         </div>
         <div class="modal-footer">
           <button href="#" data-dismiss="modal" class="btn btn-primary" >Close</button>
-          <button href="#" class="btn btn-primary" (click)='addNewContract()' >Add</button>
+          <button href="#" data-dismiss="modal" class="btn btn-primary" (click)='addShipment()' >Add</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!--Contract-->
+<div class="modal fade" id="myModal5" style='margin-left: 300px; margin-top: 70px'>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button style='background-color: transparent !important;' type="button" class="close" data-dismiss="modal" aria-hidden="true"><!--×-->&times;</button>
+          <h4 class="modal-title">Edit Contract:</h4>
+        </div>
+        <div class="modal-body">
+            <form>
+            	<div class="form-group">
+            		<p style='display:none;' id='actualcontract'></p>
+					<label for="ItemBuy">Item:</label>
+					<!--<input class="form-control" id='ItemBuy' type='text' placeholder='Item'/>-->
+					<p id='item2'>Item</p>
+				</div><div class="form-group">
+					<label for="UnitPrice">Unit Price:</label>
+					<input class="form-control" id='UnitPrice2' type='number' placeholder='Unit Price'/>
+				</div><div class="form-group">
+					<label for="Quantity">Quantity:</label>
+					<input class="form-control" id='Quantity2' type='number' placeholder='Quantity'/>
+				</div>
+        	</form>
+        </div>
+        <div class="modal-footer">
+          <button href="#" data-dismiss="modal" class="btn btn-primary" >Close</button>
+          <button href="#" class="btn btn-primary" (click)='aEditContract()' >Edit</button>
         </div>
       </div>
     </div>

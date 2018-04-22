@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DataService } from './data.service';
 import { Observable } from 'rxjs/Observable';
-import { Address, Users, Employee, Business, Item, ItemType, Contract, AddItemToInventory,RemoveItemFromInventory,UpdateItemOwner } from './models';
+import { Address, Users, Employee, Business, Item, ItemType, Contract, AddItemToInventory,RemoveItemFromInventory,UpdateItemOwner,Shipment,AddShipment,RemoveShipment} from './models';
 
 
 import 'rxjs/Rx';
@@ -21,10 +21,18 @@ export class LoginService {
   private ADDITEMTOINVENTORY: string = 'org.mat.AddItemToInventory';  
   private REMOVEITEMFROMINVENTORY: string = 'org.mat.RemoveItemFromInventory';  
 	private UPDATEITEMOWNER: string = 'org.mat.UpdateItemOwner';  
+  private AddShipmentToShipmentList: string = 'org.mat.AddShipmentToShipmentList';
+  private RemoveShipmentFromShipmentList : string = 'org.mat.RemoveShipmentFromShipmentList';
 	
     constructor(private residentService: DataService<any>) {
     };
 
+    public addShipment(itemToAdd: any): Observable<AddShipment> {
+      return this.residentService.add(this.AddShipmentToShipmentList, itemToAdd);
+    }
+    public removeShipment(itemToAdd: any): Observable<RemoveShipment> {
+      return this.residentService.add(this.RemoveShipmentFromShipmentList, itemToAdd);
+    }
     //Users functions
     public getAllUsers(): Observable<Users[]> {
         return this.residentService.getAll(this.USERS);
@@ -149,4 +157,5 @@ export class LoginService {
     public updateItemOwner(itemToAdd: any): Observable<UpdateItemOwner> {
       return this.residentService.add(this.UPDATEITEMOWNER, itemToAdd);
     }
+
 }

@@ -3,8 +3,9 @@ import { LoginService } from './Login.service';
 import 'rxjs/add/operator/toPromise';
 //import { Contract } from './models';
 import { Router } from "@angular/router";
-import { Address, Users, Employee, BusinessType, EmployeeType, Business, Item, ItemRequest, ItemType, Contract, AddItemToInventory, UpdateItemOwner, RemoveItemFromInventory } from './models';
+import { Address, Users, Employee, BusinessType, EmployeeType, Business, Item, ItemRequest, ItemType, Contract, AddItemToInventory, UpdateItemOwner, RemoveItemFromInventory, Shipment, AddShipment, RemoveShipment } from './models';
 declare var $:any;
+import * as Toastify from 'toastify-js'
 
 @Component({
   moduleId: module.id,
@@ -14,7 +15,8 @@ declare var $:any;
   './css/style.css',
   './css/jqueryui1.css',
   './css/jqueryui2.css',
-  './css/fontawesome.css'],
+  './css/fontawesome.css',
+  './css/toastify.css'],
   providers: [LoginService]
 })
 
@@ -25,6 +27,8 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 	allItems;
 	private errorMessage;
 	contracts;
+	shipments;
+	pendingshipments;
 	pendingcontracts;
 	items;
 	itemtypes;
@@ -45,8 +49,10 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 	  //console.log("now here");
 	  this.business = localStorage.getItem("name");
 	  this.contracts = new Array();
+	  this.shipments = new Array();
 	  this.actualname = localStorage.getItem("actualname");
 	  this.pendingcontracts = new Array();
+	  this.pendingshipments = new Array();
 	  this.items = new Array();
 	  this.itemtypes = new Array();
 	  this.newcontractitems = new Array();
@@ -86,6 +92,51 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		this.resize();
 	}
 	
+	editContract(contract){
+		document.getElementById("actualcontract").innerHTML = contract;
+		contract = JSON.parse(contract);
+		//console.log(contract.requestedItems[0]);
+		document.getElementById("item2").innerHTML = contract.requestedItems[0].requestedItem.split("#")[1].split("%20").join(" ");
+		(<HTMLInputElement>document.getElementById("UnitPrice2")).value = contract.requestedItems[0].unitPrice;
+		(<HTMLInputElement>document.getElementById("Quantity2")).value = contract.requestedItems[0].quantity;
+	}
+
+	aEditContract(){
+		var contract = JSON.parse(document.getElementById("actualcontract").innerHTML);
+		//console.log(contract.requestedItems[0]);
+		//document.getElementById("item2").innerHTML = contract.requestedItems[0].requestedItem.split("#")[1].split("%20").join(" ");
+		
+		var unitprice = contract.requestedItems[0].unitPrice;
+		var quantity = contract.requestedItems[0].quantity;
+		contract.requestedItems[0].quantity = (<HTMLInputElement>document.getElementById("Quantity2")).value;
+		contract.requestedItems[0].unitprice = (<HTMLInputElement>document.getElementById("UnitPrice2")).value;
+
+		//console.log(contract.approvalStatusSellingBusiness);
+		//console.log(contract.approvalStatusBuyingBusiness);
+		if(contract.approvalStatusSellingBusiness=="CONFIRMED"){
+			//console.log("yes");
+			contract.approvalStatusBuyingBusiness = "CONFIRMED";
+			contract.approvalStatusSellingBusiness = "WAITING_CONFIRMATION";
+		}else if(contract.approvalStatusBuyingBusiness=="CONFIRMED"){
+			//console.log("yes2");
+			contract.approvalStatusBuyingBusiness = "WAITING_CONFIRMATION"; 
+			contract.approvalStatusaSellingBusiness = "CONFIRMED"; 
+		}
+
+		this.updateContractS(contract);
+	}
+
+	updateShipment(contract, bool){
+		contract = JSON.parse(contract);
+		if(bool){
+			contract.shipments[0].status = "ARRIVED";
+			contract.status = "COMPLETED";
+		} else {
+			contract.shipments[0].status = "CANCELLED";
+		}
+		this.updateContractS(contract);
+	}
+
 	updateContract(contract, bool){
 		contract = JSON.parse(contract);
 		if(bool){
@@ -110,8 +161,8 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 				for(var i = 0; i<this.allItems.length; i++){
 			//		console.log(this.allItems[i].itemType+" - "+contract.requestedItems[y].requestedItem);
 			//		console.log(contract.sellingBusiness+" - "+this.allItems[i].currentOwner);
-					if(this.allItems[i].itemType==contract.requestedItems[y].requestedItem&&
-						contract.sellingBusiness=="resource:org.mat.Business#"+this.allItems[i].currentOwner){
+					if(this.eq(this.allItems[i].itemType,contract.requestedItems[y].requestedItem)&&
+						this.eq(contract.sellingBusiness,"resource:org.mat.Business#"+this.allItems[i].currentOwner)){
 						totalhave += this.allItems[i].amountOfMedication;
 			//			console.log("hizzle");
 						possibleitems.push(this.allItems[i]);
@@ -154,6 +205,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 					item.itemType = possibleitems[i].itemType;
 					item.itemTypeUoM = possibleitems[i].itemTypeUoM;
 					item.amountOfMedication = quantity;
+					item.locations = possibleitems[i].locations;
 					item.currentOwner = contract.buyingBusiness;
 					
 					var addItemToInv: AddItemToInventory;
@@ -267,6 +319,47 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 
 	}
 
+	eq(arg1, arg2) {
+		if(arg1==arg2)
+			return true;
+		if(arg1===arg2)
+			return true;
+		if("resource:"+arg1==arg2)
+			return true;
+		if(arg1=="resource:"+arg2)
+			return true;
+		if(arg1.split("#").length>1 && arg1.split("#")[1]==arg2)
+			return true;
+		if(arg2.split("#").length>1 && arg1==arg2.split("#")[1])
+			return true;
+		if(encodeURIComponent(arg1)==arg2)
+			return true;
+		if(arg1==encodeURIComponent(arg2))
+			return true;
+		if(arg1.split("#").length>1 && encodeURIComponent(arg1.split("#")[1])==arg2)
+			return true;
+		if(arg2.split("#").length>1 && arg1==encodeURIComponent(arg2.split("#")[1]))
+			return true;
+		if(arg1.split("#").length>1 && arg1.split("#")[1]==encodeURIComponent(arg2))
+			return true;
+		if(arg2.split("#").length>1 && encodeURIComponent(arg1)==arg2.split("#")[1])
+			return true;
+		return false;
+	}
+
+	toast(textinput){
+		var options = {
+		    text: textinput,
+		    duration: 2500,
+		    close: true
+		};
+		//linear-gradient(to right, #00b09b, #96c93d)
+		// Initializing the toast
+		var myToast = Toastify(options).showToast();
+		
+		$('.toastify').css('z-index', '200');
+	}
+
 	addNewMedicine(){
 		var nmtamount = (<HTMLInputElement>document.getElementById("nmtamount")).value;
 		//var nmpackage = (<HTMLInputElement>document.getElementById("nmpackage")).value;
@@ -295,6 +388,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		item.itemTypeUoM = nmtuom;
 		item.amountOfMedication = parseInt(nmtamount);
 		item.currentOwner = "org.mat.Business#"+localStorage.getItem("businessid");
+		item.locations = [this.currentbusiness.address];
 		
 		var addItemToInv: AddItemToInventory;
 		addItemToInv = new AddItemToInventory();
@@ -316,6 +410,38 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		
 	}
 
+	addressToString(object){
+		return object.street+", "+object.city+", "+object.state+", "+object.zip+", "+object.country;
+	}
+
+	addShipment(){
+		//console.log((<HTMLInputElement>document.getElementById("WhichContract")).value);
+		var contract = JSON.parse((<HTMLInputElement>document.getElementById("WhichContract")).value);
+
+		var shipment: Shipment;
+		shipment = new Shipment();
+		shipment.status = "IN_TRANSIT";
+		
+		shipment.carryingBusiness = JSON.parse((<HTMLInputElement>document.getElementById("CarryingBusiness")).value).businessId;
+		shipment.items = ["resource:org.mat.Item#"+contract.requestedItems[0].requestedItem.split("#")[1]];
+
+		for(var i = 0; i<this.allbusinesses.length; i++){
+			if(this.eq("org.mat.Business#"+this.allbusinesses[i].businessId, contract.sellingBusiness)){
+				shipment.sourceAddress = this.allbusinesses[i].address;
+			} else if(this.eq("org.mat.Business#"+this.allbusinesses[i].businessId, contract.buyingBusiness)){	
+				shipment.destinationAddress = this.allbusinesses[i].address;
+			}
+		}
+
+		var addShipment : AddShipment;
+		addShipment = new AddShipment();
+		addShipment.newShipment = shipment;
+		addShipment.contract = "resource:org.mat.Contract#"+contract.contractId;
+		//console.log("hiz");
+		//console.log(addShipment);
+		this.addShipments(addShipment);
+	}
+
 	addNewContract(){
 		var sellingbusiness = (<HTMLInputElement>document.getElementById("SellingBusiness")).value;
 		var buyingbusiness = (<HTMLInputElement>document.getElementById("BuyingBusiness")).value;
@@ -335,8 +461,8 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 			//console.log(itembuy);
 			//console.log("org.mat.Business#"+JSON.parse(sellingbusiness).businessId);
 			//console.log(this.allItems[i].currentOwner);
-			if(this.allItems[i].itemType.split("#")[1].split("%20").join(" ")==itembuy&&
-				(JSON.parse(sellingbusiness).businessId)==this.allItems[i].currentOwner){
+			if(this.eq(this.allItems[i].itemType.split("#")[1].split("%20").join(" "),itembuy)&&
+				this.eq((JSON.parse(sellingbusiness).businessId),this.allItems[i].currentOwner)){
 				totalhave += this.allItems[i].amountOfMedication;
 				console.log("WOWOW");
 				possibleitems.push(this.allItems[i]);
@@ -369,10 +495,10 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		contract.arrivalDateTime = today;
 		contract.sellingBusiness = "org.mat.Business#"+JSON.parse(sellingbusiness).businessId;
 		contract.buyingBusiness = "org.mat.Business#"+JSON.parse(buyingbusiness).businessId;
-		if(JSON.parse(sellingbusiness).businessId==this.currentBusinessId){
+		if(this.eq(JSON.parse(sellingbusiness).businessId,this.currentBusinessId)){
 			contract.approvalStatusSellingBusiness = "CONFIRMED";
 			contract.approvalStatusBuyingBusiness = "WAITING_CONFIRMATION";
-		} else if(JSON.parse(buyingbusiness).businessId==this.currentBusinessId){
+		} else if(this.eq(JSON.parse(buyingbusiness).businessId,this.currentBusinessId)){
 			contract.approvalStatusBuyingBusiness = "CONFIRMED";
 			contract.approvalStatusSellingBusiness = "WAITING_CONFIRMATION";
 		} else {
@@ -413,7 +539,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 				
 				for(var i = 0; i<this.currentbusiness.inventory.length; i++){
 						//console.log(this.currentbusiness.inventory[i].split("#")[1]);
-					if(this.currentbusiness.inventory[i].split("#")[1]==encodeURIComponent(item.itemId)) //probsgunnahavetofix	
+					if(this.eq(this.currentbusiness.inventory[i].split("#")[1],encodeURIComponent(item.itemId))) //probsgunnahavetofix	
 						this.items.push(item);	
 				}
 			  });     
@@ -484,7 +610,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 					//console.log(this.items[y]);
 					//console.log("resource:org.mat.Item#"+encodeURIComponent(this.items[y].itemId)+" "+temp.requestedItem);
 					//console.log(temp);
-					if("resource:org.mat.Item#"+encodeURIComponent(this.items[y].itemId)==temp.requestedItem){
+					if(this.eq("resource:org.mat.Item#"+encodeURIComponent(this.items[y].itemId),temp.requestedItem)){
 						foundmatch = this.items[y];
 						break;
 					}
@@ -499,7 +625,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 						console.log("asiudhiuah");
 						console.log("resource:org.mat.Item#"+encodeURIComponent(this.newcontractitems[y].itemId));
 						console.log(temp.requestedItem);
-						if("resource:org.mat.Item#"+encodeURIComponent(this.newcontractitems[y].itemId)==temp.requestedItem){
+						if(this.eq("resource:org.mat.Item#"+encodeURIComponent(this.newcontractitems[y].itemId),temp.requestedItem)){
 							foundmatch = this.newcontractitems[y];
 							break;
 						}
@@ -508,7 +634,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 				if(foundmatch!=null){
 					//console.log(this.contracts[i].sellingBusiness);
 					//console.log("resource:org.mat.Business#"+encodeURIComponent(localStorage.getItem("businessid")));
-					var tempamountchange = this.contracts[i].sellingBusiness=="resource:org.mat.Business#"+encodeURIComponent(localStorage.getItem("businessid"))?-1:1;
+					var tempamountchange = this.eq(this.contracts[i].sellingBusiness,"resource:org.mat.Business#"+encodeURIComponent(localStorage.getItem("businessid")))?-1:1;
 					foundmatch.amountOfMedication = ""+(parseInt(foundmatch.amountOfMedication)+parseInt(temp.quantity)*tempamountchange);
 					
 					//console.log("1");
@@ -518,7 +644,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 					//this.newcontractitems.push(temp);
 					for(var y = 0; y<this.allItems.length; y++){
 						var tempfound = false;
-						if(this.allItems[y].currentOwner==this.contracts[i].sellingBusiness){
+						if(this.eq(this.allItems[y].currentOwner,this.contracts[i].sellingBusiness)){
 							//this.getItem(this.contracts[i].sellingBusiness, temp);
 							this.allItems[y].amountOfMedication = this.contracts[i].requestedItems[0].quantity;
 							this.newcontractitems.push(this.allItems[y]);
@@ -570,7 +696,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 				//console.log("beep");
 				//console.log(contractitem.requestedItem);
 				//console.log("resource:org.mat.Item#"+encodeURIComponent(item.itemId));
-				if(contractitem.requestedItem == "resource:org.mat.Item#"+encodeURIComponent(item.itemId)){
+				if(this.eq(contractitem.requestedItem,"resource:org.mat.Item#"+encodeURIComponent(item.itemId))){
 					item.amountOfMedication = contractitem.quantity;
 					this.newcontractitems.push(item);
 					break;
@@ -631,7 +757,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 			  result.forEach(item => {
 				item.str = JSON.stringify(item);
 				//console.log("yes: "+item.name+" "+this.business);
-				if(item.businessId==this.currentBusinessId){ //TO-DO FIX for different businesses
+				if(this.eq(item.businessId,this.currentBusinessId)){ //TO-DO FIX for different businesses
 					this.currentbusiness = item;
 				//	console.log("hizzle");
 				//	console.log(this.currentbusiness);
@@ -680,18 +806,41 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 
 		  for (let contract of contractsList) {
 		  	//console.log(contract.sellingBusiness+" vs "+name);
-			if(contract.sellingBusiness==name||contract.buyingBusiness==name){
+			if(this.eq(contract.sellingBusiness,name)||this.eq(contract.buyingBusiness,name)){
+				contract.str = JSON.stringify(contract);
 				if(contract.status=="CANCELLED"){
 
-				} else if(contract.approvalStatusSellingBusiness=="WAITING_CONFIRMATION"&&contract.sellingBusiness==name){
-					contract.str = JSON.stringify(contract);
+				} else if(contract.approvalStatusSellingBusiness=="WAITING_CONFIRMATION"&&this.eq(contract.sellingBusiness,name)&&contract.status=="WAITING_CONFIRMATION"){
+					//contract.str = JSON.stringify(contract);
+					if(contract.shipments.length>0){
+						if(contract.shipments[0].status=="ARRIVED"){
+							this.shipments.push(contract);
+						}
+						if(contract.shipments[0].status=="IN_TRANSIT"){
+							this.shipments.push(contract);						
+						}
+					}
 					this.pendingcontracts.push(contract);
-				} else if(contract.approvalStatusBuyingBusiness=="WAITING_CONFIRMATION"&&contract.buyingBusiness==name){
-					contract.str = JSON.stringify(contract);
+				} else if(contract.approvalStatusBuyingBusiness=="WAITING_CONFIRMATION"&&this.eq(contract.buyingBusiness,name)&&contract.status=="WAITING_CONFIRMATION"){
+					if(contract.shipments.length>0){
+						if(contract.shipments[0].status=="ARRIVED"){
+							this.shipments.push(contract);
+						}
+						if(contract.shipments[0].status=="IN_TRANSIT"){
+							this.pendingshipments.push(contract);						
+						}
+					}
 					this.pendingcontracts.push(contract);
 				} else {
+					if(contract.shipments.length>0){
+						if(contract.shipments[0].status=="ARRIVED"){
+							this.shipments.push(contract);
+						}
+					}
 					this.contracts.push(contract);
 				}
+
+				
 			}
 		  }
 		  //console.log(this.contracts);
@@ -717,6 +866,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		.toPromise()
 		.then(() => {
 				this.errorMessage = null;
+				this.toast("Added Item");
 		})
 		.then(() => {
 		}).catch((error) => {
@@ -733,11 +883,56 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		});
 	}
 
+	addShipments(item): Promise<any>  {
+		return this.serviceLogin.addShipment(item)
+		.toPromise()
+		.then(() => {
+				this.errorMessage = null;
+				this.toast("Added Shipment");
+		})
+		.then(() => {
+		}).catch((error) => {
+			if(error == 'Server error'){
+				this.errorMessage = "Could not connect to REST server. Please check your configuration details";
+			}
+			else if (error == '500 - Internal Server Error') {
+			  this.errorMessage = "Input error";
+			  setTimeout(this.addShipments(item), 1000);
+			}
+			else{
+				this.errorMessage = error;
+			}
+		});
+	}
+
+	removeShipments(item): Promise<any>  {
+		return this.serviceLogin.removeShipment(item)
+		.toPromise()
+		.then(() => {
+				this.errorMessage = null;
+				this.toast("Removed Shipment");
+		})
+		.then(() => {
+		}).catch((error) => {
+			if(error == 'Server error'){
+				this.errorMessage = "Could not connect to REST server. Please check your configuration details";
+			}
+			else if (error == '500 - Internal Server Error') {
+			  this.errorMessage = "Input error";
+			  setTimeout(this.removeShipments(item), 1000);
+			}
+			else{
+				this.errorMessage = error;
+			}
+		});
+	}
+
 	addItemToInventory(item): Promise<any>  {
 		return this.serviceLogin.addItemToInventory(item)
 		.toPromise()
 		.then(() => {
 				this.errorMessage = null;
+				this.toast("Added Item to Inventory");
 		})
 		.then(() => {
 		}).catch((error) => {
@@ -759,6 +954,8 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		.toPromise()
 		.then(() => {
 				this.errorMessage = null;
+
+				this.toast("Removed Item From Inventory");
 		})
 		.then(() => {
 		}).catch((error) => {
@@ -780,6 +977,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		.toPromise()
 		.then(() => {
 				this.errorMessage = null;
+				this.toast("Updated Item Owner");
 		})
 		.then(() => {
 		}).catch((error) => {
@@ -801,6 +999,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		.toPromise()
 		.then(() => {
 				this.errorMessage = null;
+				this.toast("Added New Item Type");
 		})
 		.then(() => {
 		}).catch((error) => {
@@ -823,6 +1022,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		.toPromise()
 		.then(() => {
 				this.errorMessage = null;
+				this.toast("Added Contract");
 		})
 		.then(() => {
 		}).catch((error) => {
@@ -844,7 +1044,10 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		.toPromise()
 		.then(() => {
 				this.errorMessage = null;
-				location.reload();
+
+				this.toast("Updated Contract");
+				//location.reload();
+				//to-do add pop up that says added
 		})
 		.then(() => {
 		}).catch((error) => {
@@ -865,6 +1068,8 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		.toPromise()
 		.then(() => {
 				this.errorMessage = null;
+
+				this.toast("Updated Item");
 				//location.reload();
 		})
 		.then(() => {
@@ -887,6 +1092,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		.toPromise()
 		.then(() => {
 				this.errorMessage = null;
+
 		})
 		.then(() => {
 		}).catch((error) => {

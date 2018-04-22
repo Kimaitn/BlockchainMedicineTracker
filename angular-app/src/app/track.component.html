@@ -32,17 +32,17 @@
 						  <thead>
 							<tr>
 							  <!--<th scope="col">#</th>-->
-							  <th scope="col">From</th>
-							  <th scope="col">To</th>
-							  <th scope="col">Date</th>
+							  <th scope="col">Company</th>
+							  <th scope="col">Address</th>
 							</tr>
 						  </thead>
 						  <tbody>
-							<tr *ngFor="let contract of contracts">
+							<tr *ngFor="let tr of track">
 							 <!-- <th scope="row">{{contract.contractId}}</th>-->
-							  <th scope="row">{{contract.sellingBusiness.split("#")[1].split("%20").join(" ")}}</th>
-							  <td>{{contract.buyingBusiness.split("#")[1].split("%20").join(" ")}}</td>
-							  <td>{{contract.arrivalDateTime}}</td>
+							  <!--<th scope="row">{{contract.sellingBusiness.split("#")[1].split("%20").join(" ")}}</th>
+							  <td>{{contract.buyingBusiness.split("#")[1].split("%20").join(" ")}}</td>-->
+							   <th scope="row">{{tr.name}}</th>
+							  <td>{{tr.addressstring}}</td>
 							</tr>
 						  </tbody>
 						</table>
