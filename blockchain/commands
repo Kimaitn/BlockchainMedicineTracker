@@ -1,0 +1,12 @@
+
+scp -i avi.pem -r ./blockchain ubuntu@ec2-18-188-189-121.us-east-2.compute.amazonaws.com:/home/ubuntu
+
+scp -i avi.pem -r ubuntu@ec2-18-188-189-121.us-east-2.compute.amazonaws.com:/home/ubuntu/blockchain $HOME/Downloads
+
+scp -i avi.pem -r $HOME/Downloads/blockchain ubuntu@ec2-18-188-189-121.us-east-2.compute.amazonaws.com:/home/ubuntu
+scp -i avi.pem -r $HOME/Downloads/blockchain ubuntu@ec2-18-217-37-105.us-east-2.compute.amazonaws.com:/home/ubuntu
+scp -i avi.pem -r $HOME/Downloads/blockchain ubuntu@ec2-18-216-31-113.us-east-2.compute.amazonaws.com:/home/ubuntu
+scp -i avi.pem -r $HOME/Downloads/blockchain ubuntu@ec2-52-15-217-214.us-east-2.compute.amazonaws.com:/home/ubuntu
+scp -i avi.pem -r $HOME/Downloads/blockchain ubuntu@ec2-18-221-81-20.us-east-2.compute.amazonaws.com:/home/ubuntu
+
+
