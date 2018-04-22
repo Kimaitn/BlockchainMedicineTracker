@@ -1,5 +1,6 @@
-rule SystemAllowRestrictingHistorian {
-    description: "Grant all read access to system resources"
+rule SystemAllowRestrictingHistorian
+{
+    description: "Grant employees read access to historian records of their business"
     participant(p): "org.mat.Employee"
     operation: READ
     resource(r): "org.hyperledger.composer.system.HistorianRecord"
@@ -7,7 +8,18 @@ rule SystemAllowRestrictingHistorian {
     action: ALLOW
 }
 
-rule System {
+rule DenyLoginCheckerREADAccessOfHistorianRecord
+{
+    description: "Deny read access to historian records"
+    participant(p): "org.mat.LoginChecker"
+    operation: READ
+    resource(r): "org.hyperledger.composer.system.HistorianRecord"
+    condition: (r.participantInvoking.worksFor == p.worksFor)
+    action: DENY
+}
+
+rule System
+{
     description: "Grant all read access to system resources"
     participant: "org.**"
     operation: READ
@@ -15,7 +27,8 @@ rule System {
     action: ALLOW
 }
 
-rule ParticipantsSeeThemselves {
+rule ParticipantsSeeThemselves
+{
     description: "Let participants see themselves"
     participant(p): "org.hyperledger.composer.system.Participant"
     operation: ALL
@@ -24,7 +37,8 @@ rule ParticipantsSeeThemselves {
     action: ALLOW
 }
 
-rule LetEmployeesSeeOtherEmployeesForSameBusiness {
+rule LetEmployeesSeeOtherEmployeesForSameBusiness
+{
     description: "Let participants see other employess in their business"
     participant(p): "org.mat.Employee"
     operation: ALL
