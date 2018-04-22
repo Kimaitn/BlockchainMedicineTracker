@@ -8,7 +8,7 @@ Usage() {
 	echo -e "\t-h or --host:\t\t(Optional) name of the host to specify in the connection profile"
 	echo -e "\t-n or --noimport:\t(Optional) don't import into card store"
 	echo ""
-	echo "Example: ./createPeerAdminCard.sh"
+	echo "mat: ./createPeerAdminCard.sh"
 	echo ""
 	exit 1
 }
@@ -63,7 +63,7 @@ else
     exit 1
 fi
 
-cat << EOF > DevServer_connection.json
+cat << EOF > connection.json
 {
     "name": "hlfv1",
     "x-type": "hlfv1",
@@ -85,14 +85,14 @@ cat << EOF > DevServer_connection.json
     "channels": {
         "composerchannel": {
             "orderers": [
-                "orderer.example.com"
+                "orderer.mat.com"
             ],
             "peers": {
-                "peer0.org1.example.com": {},
-                "peer1.org1.example.com": {},
-                "peer2.org1.example.com": {},
-                "peer3.org1.example.com": {},
-                "peer4.org1.example.com": {}
+                "peer0.org1.mat.com": {},
+                "peer1.org1.mat.com": {},
+                "peer2.org1.mat.com": {},
+                "peer3.org1.mat.com": {},
+                "peer4.org1.mat.com": {}
             }
         }
     },
@@ -100,55 +100,55 @@ cat << EOF > DevServer_connection.json
         "Org1": {
             "mspid": "Org1MSP",
             "peers": [
-                "peer0.org1.example.com",
-                "peer1.org1.example.com",
-                "peer2.org1.example.com",
-                "peer3.org1.example.com",
-                "peer4.org1.example.com"
+                "peer0.org1.mat.com",
+                "peer1.org1.mat.com",
+                "peer2.org1.mat.com",
+                "peer3.org1.mat.com",
+                "peer4.org1.mat.com"
             ],
             "certificateAuthorities": [
-                "ca.org1.example.com"
+                "ca.org1.mat.com"
             ]
         }
     },
     "orderers": {
-        "orderer.example.com": {
-            "url": "grpc://<PEER-0-IP>:5050"
+        "orderer.mat.com": {
+            "url": "grpc://18.188.189.121:7050"
         }
     },
     "peers": {
-        "peer0.org1.example.com": {
-            "url": "grpc://<PEER-0-IP>:5051",
-            "eventUrl": "grpc://<PEER-0-IP>:5053"
+        "peer0.org1.mat.com": {
+            "url": "grpc://18.188.189.121:7051",
+            "eventUrl": "grpc://18.188.189.121:7053"
         },
-        "peer1.org1.example.com": {
-            "url": "grpc://<PEER-1-IP>:6051",
-            "eventUrl": "grpc://<PEER-1-IP>:6053"
+        "peer1.org1.mat.com": {
+            "url": "grpc://18.217.37.105:8051",
+            "eventUrl": "grpc://18.217.37.105:8053"
         },
-        "peer2.org1.example.com": {
-            "url": "grpc://<PEER-2-IP>:7051",
-            "eventUrl": "grpc://<PEER-2-IP>:7053"
+        "peer2.org1.mat.com": {
+            "url": "grpc://18.216.31.113:9051",
+            "eventUrl": "grpc://18.216.31.113:9053"
         },
-         "peer3.org1.example.com": {
-            "url": "grpc://<PEER-3-IP>:8051",
-            "eventUrl": "grpc://<PEER-3-IP>:8053"
+         "peer3.org1.mat.com": {
+            "url": "grpc://52.15.217.214:10051",
+            "eventUrl": "grpc://52.15.217.214:10053"
         },
-         "peer4.org1.example.com": {
-            "url": "grpc://<PEER-4-IP>:9051",
-            "eventUrl": "grpc://<PEER-4-IP>:9053"
+         "peer4.org1.mat.com": {
+            "url": "grpc://18.221.81.20:11051",
+            "eventUrl": "grpc://18.221.81.20:11053"
         }
     },
     "certificateAuthorities": {
-        "ca.org1.example.com": {
-            "url": "http://<PEER-0-IP>:5054",
-            "caName": "ca.org1.example.com"
+        "ca.org1.mat.com": {
+            "url": "http://18.188.189.121:7054",
+            "caName": "ca.org1.mat.com"
         }
     }
 }
 EOF
 
-PRIVATE_KEY="${DIR}"/composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/<KEYSTORE>
-CERT="${DIR}"/composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem
+PRIVATE_KEY="${DIR}"/composer/crypto-config/peerOrganizations/org1.mat.com/users/Admin@org1.mat.com/msp/keystore/<KEYSTORE>
+CERT="${DIR}"/composer/crypto-config/peerOrganizations/org1.mat.com/users/Admin@org1.mat.com/msp/signcerts/Admin@org1.mat.com-cert.pem
 
 if [ "${NOIMPORT}" != "true" ]; then
     CARDOUTPUT=/tmp/PeerAdmin@hlfv1.card
@@ -156,7 +156,7 @@ else
     CARDOUTPUT=PeerAdmin@hlfv1.card
 fi
 
-"${HL_COMPOSER_CLI}"  card create -p DevServer_connection.json -u PeerAdmin -c "${CERT}" -k "${PRIVATE_KEY}" -r PeerAdmin -r ChannelAdmin --file $CARDOUTPUT
+"${HL_COMPOSER_CLI}"  card create -p connection.json -u PeerAdmin -c "${CERT}" -k "${PRIVATE_KEY}" -r PeerAdmin -r ChannelAdmin --file $CARDOUTPUT
 
 if [ "${NOIMPORT}" != "true" ]; then
     if "${HL_COMPOSER_CLI}"  card list -c PeerAdmin@hlfv1 > /dev/null; then

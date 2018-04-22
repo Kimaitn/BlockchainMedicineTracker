@@ -1,14 +1,16 @@
 version: '2'
 services:
-  peer2.org1.example.com:
-    container_name: peer1.org1.example.com
+  peer1.org1.mat.com:
+    container_name: peer1.org1.mat.com
     image: hyperledger/fabric-peer:$ARCH-1.1.0
+    extra_hosts: 
+      - "orderer.mat.com:18.188.189.121"
     environment:
       - CORE_LOGGING_LEVEL=debug
       - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-      - CORE_PEER_ID=peer1.org1.example.com
-      - CORE_PEER_ADDRESS=peer1.org1.example.com:5051
+      - CORE_PEER_ID=peer1.org1.mat.com
+      - CORE_PEER_ADDRESS=peer1.org1.mat.com:7051
       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=composer_default
       - CORE_PEER_LOCALMSPID=Org1MSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/peer/msp
@@ -17,13 +19,13 @@ services:
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: peer node start
     ports:
-      - 6051:5051
-      - 6053:5053
+      - 8051:7051
+      - 8053:7053
     volumes:
         - /var/run/:/host/var/run/
         - ./:/etc/hyperledger/configtx
-        - ./crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/msp:/etc/hyperledger/peer/msp
-        - ./crypto-config/peerOrganizations/org1.example.com/users:/etc/hyperledger/msp/users
+        - ./crypto-config/peerOrganizations/org1.mat.com/peers/peer1.org1.mat.com/msp:/etc/hyperledger/peer/msp
+        - ./crypto-config/peerOrganizations/org1.mat.com/users:/etc/hyperledger/msp/users
     depends_on:
       - couchdb2
   couchdb2:

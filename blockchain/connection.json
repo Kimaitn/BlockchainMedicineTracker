@@ -1,0 +1,81 @@
+{
+    "name": "hlfv1",
+    "x-type": "hlfv1",
+    "x-commitTimeout": 300,
+    "version": "1.0.0",
+    "client": {
+        "organization": "Org1",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300",
+                    "eventHub": "300",
+                    "eventReg": "300"
+                },
+                "orderer": "300"
+            }
+        }
+    },
+    "channels": {
+        "composerchannel": {
+            "orderers": [
+                "orderer.mat.com"
+            ],
+            "peers": {
+                "peer0.org1.mat.com": {},
+                "peer1.org1.mat.com": {},
+                "peer2.org1.mat.com": {},
+                "peer3.org1.mat.com": {},
+                "peer4.org1.mat.com": {}
+            }
+        }
+    },
+    "organizations": {
+        "Org1": {
+            "mspid": "Org1MSP",
+            "peers": [
+                "peer0.org1.mat.com",
+                "peer1.org1.mat.com",
+                "peer2.org1.mat.com",
+                "peer3.org1.mat.com",
+                "peer4.org1.mat.com"
+            ],
+            "certificateAuthorities": [
+                "ca.org1.mat.com"
+            ]
+        }
+    },
+    "orderers": {
+        "orderer.mat.com": {
+            "url": "grpc://18.188.189.121:7050"
+        }
+    },
+    "peers": {
+        "peer0.org1.mat.com": {
+            "url": "grpc://18.188.189.121:7051",
+            "eventUrl": "grpc://18.188.189.121:7053"
+        },
+        "peer1.org1.mat.com": {
+            "url": "grpc://18.217.37.105:8051",
+            "eventUrl": "grpc://18.217.37.105:8053"
+        },
+        "peer2.org1.mat.com": {
+            "url": "grpc://18.216.31.113:9051",
+            "eventUrl": "grpc://18.216.31.113:9053"
+        },
+         "peer3.org1.mat.com": {
+            "url": "grpc://52.15.217.214:10051",
+            "eventUrl": "grpc://52.15.217.214:10053"
+        },
+         "peer4.org1.mat.com": {
+            "url": "grpc://18.221.81.20:11051",
+            "eventUrl": "grpc://18.221.81.20:11053"
+        }
+    },
+    "certificateAuthorities": {
+        "ca.org1.mat.com": {
+            "url": "http://18.188.189.121:7054",
+            "caName": "ca.org1.mat.com"
+        }
+    }
+}

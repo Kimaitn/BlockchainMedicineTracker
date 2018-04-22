@@ -10,7 +10,7 @@ Usage() {
 	echo "Options:"
 	echo -e "\t-d or --dev: (Optional) enable fabric development mode"
 	echo ""
-	echo "Example: ./startFabric-peer2.sh"
+	echo "mat: ./startFabric-peer2.sh"
 	echo ""
 	exit 1
 }
@@ -56,8 +56,8 @@ export FABRIC_START_TIMEOUT=15
 echo "sleeping for ${FABRIC_START_TIMEOUT} seconds to wait for fabric to complete start up"
 sleep ${FABRIC_START_TIMEOUT}
 
-docker exec -e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org1.example.com/msp" peer2.org1.example.com peer channel fetch config -o orderer.example.com:7050 -c composerchannel
-docker exec -e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org1.example.com/msp" peer2.org1.example.com peer channel join -b composerchannel_config.block
+docker exec -e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org1.mat.com/msp" peer2.org1.mat.com peer channel fetch config -o orderer.mat.com:7050 -c composerchannel
+docker exec -e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org1.mat.com/msp" peer2.org1.mat.com peer channel join -b composerchannel_config.block
 
 if [ "${FABRIC_DEV_MODE}" == "true" ]; then
     echo "Fabric Network started in chaincode development mode"
