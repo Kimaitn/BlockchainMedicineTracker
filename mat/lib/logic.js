@@ -639,7 +639,7 @@ async function setupDemo(setupDemo) {
     duser2.employeeId = demployee2.employeeId;
 
     // create the LogInChecker
-    const LogInChecker = factory.newResource(org, "LoginChecker", 'L001')
+    const pLogInChecker = factory.newResource(org, "LoginChecker", 'L001')
 
     // create itemType
     const itemType = factory.newResource(org, 'ItemType', 'Adderall');
@@ -694,8 +694,8 @@ async function setupDemo(setupDemo) {
     await employeeRegistry.addAll([memployee, cemployee, demployee, demployee2]);
 
     // add the logInChecker
-    const logInCheckerRegistry = await getParticipantRegistry(org + '.LogInChecker');
-    await logInCheckerRegistry.add(LogInChecker);
+    const logInCheckerRegistry = await getParticipantRegistry(org + '.LoginChecker');
+    await logInCheckerRegistry.add(pLogInChecker);
 
     // add the users
     const userRegistry = await getAssetRegistry(org + '.User');
