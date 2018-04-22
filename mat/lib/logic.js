@@ -10,20 +10,6 @@ function changeContractStatuses(contract) {
 }
 
 /**
- * Private function that updates the inventory of a business
- * @param {org.mat.business} business - business that need updating
- */
-async function changeItemOwner(buyingBusiness, sellingBusiness, item){
-    const businessRegistry = await getAssetRegistry('org.mat.Business');
-    var index = sellingBusiness.inventory.indexOf(item);
-    if(index>-1) {
-        sellingBusiness.inventory.splice(index, 1);
-    }
-    buyingBusiness.inventory.push(item);
-    await businessRegistry.updateAll([sellingBusiness, buyingBusiness]);
-}
-
-/**
  * Takes in an array of items to be placed on the blockchain for the
  * @param {org.mat.BulkLoad} bulkLoad - The array of items
  * @transaction
@@ -212,6 +198,7 @@ async function completeContract(completeContract) {
     const factory = getFactory();
     const resources = [];
     const itemRegistry = await getAssetRegistry('org.mat.Item');
+    const businessRegistry = await getAssetRegistry('org.mat.Business');
     if(completeContract.contract.approvalStatusBuyingBusiness === 'CONFIRMED' &&
         completeContract.contract.approvalStatusSellingBusiness === 'CONFIRMED'
     )
@@ -227,7 +214,12 @@ async function completeContract(completeContract) {
                 arrayItems.forEach(function(items){
                     items.locations.push(shipment.destinationAddress);
                     items.currentOwner = completeContract.contract.buyingBusiness.businessId;
-                    changeItemOwner(completeContract.contract.buyingBusiness, completeContract.contract.sellingBusiness, items);
+                    var index = completeContract.contract.sellingBusiness.inventory.indexOf(items);
+                    if(index>-1) {
+                        completeContract.contract.sellingBusiness.inventory.splice(index, 1);
+                    }
+                    completeContract.contract.buyingBusiness.inventory.push(items);
+                    businessRegistry.updateAll([completeContract.contract.sellingBusiness, completeContract.contract.buyingBusiness]);
                     resources.push(items);
                 });
             });
@@ -671,6 +663,7 @@ async function setupDemo(setupDemo) {
     itemRequest.requestedItem = factory.newRelationship(org, 'ItemType', 'Adderall');
     itemRequest.unitPrice = 14.2;
     itemRequest.quantity = 2;
+    contract.requestedItems = [itemRequest];
 
     // create the shipment concept
     const shipment = factory.newResource(org, 'Shipment', 'S001');
@@ -679,7 +672,7 @@ async function setupDemo(setupDemo) {
     shipment.sourceAddress = mAddress;
     shipment.approvalStatusReceivingBusiness = 'NOT_ARRIVED';
     shipment.sendingBusiness = 'B001';
-    shipment.receivingBusiness = 'b003';
+    shipment.receivingBusiness = 'B003';
     shipment.carryingBusiness = factory.newRelationship(org, 'Business', 'B002');
     shipment.items = [factory.newRelationship(org, 'Item', 'I00001')];
 

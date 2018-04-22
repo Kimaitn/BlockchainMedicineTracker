@@ -189,7 +189,7 @@ rule EmployeeApproveShipmentStatusViaUpdateShipmentStatusViaCarrierBusiness
   description: "Allow carrying business employee to UPDATE the stuats of the shipment"
   participant(e): "org.mat.Employee"
   operation: UPDATE
-  resource(c): "org.mat.Contract"
+  resource(c): "org.mat.Shipment"
   transaction(tx): "org.mat.UpdateShipmentStatusViaCarrierBusiness"
   condition: (e.worksFor == tx.shipment.carryingBusiness.businessId)
   action: ALLOW
@@ -201,7 +201,7 @@ rule EmployeeApproveShipmentStatusViaCreateUpdateShipmentStatus
   participant(e): "org.mat.Employee"
   operation: CREATE
   resource(c): "org.mat.UpdateShipmentStatusViaCarrierBusiness"
-  condition: (e.worksFor == c.carryingBusiness.businessId)
+  condition: (e.worksFor == c.shipment.carryingBusiness.businessId)
   action: ALLOW
 }
 
