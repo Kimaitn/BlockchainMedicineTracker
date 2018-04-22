@@ -638,6 +638,9 @@ async function setupDemo(setupDemo) {
     duser2.password = 'BobZoss';
     duser2.employeeId = demployee2.employeeId;
 
+    // create the LogInChecker
+    const LogInChecker = factory.newResource(org, "LoginChecker", 'L001')
+
     // create itemType
     const itemType = factory.newResource(org, 'ItemType', 'Adderall');
 
@@ -654,9 +657,9 @@ async function setupDemo(setupDemo) {
 
     // create the contract
     const contract = factory.newResource(org, 'Contract', 'C001');
-    contract.approvalStatusBuyingBusiness = 'CONFIRMED';
-    contract.approvalStatusSellingBusiness = 'CONFIRMED';
-    contract.status = 'CONFIRMED';
+    contract.approvalStatusBuyingBusiness = 'WAITING_CONFIRMATION';
+    contract.approvalStatusSellingBusiness = 'WAITING_CONFIRMATION';
+    contract.status = 'WAITING_CONFIRMATION';
     const tomorrow = setupDemo.timestamp;
     tomorrow.setDate(tomorrow.getDate() + 1);
     contract.arrivalDateTime = tomorrow; // the shipment has to arrive tomorrow
@@ -670,10 +673,13 @@ async function setupDemo(setupDemo) {
     itemRequest.quantity = 2;
 
     // create the shipment concept
-    const shipment = factory.newConcept(org, 'Shipment', 'S001');
-    shipment.status = 'IN_TRANSIT';
+    const shipment = factory.newResource(org, 'Shipment', 'S001');
+    shipment.status = 'WAITING_CONFIRMATION';
     shipment.destinationAddress = dAddress;
     shipment.sourceAddress = mAddress;
+    shipment.approvalStatusReceivingBusiness = 'NOT_ARRIVED';
+    shipment.sendingBusiness = 'B001';
+    shipment.receivingBusiness = 'b003';
     shipment.carryingBusiness = factory.newRelationship(org, 'Business', 'B002');
     shipment.items = [factory.newRelationship(org, 'Item', 'I00001')];
 
@@ -687,6 +693,10 @@ async function setupDemo(setupDemo) {
     const employeeRegistry = await getParticipantRegistry(org + '.Employee');
     await employeeRegistry.addAll([memployee, cemployee, demployee, demployee2]);
 
+    // add the logInChecker
+    const logInCheckerRegistry = await getParticipantRegistry(org + '.LogInChecker');
+    await logInCheckerRegistry.add(LogInChecker);
+
     // add the users
     const userRegistry = await getAssetRegistry(org + '.User');
     await userRegistry.addAll([muser, cuser, duser, duser2]);
@@ -699,14 +709,9 @@ async function setupDemo(setupDemo) {
     const itemRegistry = await getAssetRegistry(org + '.Item');
     await itemRegistry.addAll([item]);
 
-
-    // add the itemRequest - are now concepts
-    //const itemRequestRegistry = await getAssetRegistry(org + '.ItemRequest');
-    //await itemRequestRegistry.addAll([itemRequest]);
-
-    // add the shipments - are now concepts
-    //const shipmentRegistry = await getAssetRegistry(org + '.Shipment');
-    //await shipmentRegistry.addAll([shipment]);
+    // add the shipment
+    const shipmentRegistry = await getAssetRegistry(org + '.Shipment');
+    await shipmentRegistry.add(shipment);
 
     // add the contracts
     const contractRegistry = await getAssetRegistry(org + '.Contract');

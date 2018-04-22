@@ -13,8 +13,8 @@ enum shipmentStatus
 // Status of shipment for receiver
 enum receiverStatus 
 {
-  o ARRIVED
   o NOT_ARRIVED
+  o ARRIVED 
 }
 
 // Status of a contract
