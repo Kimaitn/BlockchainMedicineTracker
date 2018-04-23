@@ -652,11 +652,11 @@ async function setupDemo(setupDemo) {
     distributor2.businessType = 'Distributor';
     distributor2.PoCName = 'Josh Merlo';
     distributor2.PoCEmail = 'joshmerlo@gmail.com';
-    dAddress2.street = 'Two CVS-2 Drive';
-    dAddress2.city = 'Woonsocket';
-    dAddress2.state = 'RI';
+    dAddress2.street = '4974 N Alafaya Trail';
+    dAddress2.city = 'Orlando';
+    dAddress2.state = 'FL';
     dAddress2.country = 'USA';
-    dAddress2.zip = '02896';
+    dAddress2.zip = '32826';
     distributor2.address = dAddress;
     distributor2.inventory = [];
 
