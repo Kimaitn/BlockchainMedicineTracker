@@ -10,7 +10,7 @@ Usage() {
 	echo "Options:"
 	echo -e "\t-d or --dev: (Optional) enable fabric development mode"
 	echo ""
-	echo "mat: ./startFabric-peer2.sh"
+	echo "mat: ./startFabric.sh"
 	echo ""
 	exit 1
 }
@@ -44,11 +44,11 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ "${FABRIC_DEV_MODE}" == "true" ]; then
     DOCKER_FILE="${DIR}"/composer/docker-compose-dev.yml
 else
-    DOCKER_FILE="${DIR}"/composer/docker-compose-peer2.yml
+    DOCKER_FILE="${DIR}"/composer/docker-compose-peer0.yml
 fi
 
-# ARCH=$ARCH docker-compose -f "${DIR}"/composer/docker-compose-peer2.yml down
-ARCH=$ARCH docker-compose -f "${DIR}"/composer/docker-compose-peer2.yml up -d
+ARCH=$ARCH docker-compose -f "${DOCKER_FILE}" down
+ARCH=$ARCH docker-compose -f "${DOCKER_FILE}" up -d
 
 # wait for Hyperledger Fabric to start
 # incase of errors when running later commands, issue export FABRIC_START_TIMEOUT=<larger number>
@@ -56,8 +56,11 @@ export FABRIC_START_TIMEOUT=15
 echo "sleeping for ${FABRIC_START_TIMEOUT} seconds to wait for fabric to complete start up"
 sleep ${FABRIC_START_TIMEOUT}
 
-docker exec -e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org1.mat.com/msp" peer2.org1.mat.com peer channel fetch config -o orderer.mat.com:7050 -c composerchannel
-docker exec -e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org1.mat.com/msp" peer2.org1.mat.com peer channel join -b composerchannel_config.block
+# Create the channel
+docker exec peer0.org1.mat.com peer channel create -o orderer.mat.com:7050 -c composerchannel -f /etc/hyperledger/configtx/composer-channel.tx
+# Join peer0.org1.mat.com to the channel.
+docker exec -e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org1.mat.com/msp" peer0.org1.mat.com peer channel join -b composerchannel.block
+
 
 if [ "${FABRIC_DEV_MODE}" == "true" ]; then
     echo "Fabric Network started in chaincode development mode"
