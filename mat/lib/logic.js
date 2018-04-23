@@ -561,16 +561,16 @@ async function setupDemo(setupDemo) {
     const memployee = factory.newResource(org, 'Employee', 'B001_E001');
     memployee.firstName = 'Flemming';
     memployee.lastName = 'Ornskov';
-    memployee.email = 'BobRoss@gmail.com';
+    memployee.email = 'flemmingornskov@gmail.com';
     memployee.employeeType = 'Admin';
     memployee.phoneNumber = '407-999-9999';
     memployee.worksFor = manufacturer.businessId;
-
-    manufacturer.employees = [memployee];
+    manufacturer.employees = [];
+    manufacturer.employees.push(memployee);
 
     // create user for manufacturer employee
-    const muser = factory.newResource(org, 'User', 'BobRoss@gmail.com');
-    muser.password = 'BobRoss';
+    const muser = factory.newResource(org, 'User', 'flemmingornskov@gmail.com');
+    muser.password = 'flemmingornskov';
     muser.employeeId = memployee.employeeId;
 
     // create the carrier
@@ -578,8 +578,8 @@ async function setupDemo(setupDemo) {
     const cAddress = factory.newConcept(org, 'Address');
     carrier.name = 'McKesson';
     carrier.businessType = 'Carrier';
-    carrier.PoCName = 'Bob Loss';
-    carrier.PoCEmail = 'BobLoss@gmail.com';
+    carrier.PoCName = 'John H. Hammergren';
+    carrier.PoCEmail = 'johnhammergren@gmail.com';
     cAddress.street = 'One Post Street';
     cAddress.city = 'San Francisco';
     cAddress.state = 'CA';
@@ -589,18 +589,18 @@ async function setupDemo(setupDemo) {
 
     // create employee for carrier
     const cemployee = factory.newResource(org, 'Employee', 'B002_E001');
-    cemployee.firstName = 'Bob';
-    cemployee.lastName = 'Loss';
-    cemployee.email = 'BobLoss@gmail.com';
+    cemployee.firstName = 'John';
+    cemployee.lastName = 'Hammergren';
+    cemployee.email = 'johnhammergren@gmail.com';
     cemployee.employeeType = 'Admin';
     cemployee.phoneNumber = '407-999-9991';
     cemployee.worksFor = carrier.businessId;
-
-    carrier.employees = [cemployee];
+    carrier.employees = [];
+    carrier.employees.push(cemployee);
 
     // create user for carrier employee
-    const cuser = factory.newResource(org, 'User', 'BobLoss@gmail.com');
-    cuser.password = 'BobLoss';
+    const cuser = factory.newResource(org, 'User', 'johnhammergren@gmail.com');
+    cuser.password = 'johnhammergren';
     cuser.employeeId = cemployee.employeeId;
 
     // create the distributor
