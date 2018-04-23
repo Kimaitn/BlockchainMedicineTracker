@@ -3,9 +3,18 @@ namespace org.mat
 // Status of a shipment
 enum shipmentStatus 
 {
+  o WAITING_CONFIRMATION
+  o ACCEPTED
   o IN_TRANSIT
   o ARRIVED
   o CANCELLED
+}
+
+// Status of shipment for receiver
+enum receiverStatus 
+{
+  o ARRIVED
+  o NOT_ARRIVED
 }
 
 // Status of a contract
@@ -56,6 +65,7 @@ concept Shipment
   o shipmentStatus status
   o Address destinationAddress
   o Address sourceAddress
+  o receiverStatus approvalStatusReceivingBusiness
   --> Business carryingBusiness
   --> Item[] items
 }
@@ -64,7 +74,6 @@ concept Shipment
 concept ItemRequest 
 {
   --> ItemType requestedItem
-  o Double unitPrice
   o Integer quantity
 }
 
@@ -116,7 +125,6 @@ asset Business identified by businessId
   o String PoCName optional
   o String PoCEmail optional
   o Address address 
-  o Double accountBalance
   --> Item[] inventory optional
   --> Employee[] employees optional
 }
@@ -162,8 +170,8 @@ transaction UpdateShipment extends UpdateContract
   o Integer shipmentIndex
 }
 
-// Allows the owner of a shipment to to be changed
-transaction ApproveShipments extends UpdateContract
+// Allows the buying business to approve that the shipments have arrived
+transaction ApproveShipmentsByBuyingBusiness extends UpdateContract
 {
   o Integer[] shipmentIndexes
 }
@@ -223,6 +231,14 @@ transaction RemoveItemRequestsFromRequestedItemsList extends UpdateContract
   o Integer[] itemRequestIndexes
 }
 
+// Allows the carrier business to update the status of the shipment on the contract
+transaction UpdateShipmentStatusViaCarrierBusiness extends UpdateContract
+{
+  o shipmentStatus newStatus
+  o Integer[] shipmentIndexes
+  --> Employee carrierEmployee
+}
+
 // Updates user 
 abstract transaction UpdateUser
 {
@@ -258,10 +274,10 @@ transaction UpdateBusinessInfo extends UpdateBusiness
 }
 
 // Updates the account balance of a business
-transaction UpdateBusinessAccBalance extends UpdateBusiness
-{
-  o Double newAccBalance
-}
+// transaction UpdateBusinessAccBalance extends UpdateBusiness
+// {
+//   o Double newAccBalance
+// }
 
 //call to bulk load invenotory from front end
 transaction BulkLoad
