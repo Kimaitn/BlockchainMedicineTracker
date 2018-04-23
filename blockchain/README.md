@@ -42,7 +42,7 @@ run `./deploy.sh` in the `blockchain` folder and skip to step 3 of the next part
 ## Steps to deploy the Fabric as of 1.1
 MACHINE ONE: Within the `blockchain` folder
 
-1. Within the `composer` folder, run `./begin.sh`.  This will generate all the necessary certificates and place them in the `cryto-config` folder.
+1. Within the `composer` folder, run `./begin.sh`.  This will generate all the necessary certificates and place them in the `crypto-config` folder.
 1. EDIT THE FOLLOWING TWO FILES:
   * **docker-compose.yml**
     - find `<CA_CERT>` and replace it with the full name of the `_sk` file in `composer/crypto-config/peerOrganizations/org1.example.com/ca/`.
