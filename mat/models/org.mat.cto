@@ -3,9 +3,18 @@ namespace org.mat
 // Status of a shipment
 enum shipmentStatus 
 {
+  o WAITING_CONFIRMATION
+  o ACCEPTED
   o IN_TRANSIT
   o ARRIVED
   o CANCELLED
+}
+
+// Status of shipment for receiver
+enum receiverStatus 
+{
+  o NOT_ARRIVED
+  o ARRIVED 
 }
 
 // Status of a contract
@@ -51,11 +60,14 @@ concept Address
 }
 
 // Packages of items to be delivered between businesses
-concept Shipment
+asset Shipment identified by shipmentId
 {
+  o String shipmentId
   o shipmentStatus status
   o Address destinationAddress
   o Address sourceAddress
+  o receiverStatus approvalStatusReceivingBusiness
+  o String receivingBusiness
   --> Business carryingBusiness
   --> Item[] items
 }
@@ -93,7 +105,7 @@ asset Contract identified by contractId
   o contractStatus approvalStatusBuyingBusiness
   o contractStatus status
   o DateTime arrivalDateTime
-  o Shipment[] shipments optional
+  --> Shipment[] shipments 
   o ItemRequest[] requestedItems
   --> Business sellingBusiness
   --> Business buyingBusiness
@@ -162,8 +174,8 @@ transaction UpdateShipment extends UpdateContract
   o Integer shipmentIndex
 }
 
-// Allows the owner of a shipment to to be changed
-transaction ApproveShipments extends UpdateContract
+// Allows the buying business to approve that the shipments have arrived
+transaction ApproveShipmentsByBuyingBusiness extends UpdateContract
 {
   o Integer[] shipmentIndexes
 }
@@ -191,6 +203,7 @@ transaction  CancelContract extends UpdateContract
 // Complete a contract
 transaction CompleteContract extends UpdateContract
 {
+  --> Employee invokingEmployee
 }
 
 // Updates the arrival time of a shipment on a contract
@@ -202,7 +215,7 @@ transaction UpdateContractArrivalDateTime extends UpdateContract
 // Adds a shipment to a contract
 transaction AddShipmentToShipmentList extends UpdateContract
 {
-  o Shipment newShipment
+ o Shipment newShipment
 }
 
 // Removes a shipment in a contract
@@ -221,6 +234,20 @@ transaction AddItemRequestsToRequestedItemsList extends UpdateContract
 transaction RemoveItemRequestsFromRequestedItemsList extends UpdateContract
 {
   o Integer[] itemRequestIndexes
+}
+
+// Updates Shipment by Carrier 
+abstract transaction shipmentUpdate
+{
+  --> Shipment shipment
+}
+
+
+// Allows the carrier business to update the status of the shipment on the contract
+transaction UpdateShipmentStatusViaCarrierBusiness extends shipmentUpdate
+{
+  o shipmentStatus newStatus
+  --> Business sellingBusiness
 }
 
 // Updates user 
