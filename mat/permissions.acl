@@ -7,6 +7,15 @@ rule SystemAllowRestrictingHistorian {
     action: ALLOW
 }
 
+rule DenyLoginCheckerREADAccessOfHistorianRecord {
+    description: "Deny read access to system resources"
+    participant(p): "org.mat.LoginChecker"
+    operation: READ
+    resource(r): "org.hyperledger.composer.system.HistorianRecord"
+    condition: (r.participantInvoking.worksFor == p.worksFor)
+    action: DENY
+}
+
 rule System {
     description: "Grant all read access to system resources"
     participant: "org.**"
