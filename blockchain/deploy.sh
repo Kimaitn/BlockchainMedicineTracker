@@ -13,7 +13,9 @@ CACERT=`find ./composer/crypto-config/peerOrganizations/org1.example.com/ca/ -na
 KEYSTORE=`find ./composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/ -name '*_sk' | cut -d'/' -f10`
 
 sed -i -e "s|<CA-CERT>|$CACERT|" ./composer/docker-compose.yml
-sed -i -e "s|<PEER-1-IP>|$1|" ./composer/docker-compose.yml
+sed -i -e "s|<PEER-1-IP>|$1|g" ./composer/docker-compose.yml
+sed -i -e "s|<PEER-1-IP>|$1|g" ./composer/docker-compose-peer2.yml
 
 sed -i -e "s|<KEYSTORE>|$KEYSTORE|" ./createPeerAdminCard.sh
-sed -i -e "s|<PEER-2-IP>|$2|" ./createPeerAdminCard.sh
+sed -i -e "s|<PEER-2-IP>|$2|g" ./createPeerAdminCard.sh
+sed -i -e "s|<PEER-1-IP>|$1|g" ./createPeerAdminCard.sh

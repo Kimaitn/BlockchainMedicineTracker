@@ -4,7 +4,7 @@ services:
     container_name: peer2.org1.example.com
     image: hyperledger/fabric-peer:$ARCH-1.1.0
     extra_hosts:
-      - "orderer.example.com:172.31.7.175"
+      - "orderer.example.com:<PEER-1-IP>"
     environment:
       - CORE_LOGGING_LEVEL=debug
       - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
