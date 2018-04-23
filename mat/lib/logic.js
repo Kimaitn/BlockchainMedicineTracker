@@ -220,7 +220,7 @@ async function updateShipmentStatusViaCarrierBusiness(updateShipmentStatusViaCar
                 item.currentOwner = updateShipmentStatusViaCarrierBusiness.contract.shipments[shipmentIndex].carryingBusiness.businessId;
                 itemRegistry.update(item);
             });
-            await businessRegistry.update(updateShipmentStatusViaCarrierBusiness.contract.sellingBusiness);    
+             businessRegistry.update(updateShipmentStatusViaCarrierBusiness.contract.sellingBusiness);    
         }
     }
     });
