@@ -37,15 +37,17 @@ If there already is an instance of fabric running, run the following commands to
 The `./teardownFabric.sh` command has been modified to remove all docker containers, so be careful when executing this command.
 
 ## Sparknotes deployment
-run `./deploy.sh` in the `blockchain` folder and skip to step 3 of the next part of the tutorial.
+Run `./deploy.sh` in the `blockchain` folder and skip to step 3 of the next part of the tutorial.
 
 ## Steps to deploy the Fabric as of 1.1
 MACHINE ONE: Within the `blockchain` folder
 
-1. Within the `composer` folder, run `./begin.sh`.  This will generate all the necessary certificates and place them in the `cryto-config` folder.
-1. EDIT THE FOLLOWING TWO FILES:
+1. Within the `composer` folder, run `./begin.sh`.  This will generate all the necessary certificates and place them in the `crypto-config` folder.
+1. EDIT THE FOLLOWING THREE FILES:
   * **docker-compose.yml**
     - find `<CA_CERT>` and replace it with the full name of the `_sk` file in `composer/crypto-config/peerOrganizations/org1.example.com/ca/`.
+    - find `<PEER-1-IP>` and replace it with machine one's IP address.  This will specify what IP `orderer.example.com` will point to.
+  * **createPeerAdminCard.sh**
     - find `<PEER-1-IP>` and replace it with machine one's IP address.  This will specify what IP `orderer.example.com` will point to.
   * **createPeerAdminCard.sh**
     - find `<KEYSTORE>` and replace it with the full name of the `_sk` file in  `composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/`.
@@ -55,18 +57,14 @@ MACHINE ONE: Within the `blockchain` folder
 1. MACHINE TWO - `./startFabric-peer2.sh`
 
 ## Using Composer to deploy a business network on Fabric
-You will need to add `mat-network.bna` (or whatever `.bna` file you will be using) in the current working directory. A sample one has been provided, but it is still in development. The directory doesn't matter, but `networkadmin.card` will be saved in it, so doing this in `blockchain` would probably be best.  Run these commands on MACHINE ONE.
+You will need to add `mat-network.bna` (or whatever `.bna` file you will be using) in the current working directory. A sample one has been provided, but it is still in development. The directory doesn't matter, but `networkadmin.card` will be saved in it, so doing this in `blockchain` would probably be best.  Run these commands on machine one.
 
 1. `composer network install --card PeerAdmin@hlfv1 --archiveFile mat-network.bna`
 1. `composer network start -n mat-network -V 0.0.1 -A admin -S adminpw --card PeerAdmin@hlfv1 -f networkadmin.card`
 
-You did it! From here you can:
-* `composer network ping --card admin@mat-network` to ping the network
-* `composer-rest-server --card admin@mat-network` to deploy the rest server
-
 ## Deploying the Business Network on the Second Machine
 
-The mat-network is now running. If necessary, more business network admins can be created.  In this tutorial, alice will be established as another admin.  Make sure that the `-u` is NOT the same as the first `-A` argument from a few commands above.
+Create alice, an admin for the business network.
 
 1. `composer identity request -c PeerAdmin@hlfv1 -u admin -s adminpw -d alice`
 
@@ -82,7 +80,7 @@ We have now made alice a business network admin in our mat-network.  From here, 
 
 1. `composer identity issue -c alice@mat-network -f jdoe.card -u jdoe -a "resource:org.mat.Employee#1"`
 
-From here, deploying `scp` jo.card from MACHINE ONE to MACHINE TWO.  Feel free to put it anywhere, but the `blockchain` folder would be preferable.  In the same working directory as `jo.card`:
+From here, deploying `scp` jo.card from machine one to machine two.  Feel free to put it anywhere, but the `blockchain` folder would be preferable.  In the same working directory as `jdoe.card`:
 
 1. MACHINE TWO - `composer card import -f jdoe.card`
 
