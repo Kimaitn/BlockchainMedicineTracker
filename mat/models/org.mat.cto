@@ -180,7 +180,6 @@ transaction ApproveShipmentsByBuyingBusiness extends UpdateContract
 transaction UpdateItemRequest extends UpdateContract
 {
   o Integer itemRequestIndex
-  o Double newUnitPrice
   o Integer newQuantity
 }
 

@@ -130,7 +130,6 @@ async function approveShipmentsByBuyingBusiness(approveShipmentsByBuyingBusiness
  * @transaction
  */
 async function updateItemRequest(updateItemRequest) {
-    updateItemRequest.contract.requestedItems[updateItemRequest.itemRequestIndex].unitPrice = updateItemRequest.newUnitPrice;
     updateItemRequest.contract.requestedItems[updateItemRequest.itemRequestIndex].quantity = updateItemRequest.newQuantity;
     changeContractStatuses(updateItemRequest.contract);
     return getAssetRegistry('org.mat.Contract')
@@ -533,17 +532,24 @@ async function updateEmployeeType(updateEmployeeType) {
  * @transaction
  */
 async function setupDemo(setupDemo) {
-
+    //Create Businesses 
+    //Manufacturer - Admin Employee
+    //Carrier - Admin Employee
+    //Distributor 1 - Admin Employee + Regular Employee
+    //Distributor 2 - Admin Employee 
     const factory = getFactory();
     const org = 'org.mat';
 
-    // create the manufacturer
+    
+
+
+    //Create Manufacturer
     const manufacturer = factory.newResource(org, 'Business', 'B001');
     const mAddress = factory.newConcept(org, 'Address');
     manufacturer.name = 'Shire Pharmaceuticals';
     manufacturer.businessType = 'Manufacturer';
-    manufacturer.PoCName = 'Bob Ross';
-    manufacturer.PoCEmail = 'BobRoss@gmail.com';
+    manufacturer.PoCName = 'Flemming Ornskov';
+    manufacturer.PoCEmail = 'flemmingornskov@gmail.com';
     mAddress.city = 'Dublin';
     mAddress.country = 'Ireland';
     mAddress.street = 'Block 2 & 3 Miesian Plaza 50, 50-58 Baggot Street Lower';
@@ -551,10 +557,10 @@ async function setupDemo(setupDemo) {
     manufacturer.address = mAddress;
     manufacturer.inventory = [];
 
-    // create employee for manufacturer
+    //Create Admin Employee for Manufacturer
     const memployee = factory.newResource(org, 'Employee', 'B001_E001');
-    memployee.firstName = 'Bob';
-    memployee.lastName = 'Ross';
+    memployee.firstName = 'Flemming';
+    memployee.lastName = 'Ornskov';
     memployee.email = 'BobRoss@gmail.com';
     memployee.employeeType = 'Admin';
     memployee.phoneNumber = '407-999-9999';
