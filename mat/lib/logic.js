@@ -667,7 +667,7 @@ async function setupDemo(setupDemo) {
     demployeed2.email = 'joshmerlo@gmail.com';
     demployeed2.employeeType = 'Admin';
     demployeed2.phoneNumber = '407-999-9992';
-    demployeed2.worksFor = distributor.businessId;
+    demployeed2.worksFor = distributor2.businessId;
     distributor2.employees = [demployeed2];
 
     // create user for admin distributor-2 employee
