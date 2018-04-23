@@ -44,6 +44,8 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 	onContracts: boolean;
 	onShipments: boolean;
 	onBusiness: boolean;
+	businessName;
+	employeetype;
 	allEmployees;
 	currentBusinessId: string;
 
@@ -61,6 +63,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 	  this.newcontractitems = new Array();
 	  this.type = localStorage.getItem('type');
 	  this.employeetype = localStorage.getItem('employeetype');
+	  this.businessName = localStorage.getItem('businessName');
 	  //console.log(this.type);
 	  this.carriers = new Array();
 	  this.allEmployees = new Array();
