@@ -661,7 +661,7 @@ async function setupDemo(setupDemo) {
     distributor2.inventory = [];
 
     // create admin employee for distributor-2
-    const demployeed2 = factory.newResource(org, 'Employee', 'B003_E001');
+    const demployeed2 = factory.newResource(org, 'Employee', 'B004_E001');
     demployeed2.firstName = 'Josh';
     demployeed2.lastName = 'Merlo';
     demployeed2.email = 'joshmerlo@gmail.com';
@@ -671,9 +671,9 @@ async function setupDemo(setupDemo) {
     distributor2.employees = [demployeed2];
 
     // create user for admin distributor-2 employee
-    const duser = factory.newResource(org, 'User', 'joshmerlo@gmail.com');
-    duser.password = 'joshmerlo';
-    duser.employeeId = demployeed2.employeeId;
+    const d2user = factory.newResource(org, 'User', 'joshmerlo@gmail.com');
+    d2user.password = 'joshmerlo';
+    d2user.employeeId = demployeed2.employeeId;
 
     // create itemType
     const itemType = factory.newResource(org, 'ItemType', 'Adderall');
@@ -722,15 +722,15 @@ async function setupDemo(setupDemo) {
 
     // add the businesses
     const businessRegistry = await getAssetRegistry(org + '.Business');
-    await businessRegistry.addAll([manufacturer, carrier, distributor]);
+    await businessRegistry.addAll([manufacturer, carrier, distributor, distributor2]);
 
     // add the employees
     const employeeRegistry = await getParticipantRegistry(org + '.Employee');
-    await employeeRegistry.addAll([memployee, cemployee, demployee, demployee2]);
+    await employeeRegistry.addAll([memployee, cemployee, demployee, demployee2, demployeed2]);
 
     // add the users
     const userRegistry = await getAssetRegistry(org + '.User');
-    await userRegistry.addAll([muser, cuser, duser, duser2]);
+    await userRegistry.addAll([muser, cuser, duser, duser2, d2user]);
 
     // add the itemType
     const itemTypeRegistry = await getAssetRegistry(org + '.ItemType');
