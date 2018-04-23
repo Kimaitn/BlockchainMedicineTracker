@@ -34,4 +34,4 @@ services:
     ports:
       - 8984:5984
     environment:
-      DB_URL: http://localhost:7984/member_db
+      DB_URL: http://localhost:8984/member_db
