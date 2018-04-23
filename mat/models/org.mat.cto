@@ -67,7 +67,6 @@ asset Shipment identified by shipmentId
   o Address destinationAddress
   o Address sourceAddress
   o receiverStatus approvalStatusReceivingBusiness
-  o String sendingBusiness
   o String receivingBusiness
   --> Business carryingBusiness
   --> Item[] items
@@ -248,6 +247,7 @@ abstract transaction shipmentUpdate
 transaction UpdateShipmentStatusViaCarrierBusiness extends shipmentUpdate
 {
   o shipmentStatus newStatus
+  --> Business sellingBusiness
 }
 
 // Updates user 

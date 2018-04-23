@@ -10,6 +10,20 @@ function changeContractStatuses(contract) {
 }
 
 /**
+ * Private function that updates the inventory of a business
+ * @param {org.mat.business} business - business that need updating
+ */
+async function changeItemOwner(buyingBusiness, sellingBusiness, item){
+    const businessRegistry = await getAssetRegistry('org.mat.Business');
+    var index = sellingBusiness.inventory.indexOf(item);
+    if(index>-1) {
+        sellingBusiness.inventory.splice(index, 1);
+    }
+    buyingBusiness.inventory.push(item);
+    await businessRegistry.updateAll([sellingBusiness, buyingBusiness]);
+}
+
+/**
  * Takes in an array of items to be placed on the blockchain for the
  * @param {org.mat.BulkLoad} bulkLoad - The array of items
  * @transaction
@@ -93,11 +107,21 @@ async function updateShipmentCarrier(updateShipment) {
  */
 async function approveShipmentsByBuyingBusiness(approveShipmentsByBuyingBusiness) {
     var shipments = [];
+    const businessRegistry = await getAssetRegistry('org.mat.Business');
+    const itemRegistry = await getAssetRegistry('org.mat.Item');
     const shipmentRegistry = await getAssetRegistry('org.mat.Shipment');
     approveShipmentsByBuyingBusiness.shipmentIndexes.forEach((shipmentIndex) => {
         approveShipmentsByBuyingBusiness.contract.shipments[shipmentIndex].approvalStatusReceivingBusiness = 'ARRIVED';
+      	 var arrayItems = approveShipmentsByBuyingBusiness.contract.shipments[shipmentIndex].items;
+         arrayItems.forEach(function(items){
+           items.locations.push(approveShipmentsByBuyingBusiness.contract.shipments[shipmentIndex].destinationAddress);
+           items.currentOwner = approveShipmentsByBuyingBusiness.contract.buyingBusiness.businessId;
+           itemRegistry.update(items);
+           approveShipmentsByBuyingBusiness.contract.buyingBusiness.inventory.push(items);
+         });
         shipments.push(approveShipmentsByBuyingBusiness.contract.shipments[shipmentIndex]);
   });
+  	businessRegistry.update(approveShipmentsByBuyingBusiness.contract.buyingBusiness);
     await shipmentRegistry.updateAll(shipments);
 }
 
@@ -108,6 +132,7 @@ async function approveShipmentsByBuyingBusiness(approveShipmentsByBuyingBusiness
  * @transaction
  */
 async function updateItemRequest(updateItemRequest) {
+   	const businessRegistry = await getAssetRegistry('org.mat.Business');
     updateItemRequest.contract.requestedItems[updateItemRequest.itemRequestIndex].unitPrice = updateItemRequest.newUnitPrice;
     updateItemRequest.contract.requestedItems[updateItemRequest.itemRequestIndex].quantity = updateItemRequest.newQuantity;
     changeContractStatuses(updateItemRequest.contract);
@@ -185,8 +210,23 @@ async function cancelContract(cancelContract) {
  */
 async function updateShipmentStatusViaCarrierBusiness(updateShipmentStatusViaCarrierBusiness){
     const shipmentRegistry = await getAssetRegistry('org.mat.Shipment');
+  	const itemRegistry = await getAssetRegistry('org.mat.Item');
+  	const businessRegistry = await getAssetRegistry('org.mat.Business');
     updateShipmentStatusViaCarrierBusiness.shipment.status = updateShipmentStatusViaCarrierBusiness.newStatus;
     await shipmentRegistry.update(updateShipmentStatusViaCarrierBusiness.shipment);
+  
+  	if(updateShipmentStatusViaCarrierBusiness.newStatus === 'ACCEPTED'){
+  	var arrayItems = updateShipmentStatusViaCarrierBusiness.shipment.items;
+    arrayItems.forEach(function(item){
+      var index = updateShipmentStatusViaCarrierBusiness.sellingBusiness.inventory.indexOf(item);
+      if(index>-1) {
+        updateShipmentStatusViaCarrierBusiness.sellingBusiness.inventory.splice(index, 1);
+    	}
+       item.currentOwner = updateShipmentStatusViaCarrierBusiness.shipment.carryingBusiness.businessId;
+      itemRegistry.update(item);
+    });
+      await businessRegistry.update(updateShipmentStatusViaCarrierBusiness.sellingBusiness);
+    }
 }
 
 /**
@@ -208,32 +248,6 @@ async function completeContract(completeContract) {
         }))
         {
             completeContract.contract.status = 'COMPLETED';
-            const shipments = completeContract.contract.shipments;
-            shipments.forEach(function(shipment){
-                var arrayItems = shipment.items;
-                arrayItems.forEach(function(items){
-                    if(completeContract.invokingEmployee.worksFor == completeContract.contract.buyingBusiness.businessId){
-          				completeContract.contract.buyingBusiness.inventory.push(items);
-          				businessRegistry.update(completeContract.contract.buyingBusiness);
-          			}
-                    else{
-                        items.locations.push(shipment.destinationAddress);
-                        items.currentOwner = completeContract.contract.buyingBusiness.businessId;
-                        itemRegistry.update(items);
-                        resources.push(items);
-                    }
-                });
-            });
-            if(completeContract.invokingEmployee.worksFor == completeContract.contract.sellingBusiness.businessId){
-              	for(var i = 0; i<resources.length; i++){
-            		var index = completeContract.contract.sellingBusiness.inventory.indexOf(resources[i]);
-                	if(index>-1) {
-                       	completeContract.contract.sellingBusiness.inventory.splice(index, 1);
-                 	}
-                  	businessRegistry.update(completeContract.contract.sellingBusiness);
-                }
-                return;
-             }
         }
     }
     else {
@@ -244,7 +258,6 @@ async function completeContract(completeContract) {
             return assetRegistry.update(completeContract.contract);
         });
 }
-
 /**
  * Updates the absolute arrival time of shipments specified within a contract
  * This will need approval from all participants of the contract
@@ -641,7 +654,7 @@ async function setupDemo(setupDemo) {
     duser2.employeeId = demployee2.employeeId;
 
     // create the LogInChecker
-    const pLogInChecker = factory.newResource(org, "LoginChecker", 'L001')
+    const LogInChecker = factory.newResource(org, "LoginChecker", 'L001')
 
     // create itemType
     const itemType = factory.newResource(org, 'ItemType', 'Adderall');
@@ -674,7 +687,7 @@ async function setupDemo(setupDemo) {
     itemRequest.requestedItem = factory.newRelationship(org, 'ItemType', 'Adderall');
     itemRequest.unitPrice = 14.2;
     itemRequest.quantity = 2;
-    contract.requestedItems = [itemRequest];
+  	contract.requestedItems = [itemRequest];
 
     // create the shipment concept
     const shipment = factory.newResource(org, 'Shipment', 'S001');
@@ -699,7 +712,7 @@ async function setupDemo(setupDemo) {
 
     // add the logInChecker
     const logInCheckerRegistry = await getParticipantRegistry(org + '.LoginChecker');
-    await logInCheckerRegistry.add(pLogInChecker);
+    await logInCheckerRegistry.add(LogInChecker);
 
     // add the users
     const userRegistry = await getAssetRegistry(org + '.User');
