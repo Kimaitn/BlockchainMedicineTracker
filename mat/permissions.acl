@@ -554,26 +554,26 @@ rule AdminEmployeeUPDATEBusinessViaUpdateBusinessInfo
   action: ALLOW
 }
 
-rule AdminEmployeeUPDATEBusinessViaUpdateBusinessAccBalance
-{
-  description: "Allow an ADMIN employee to UPDATE a business via UpdateBusinessAccBalance"
-  participant(e): "org.mat.Employee"
-  operation: UPDATE
-  resource(b): "org.mat.Business"
-  transaction(tx): "org.mat.UpdateBusinessAccBalance"
-  condition: ((e.employeeType == "Admin") && (e.worksFor == tx.business.businessId) && (e.worksFor == b.businessId))
-  action: ALLOW
-}
+// rule AdminEmployeeUPDATEBusinessViaUpdateBusinessAccBalance
+// {
+//   description: "Allow an ADMIN employee to UPDATE a business via UpdateBusinessAccBalance"
+//   participant(e): "org.mat.Employee"
+//   operation: UPDATE
+//   resource(b): "org.mat.Business"
+//   transaction(tx): "org.mat.UpdateBusinessAccBalance"
+//   condition: ((e.employeeType == "Admin") && (e.worksFor == tx.business.businessId) && (e.worksFor == b.businessId))
+//   action: ALLOW
+// }
 
-rule AdminEmployeeCREATEUpdateBusinessAccBalanceTransaction
-{
-  description: "Allow an ADMIN employee to CREATE the UpdateBusinessAccBalance transaction"
-  participant(e): "org.mat.Employee"
-  operation: CREATE
-  resource(b): "org.mat.UpdateBusinessAccBalance"
-  condition: ((e.employeeType == "Admin") && (e.worksFor == b.business.businessId))
-  action: ALLOW
-}
+// rule AdminEmployeeCREATEUpdateBusinessAccBalanceTransaction
+// {
+//   description: "Allow an ADMIN employee to CREATE the UpdateBusinessAccBalance transaction"
+//   participant(e): "org.mat.Employee"
+//   operation: CREATE
+//   resource(b): "org.mat.UpdateBusinessAccBalance"
+//   condition: ((e.employeeType == "Admin") && (e.worksFor == b.business.businessId))
+//   action: ALLOW
+// }
 
 rule AdminEmployeeCREATEParticipants
 {

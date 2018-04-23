@@ -401,18 +401,18 @@ async function updateBusinessInfo(updateBusinessInfo) {
         });
 }
 
-/**
- * Update a business's account balance
- * @param {org.mat.UpdateBusinessAccBalance} updateBusinessAccBalance - the businessTransaction to be processed
- * @transaction
- */
-async function updateBusinessAccBalance(updateBusinessAccBalance) {
-    updateBusinessAccBalance.business.accountBalance = updateBusinessAccBalance.newAccBalance;
-    return getAssetRegistry('org.mat.Business')
-        .then(function (assetRegistry) {
-            return assetRegistry.update(updateBusinessAccBalance.business);
-        });
-}
+// /**
+//  * Update a business's account balance
+//  * @param {org.mat.UpdateBusinessAccBalance} updateBusinessAccBalance - the businessTransaction to be processed
+//  * @transaction
+//  */
+// async function updateBusinessAccBalance(updateBusinessAccBalance) {
+//     updateBusinessAccBalance.business.accountBalance = updateBusinessAccBalance.newAccBalance;
+//     return getAssetRegistry('org.mat.Business')
+//         .then(function (assetRegistry) {
+//             return assetRegistry.update(updateBusinessAccBalance.business);
+//         });
+// }
 
 /**
 * Remove an item from the inventory of a business

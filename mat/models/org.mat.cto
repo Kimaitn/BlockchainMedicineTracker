@@ -274,10 +274,10 @@ transaction UpdateBusinessInfo extends UpdateBusiness
 }
 
 // Updates the account balance of a business
-transaction UpdateBusinessAccBalance extends UpdateBusiness
-{
-  o Double newAccBalance
-}
+// transaction UpdateBusinessAccBalance extends UpdateBusiness
+// {
+//   o Double newAccBalance
+// }
 
 //call to bulk load invenotory from front end
 transaction BulkLoad
