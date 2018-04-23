@@ -537,8 +537,8 @@ async function setupDemo(setupDemo) {
     const mAddress = factory.newConcept(org, 'Address');
     manufacturer.name = 'Shire Pharmaceuticals';
     manufacturer.businessType = 'Manufacturer';
-    manufacturer.PoCName = 'Bob Ross';
-    manufacturer.PoCEmail = 'BobRoss@gmail.com';
+    manufacturer.PoCName = 'Flemming Ornskov';
+    manufacturer.PoCEmail = 'FlemmingOrnskov@gmail.com';
     mAddress.city = 'Dublin';
     mAddress.country = 'Ireland';
     mAddress.street = 'Block 2 & 3 Miesian Plaza 50, 50-58 Baggot Street Lower';
@@ -549,9 +549,9 @@ async function setupDemo(setupDemo) {
 
     // create employee for manufacturer
     const memployee = factory.newResource(org, 'Employee', 'B001_E001');
-    memployee.firstName = 'Bob';
-    memployee.lastName = 'Ross';
-    memployee.email = 'BobRoss@gmail.com';
+    memployee.firstName = 'Flemming';
+    memployee.lastName = 'Ornskov';
+    memployee.email = 'FlemmingOrnskov@gmail.com';
     memployee.employeeType = 'Admin';
     memployee.phoneNumber = '407-999-9999';
     memployee.worksFor = manufacturer.businessId;
@@ -559,8 +559,8 @@ async function setupDemo(setupDemo) {
     manufacturer.employees = [memployee];
 
     // create user for manufacturer employee
-    const muser = factory.newResource(org, 'User', 'BobRoss@gmail.com');
-    muser.password = 'BobRoss';
+    const muser = factory.newResource(org, 'User', 'FlemmingOrnskov@gmail.com');
+    muser.password = 'FlemmingOrnskov';
     muser.employeeId = memployee.employeeId;
 
     // create the carrier
@@ -568,8 +568,8 @@ async function setupDemo(setupDemo) {
     const cAddress = factory.newConcept(org, 'Address');
     carrier.name = 'McKesson';
     carrier.businessType = 'Carrier';
-    carrier.PoCName = 'Bob Loss';
-    carrier.PoCEmail = 'BobLoss@gmail.com';
+    carrier.PoCName = 'John H. Hammergren';
+    carrier.PoCEmail = 'JohnHammergren@gmail.com';
     cAddress.street = 'One Post Street';
     cAddress.city = 'San Francisco';
     cAddress.state = 'CA';
@@ -580,9 +580,9 @@ async function setupDemo(setupDemo) {
 
     // create employee for carrier
     const cemployee = factory.newResource(org, 'Employee', 'B002_E001');
-    cemployee.firstName = 'Bob';
-    cemployee.lastName = 'Loss';
-    cemployee.email = 'BobLoss@gmail.com';
+    cemployee.firstName = 'John';
+    cemployee.lastName = 'Hammergren';
+    cemployee.email = 'JohnHammergren@gmail.com';
     cemployee.employeeType = 'Admin';
     cemployee.phoneNumber = '407-999-9991';
     cemployee.worksFor = carrier.businessId;
@@ -590,8 +590,8 @@ async function setupDemo(setupDemo) {
     carrier.employees = [cemployee];
 
     // create user for carrier employee
-    const cuser = factory.newResource(org, 'User', 'BobLoss@gmail.com');
-    cuser.password = 'BobLoss';
+    const cuser = factory.newResource(org, 'User', 'JohnHammergren@gmail.com');
+    cuser.password = 'JohnHammergren';
     cuser.employeeId = cemployee.employeeId;
 
     // create the distributor
@@ -599,8 +599,8 @@ async function setupDemo(setupDemo) {
     const dAddress = factory.newConcept(org, 'Address');
     distributor.name = 'CVS Pharmacy';
     distributor.businessType = 'Distributor';
-    distributor.PoCName = 'Bob DDos';
-    distributor.PoCEmail = 'BobDDos@gmail.com';
+    distributor.PoCName = 'Larry J. Merlo';
+    distributor.PoCEmail = 'LarryMerlo@gmail.com';
     dAddress.street = 'One CVS Drive';
     dAddress.city = 'Woonsocket';
     dAddress.state = 'RI';
@@ -612,23 +612,23 @@ async function setupDemo(setupDemo) {
 
     // create employee for distributor
     const demployee = factory.newResource(org, 'Employee', 'B003_E001');
-    demployee.firstName = 'Bob';
-    demployee.lastName = 'DDoss';
-    demployee.email = 'BobDDoss@gmail.com';
+    demployee.firstName = 'Larry';
+    demployee.lastName = 'Merlo';
+    demployee.email = 'LarryMerlo@gmail.com';
     demployee.employeeType = 'Admin';
     demployee.phoneNumber = '407-999-9992';
     demployee.worksFor = distributor.businessId;
 
     // create user for distributor employee
-    const duser = factory.newResource(org, 'User', 'BobDDoss@gmail.com');
-    duser.password = 'BobDDoss';
+    const duser = factory.newResource(org, 'User', 'LarryMerlo@gmail.com');
+    duser.password = 'LarryMerlo';
     duser.employeeId = demployee.employeeId;
 
     // create regular employee for distributor
     const demployee2 = factory.newResource(org, 'Employee', 'B003_E002');
-    demployee2.firstName = 'Bob';
-    demployee2.lastName = 'Zoss';
-    demployee2.email = 'BobZoss@gmail.com';
+    demployee2.firstName = 'Larry';
+    demployee2.lastName = 'Merlo';
+    demployee2.email = 'LarryMerlo@gmail.com';
     demployee2.employeeType = 'Regular';
     demployee2.phoneNumber = '407-999-9993';
     demployee2.worksFor = distributor.businessId;
@@ -636,8 +636,8 @@ async function setupDemo(setupDemo) {
     distributor.employees = [demployee, demployee2];
 
     // create user for distributor employee
-    const duser2 = factory.newResource(org, 'User', 'BobZoss@gmail.com');
-    duser2.password = 'BobZoss';
+    const duser2 = factory.newResource(org, 'User', 'LarryMerlo@gmail.com');
+    duser2.password = 'LarryMerlo';
     duser2.employeeId = demployee2.employeeId;
 
     // create the LogInChecker
@@ -645,6 +645,7 @@ async function setupDemo(setupDemo) {
 
     // create itemType
     const itemType = factory.newResource(org, 'ItemType', 'Adderall');
+    const itemType = factory.newResource(org, 'ItemType', 'Xagrid');
 
     // create item
     const item = factory.newResource(org, 'Item', 'I00001');
