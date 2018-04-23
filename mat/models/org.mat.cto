@@ -3,8 +3,8 @@ namespace org.mat
 // Status of a shipment
 enum shipmentStatus 
 {
-  o ACCEPTED
   o WAITING_CONFIRMATION
+  o ACCEPTED
   o IN_TRANSIT
   o ARRIVED
   o CANCELLED
