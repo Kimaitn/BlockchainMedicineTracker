@@ -549,7 +549,6 @@ async function setupDemo(setupDemo) {
     mAddress.street = 'Block 2 & 3 Miesian Plaza 50, 50-58 Baggot Street Lower';
     mAddress.zip = 'D02 Y754';
     manufacturer.address = mAddress;
-    manufacturer.accountBalance = 23.03;
     manufacturer.inventory = [];
 
     // create employee for manufacturer
@@ -581,7 +580,6 @@ async function setupDemo(setupDemo) {
     cAddress.country = 'USA';
     cAddress.zip = '94104';
     carrier.address = cAddress;
-    carrier.accountBalance = 55.54;
 
     // create employee for carrier
     const cemployee = factory.newResource(org, 'Employee', 'B002_E001');
@@ -612,7 +610,6 @@ async function setupDemo(setupDemo) {
     dAddress.country = 'USA';
     dAddress.zip = '02895';
     distributor.address = dAddress;
-    distributor.accountBalance = 645.64;
     distributor.inventory = [];
 
     // create employee for distributor
@@ -645,6 +642,22 @@ async function setupDemo(setupDemo) {
     duser2.password = 'BobZoss';
     duser2.employeeId = demployee2.employeeId;
 
+
+    // create the distributor
+    const distributor2 = factory.newResource(org, 'Business', 'B004');
+    const dAddress2 = factory.newConcept(org, 'Address');
+    distributor2.name = 'CVS-2 Pharmacy';
+    distributor2.businessType = 'Distributor';
+    distributor2.PoCName = 'Bob DDos 2';
+    distributor2.PoCEmail = 'BobDDos2@gmail.com';
+    dAddress2.street = 'One CVS-2 Drive';
+    dAddress2.city = 'Woonsocket';
+    dAddress2.state = 'RI';
+    dAddress2.country = 'USA';
+    dAddress2.zip = '02896';
+    distributor2.address = dAddress;
+    distributor2.inventory = [];
+
     // create itemType
     const itemType = factory.newResource(org, 'ItemType', 'Adderall');
 
@@ -661,9 +674,10 @@ async function setupDemo(setupDemo) {
 
     // create the contract
     const contract = factory.newResource(org, 'Contract', 'C001');
-    contract.approvalStatusBuyingBusiness = 'CONFIRMED';
-    contract.approvalStatusSellingBusiness = 'CONFIRMED';
-    contract.status = 'CONFIRMED';
+    contract.approvalStatusBuyingBusiness = 'WAITING_CONFIRMATION';
+    contract.approvalStatusSellingBusiness = 'WAITING_CONFIRMATION';
+    contract.status = 'WAITING_CONFIRMATION';
+    contract.shipments = [];
     const tomorrow = setupDemo.timestamp;
     tomorrow.setDate(tomorrow.getDate() + 1);
     contract.arrivalDateTime = tomorrow; // the shipment has to arrive tomorrow
@@ -673,20 +687,20 @@ async function setupDemo(setupDemo) {
     // create the itemRequest concept
     const itemRequest = factory.newConcept(org, 'ItemRequest', 'R001');
     itemRequest.requestedItem = factory.newRelationship(org, 'ItemType', 'Adderall');
-    itemRequest.unitPrice = 14.2;
     itemRequest.quantity = 2;
 
     contract.requestedItems = [itemRequest];
 
     // create the shipment concept
     const shipment = factory.newConcept(org, 'Shipment', 'S001');
-    shipment.status = 'IN_TRANSIT';
+    shipment.status = 'WAITING_CONFIRMATION';
     shipment.destinationAddress = dAddress;
     shipment.sourceAddress = mAddress;
+    shipment.approvalStatusReceivingBusiness = 'NOT_ARRIVED';
     shipment.carryingBusiness = factory.newRelationship(org, 'Business', 'B002');
     shipment.items = [factory.newRelationship(org, 'Item', 'I00001')];
 
-    contract.shipments = [shipment];
+    contract.shipments.push(shipment);
 
     // add the businesses
     const businessRegistry = await getAssetRegistry(org + '.Business');
