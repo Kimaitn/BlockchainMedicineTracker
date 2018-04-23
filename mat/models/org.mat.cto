@@ -74,7 +74,6 @@ concept Shipment
 concept ItemRequest 
 {
   --> ItemType requestedItem
-  o Double unitPrice
   o Integer quantity
 }
 
@@ -107,7 +106,6 @@ asset Contract identified by contractId
   o ItemRequest[] requestedItems
   --> Business sellingBusiness
   --> Business buyingBusiness
-  --> Business carryingBusiness
 }
 
 // The basic User class that will be using the system
@@ -127,7 +125,6 @@ asset Business identified by businessId
   o String PoCName optional
   o String PoCEmail optional
   o Address address 
-  o Double accountBalance
   --> Item[] inventory optional
   --> Employee[] employees optional
 }

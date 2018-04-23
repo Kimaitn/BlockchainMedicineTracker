@@ -104,9 +104,19 @@ async function updateShipmentCarrier(updateShipment) {
  * @transaction
  */
 async function approveShipmentsByBuyingBusiness(approveShipmentsByBuyingBusiness) {
+    const businessRegistry = await getAssetRegistry('org.mat.Business');
+    const itemRegistry = await getAssetRegistry('org.mat.Item');
     approveShipmentsByBuyingBusiness.shipmentIndexes.forEach((shipmentIndex) => {
         approveShipmentsByBuyingBusiness.contract.shipments[shipmentIndex].approvalStatusReceivingBusiness = 'ARRIVED';
+        var arrayItems = approveShipmentsByBuyingBusiness.contract.shipments[shipmentIndex].items;
+         arrayItems.forEach(function(item){
+           item.locations.push(approveShipmentsByBuyingBusiness.contract.shipments[shipmentIndex].destinationAddress);
+           item.currentOwner = approveShipmentsByBuyingBusiness.contract.buyingBusiness.businessId;
+           itemRegistry.update(item);
+           approveShipmentsByBuyingBusiness.contract.buyingBusiness.inventory.push(item);
+         });
     });
+    businessRegistry.update(approveShipmentsByBuyingBusiness.contract.buyingBusiness);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(approveShipmentsByBuyingBusiness.contract);
@@ -195,10 +205,24 @@ async function cancelContract(cancelContract) {
  * @transaction
  */
 async function updateShipmentStatusViaCarrierBusiness(updateShipmentStatusViaCarrierBusiness){
+    const itemRegistry = await getAssetRegistry('org.mat.Item');
+  	const businessRegistry = await getAssetRegistry('org.mat.Business');
     updateShipmentStatusViaCarrierBusiness.shipmentIndexes.forEach((shipmentIndex) => {
-        if(updateShipmentStatusViaCarrierBusiness.contract.shipments[shipmentIndex].carryingBusiness.employees.indexOf(updateShipmentStatusViaCarrierBusiness.carrierEmployee) > -1){
+    if(updateShipmentStatusViaCarrierBusiness.contract.shipments[shipmentIndex].carryingBusiness.employees.indexOf(updateShipmentStatusViaCarrierBusiness.carrierEmployee) > -1){
         updateShipmentStatusViaCarrierBusiness.contract.shipments[shipmentIndex].status = updateShipmentStatusViaCarrierBusiness.newStatus;
+        if(updateShipmentStatusViaCarrierBusiness.newStatus === 'ACCEPTED'){
+            var arrayItems = updateShipmentStatusViaCarrierBusiness.contract.shipments[shipmentIndex].items;
+            arrayItems.forEach(function(item){
+                var index = updateShipmentStatusViaCarrierBusiness.contract.sellingBusiness.inventory.indexOf(item);
+                if(index>-1) {
+                    updateShipmentStatusViaCarrierBusiness.contract.sellingBusiness.inventory.splice(index, 1);
+    	        }
+                item.currentOwner = updateShipmentStatusViaCarrierBusiness.contract.shipments[shipmentIndex].carryingBusiness.businessId;
+                itemRegistry.update(item);
+            });
+            await businessRegistry.update(updateShipmentStatusViaCarrierBusiness.contract.sellingBusiness);    
         }
+    }
     });
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
@@ -224,17 +248,7 @@ async function completeContract(completeContract) {
         }))
         {
             completeContract.contract.status = 'COMPLETED';
-            const shipments = completeContract.contract.shipments;
-            shipments.forEach(function(shipment){
-                var arrayItems = shipment.items;
-                arrayItems.forEach(function(items){
-                    items.locations.push(shipment.destinationAddress);
-                    items.currentOwner = completeContract.contract.buyingBusiness.businessId;
-                    changeItemOwner(completeContract.contract.buyingBusiness, completeContract.contract.sellingBusiness, items);
-                    resources.push(items);
-                });
-            });
-            await itemRegistry.updateAll(resources);
+
         }
     }
     else {
