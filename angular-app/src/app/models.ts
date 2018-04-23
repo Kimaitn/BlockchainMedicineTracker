@@ -98,6 +98,7 @@ export class Employee {
 	employeeType: string; //changed from EmployeeType
 	phoneNumber: string;
 	worksFor: string;
+	str: string;
 }
 
 export class ItemTransaction {

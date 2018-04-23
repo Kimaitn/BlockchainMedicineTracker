@@ -77,6 +77,7 @@ export class LoginComponent implements AfterViewInit  {
 		var inputaddressstreet = (<HTMLInputElement>document.getElementById("signupinputAddressStreet")).value;
 		var inputaddresscity = (<HTMLInputElement>document.getElementById("signupinputAddressCity")).value;
 		var inputaddressstate = (<HTMLInputElement>document.getElementById("signupinputAddressState")).value;
+		var inputaddresszip = (<HTMLInputElement>document.getElementById("signupinputAddressZip")).value;
 		var inputaddresscountry = (<HTMLInputElement>document.getElementById("signupinputAddressCountry")).value;
 		var inputfirstname = (<HTMLInputElement>document.getElementById("signupinputEmployeeFName")).value;
 		var inputlastname = (<HTMLInputElement>document.getElementById("signupinputEmployeeLName")).value;
@@ -100,37 +101,43 @@ export class LoginComponent implements AfterViewInit  {
 		} else {
 			(<HTMLInputElement>document.getElementById("signupinputCompany")).style.borderBottomColor = "";
 		}
-		if(inputname == ""){
+		if(inputaddressstreet == ""){
 			(<HTMLInputElement>document.getElementById("signupinputAddressStreet")).style.borderBottomColor = "Red";
 			return;
 		} else {
 			(<HTMLInputElement>document.getElementById("signupinputAddressStreet")).style.borderBottomColor = "";
 		}
-		if(inputname == ""){
+		if(inputaddressstate == ""){
 			(<HTMLInputElement>document.getElementById("signupinputAddressState")).style.borderBottomColor = "Red";
 			return;
 		} else {
 			(<HTMLInputElement>document.getElementById("signupinputAddressState")).style.borderBottomColor = "";
 		}
-		if(inputname == ""){
+		if(inputaddresscity == ""){
 			(<HTMLInputElement>document.getElementById("signupinputAddressCity")).style.borderBottomColor = "Red";
 			return;
 		} else {
 			(<HTMLInputElement>document.getElementById("signupinputAddressCity")).style.borderBottomColor = "";
 		}
-		if(inputname == ""){
+		if(inputaddresszip == ""){
+			(<HTMLInputElement>document.getElementById("signupinputAddressZip")).style.borderBottomColor = "Red";
+			return;
+		} else {
+			(<HTMLInputElement>document.getElementById("signupinputAddressZip")).style.borderBottomColor = "";
+		}
+		if(inputaddresscountry == ""){
 			(<HTMLInputElement>document.getElementById("signupinputAddressCountry")).style.borderBottomColor = "Red";
 			return;
 		} else {
 			(<HTMLInputElement>document.getElementById("signupinputAddressCountry")).style.borderBottomColor = "";
 		}
-		if(inputname == ""){
+		if(inputfirstname == ""){
 			(<HTMLInputElement>document.getElementById("signupinputEmployeeFName")).style.borderBottomColor = "Red";
 			return;
 		} else {
 			(<HTMLInputElement>document.getElementById("signupinputEmployeeFName")).style.borderBottomColor = "";
 		}
-		if(inputname == ""){
+		if(inputlastname == ""){
 			(<HTMLInputElement>document.getElementById("signupinputEmployeeLName")).style.borderBottomColor = "Red";
 			return;
 		} else {
@@ -161,7 +168,7 @@ export class LoginComponent implements AfterViewInit  {
 		address.city = inputaddresscity; 
 		address.country = inputaddresscountry;
 		address.state = inputaddressstate;
-		address.zip = ""; //TO-DO ADD THIS
+		address.zip = inputaddresszip; //TO-DO ADD THIS
 		var addressstr = JSON.stringify(address);
 		//this.addAddress(address);
 

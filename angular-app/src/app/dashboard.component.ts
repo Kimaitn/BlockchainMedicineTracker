@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { LoginService } from './Login.service';
 import 'rxjs/add/operator/toPromise';
+import { Md5 } from 'ts-md5/dist/md5';
 //import { Contract } from './models';
 import { Router } from "@angular/router";
 import { Address, Users, Employee, BusinessType, EmployeeType, Business, Item, ItemRequest, ItemType, Contract, AddItemToInventory, UpdateItemOwner, RemoveItemFromInventory, Shipment, AddShipment, RemoveShipment } from './models';
@@ -43,8 +44,9 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 	onContracts: boolean;
 	onShipments: boolean;
 	onBusiness: boolean;
+	allEmployees;
 	currentBusinessId: string;
-	
+
 	constructor(private serviceLogin:LoginService,private router: Router){
 	  //this.loadInfo(localStorage.getItem('id'));
 	  //console.log("now here");
@@ -58,7 +60,10 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 	  this.itemtypes = new Array();
 	  this.newcontractitems = new Array();
 	  this.type = localStorage.getItem('type');
+	  this.employeetype = localStorage.getItem('employeetype');
+	  //console.log(this.type);
 	  this.carriers = new Array();
+	  this.allEmployees = new Array();
 	  if(this.type=="Manufacturer")
 		  this.isManufacturer = true;
 	  else
@@ -75,6 +80,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 
 	  //this.loadItems(this.currentBusinessId);
 	  this.loadItemTypes();
+	  this.loadAllEmployees();
 	  
     }
 	
@@ -101,6 +107,124 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		document.getElementById("item2").innerHTML = contract.requestedItems[0].requestedItem.split("#")[1].split("%20").join(" ");
 		//(<HTMLInputElement>document.getElementById("UnitPrice2")).value = contract.requestedItems[0].unitPrice;
 		(<HTMLInputElement>document.getElementById("Quantity2")).value = contract.requestedItems[0].quantity;
+	}
+
+	addUser(){
+		var inputemail = (<HTMLInputElement>document.getElementById("signupinputEmail")).value;
+		var inputpassword = (<HTMLInputElement>document.getElementById("signupinputPassword")).value;
+		var inputpasswordR = (<HTMLInputElement>document.getElementById("signupinputRPassword")).value;
+		var inputtype = (<HTMLInputElement>document.getElementById("signupinputType")).value;
+		var inputfirstname = (<HTMLInputElement>document.getElementById("signupinputEmployeeFName")).value;
+		var inputlastname = (<HTMLInputElement>document.getElementById("signupinputEmployeeLName")).value;
+		
+		
+		if(inputpassword == ""){
+			(<HTMLInputElement>document.getElementById("signupinputPassword")).style.borderBottomColor = "Red";
+			return;
+		} else {
+			(<HTMLInputElement>document.getElementById("signupinputPassword")).style.borderBottomColor = "";
+		}
+		if(inputpasswordR == ""){
+			(<HTMLInputElement>document.getElementById("signupinputRPassword")).style.borderBottomColor = "Red";
+			return;
+		} else {
+			(<HTMLInputElement>document.getElementById("signupinputRPassword")).style.borderBottomColor = "";
+		}
+		if(inputfirstname == ""){
+			(<HTMLInputElement>document.getElementById("signupinputEmployeeFName")).style.borderBottomColor = "Red";
+			return;
+		} else {
+			(<HTMLInputElement>document.getElementById("signupinputEmployeeFName")).style.borderBottomColor = "";
+		}
+		if(inputlastname == ""){
+			(<HTMLInputElement>document.getElementById("signupinputEmployeeLName")).style.borderBottomColor = "Red";
+			return;
+		} else {
+			(<HTMLInputElement>document.getElementById("signupinputEmployeeLName")).style.borderBottomColor = "";
+		}
+		if(inputemail.indexOf("@")==-1||inputemail.indexOf(".")==-1||inputemail == ""){
+			(<HTMLInputElement>document.getElementById("signupinputEmail")).style.borderBottomColor = "Red";
+			return;
+		} else {
+			(<HTMLInputElement>document.getElementById("signupinputEmail")).style.borderBottomColor = "";
+		}
+		
+		if(inputpasswordR !== inputpassword){
+			(<HTMLInputElement>document.getElementById("signupinputPassword")).style.borderBottomColor = "Red";
+			(<HTMLInputElement>document.getElementById("signupinputRPassword")).style.borderBottomColor = "Red";
+			return;
+		} else {
+			(<HTMLInputElement>document.getElementById("signupinputPassword")).style.borderBottomColor = "";
+			(<HTMLInputElement>document.getElementById("signupinputRPassword")).style.borderBottomColor = "";
+		}
+
+		var inputpassword2 = Md5.hashStr(inputpassword);
+
+		var employee: Employee;
+		employee = new Employee();
+		employee.employeeId = this.businessName+"."+inputfirstname+"."+inputlastname+"."+inputemail;
+		employee.firstName = inputfirstname;
+		employee.lastName = inputlastname;
+		employee.email = inputemail.toLowerCase();
+		employee.employeeType = inputtype;
+		//TO-DO ADD PHONE NUMBER OPTIONAL
+		employee.worksFor = "org.mat.Business#"+this.currentBusinessId;
+		this.addEmployee(employee);
+		
+		var user: Users;
+		user = new Users();
+		user.employeeId = this.businessName+"."+inputfirstname+"."+inputlastname+"."+inputemail;
+		user.userEmail = inputemail.toLowerCase();
+		user.password = inputpassword2 as string;
+		this.addUserA(user);
+	}
+
+	addEmployee(employee): Promise<any>  {
+		return this.serviceLogin.addEmployee(employee)
+		.toPromise()
+		.then((result) => {
+				this.errorMessage = null;
+				console.log("Added Employee");
+				console.log(result);
+				this.toast("Added Employee");
+		})
+		.then(() => {
+		}).catch((error) => {
+			if(error == 'Server error'){
+				this.errorMessage = "Could not connect to REST server. Please check your configuration details";
+			}
+			else if (error == '500 - Internal Server Error') {
+			  this.errorMessage = "Input error";
+			  setTimeout(this.addEmployee(employee), 1000);
+			}
+			else{
+				this.errorMessage = error;
+			}
+		});
+	}
+
+	addUserA(user): Promise<any>  {
+		return this.serviceLogin.addUser(user)
+		.toPromise()
+		.then((result) => {
+				this.errorMessage = null;
+				console.log("Added User");
+				console.log(result);
+				this.toast("Added User");
+		})
+		.then(() => {
+		}).catch((error) => {
+			if(error == 'Server error'){
+				this.errorMessage = "Could not connect to REST server. Please check your configuration details";
+			}
+			else if (error == '500 - Internal Server Error') {
+			  this.errorMessage = "Input error";
+			  setTimeout(this.addUserA(user), 1000);
+			}
+			else{
+				this.errorMessage = error;
+			}
+		});
 	}
 
 	aEditContract(){
@@ -568,6 +692,42 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 			else if (error == '500 - Internal Server Error') {
 			  this.errorMessage = "Input error";
 			  setTimeout(this.loadAllItems(), 1000);
+			}
+			else{
+				this.errorMessage = error;
+			}
+		});
+
+	  }
+
+	  loadAllEmployees(): Promise<any>  {
+    
+    //retrieve all residents
+		let itemsList = [];
+		//return this.serviceLogin.getAllItems()
+		return this.serviceLogin.getAllEmployees()
+		.toPromise()
+		.then((result) => {
+				this.errorMessage = null;
+				//console.log(result);
+			  result.forEach(item => {
+				item.str = JSON.stringify(item);
+				itemsList.push(item);
+				//console.log("weeesnaw");
+				//console.log(this.currentbusiness);
+				
+			  });     
+		})
+		.then(() => {
+		  this.allEmployees = itemsList;
+		  //console.log("here we go");
+		  }).catch((error) => {
+			if(error == 'Server error'){
+				this.errorMessage = "Could not connect to REST server. Please check your configuration details";
+			}
+			else if (error == '500 - Internal Server Error') {
+			  this.errorMessage = "Input error";
+			  setTimeout(this.loadAllEmployees(), 1000);
 			}
 			else{
 				this.errorMessage = error;

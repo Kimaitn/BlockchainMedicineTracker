@@ -61,8 +61,8 @@
             <li *ngIf="!onContracts" (click)="onItemsOwned = false; onContracts = true; onShipments = false; onBusiness=false" class='navlinks'><a>Contracts</a></li>
             <li *ngIf="onShipments" class='active navlinks'><a >Shipments</a></li>
             <li *ngIf="!onShipments" (click)="onItemsOwned = false; onContracts = false; onShipments = true; onBusiness=false" class='navlinks'><a>Shipments</a></li>
-            <li *ngIf="false" class='active navlinks'><a >Business</a></li>
-            <li *ngIf="false" (click)="onItemsOwned = false; onContracts = false; onShipments = false; onBusiness=true" class='navlinks'><a>Business</a></li>
+            <li *ngIf="onBusiness&&(employeetype=='Admin')" class='active navlinks'><a >Business</a></li>
+            <li *ngIf="!onBusiness&&(employeetype=='Admin')" (click)="onItemsOwned = false; onContracts = false; onShipments = false; onBusiness=true" class='navlinks'><a>Business</a></li>
 
         </ul>
 	</nav>
@@ -145,8 +145,8 @@
 								<tr *ngFor="let contract of pendingcontracts">
 								  <!--<th scope="row">{{contract.id}}</th>-->
 								  <th scope="row">{{contract.status}}<br>
-								  <button type="button" class="btn btn-success" style='background-color: #8bc34a !important; border: none;' (click)='updateContract(contract.str, true)'>&#10004;</button>
-								  <button type="button" class="btn btn-danger" style='background-color: #f44336 !important; border: none;' (click)='updateContract(contract.str, false)'>&#10005;</button>
+								  <button *ngIf="(employeetype=='Admin')" type="button" class="btn btn-success" style='background-color: #8bc34a !important; border: none;' (click)='updateContract(contract.str, true)'>&#10004;</button>
+								  <button *ngIf="(employeetype=='Admin')" type="button" class="btn btn-danger" style='background-color: #f44336 !important; border: none;' (click)='updateContract(contract.str, false)'>&#10005;</button>
 								  <button data-toggle="modal" href="#myModal5" type="button" class="btn btn-danger" style='background-color: #ffa726 !important; border: none;' (click)='editContract(contract.str)'>Edit</button></th>
 								  <td>{{contract.sellingBusiness.split("#")[1].split("%20").join(" ")}}</td>
 								  <td>{{contract.buyingBusiness.split("#")[1].split("%20").join(" ")}}</td>
@@ -223,14 +223,35 @@
 			<div id='trackformfinished'>
 				<div class='row'>
 					<div class='col-md-12' >
-						<h3>Business Info:</h3>
 						<h3>Employees:</h3>
+						<div class='table-responsive'>
+							<table class="table">
+							  <thead>
+								<tr>
+								  <!--<th scope="col">ID</th>-->
+								  <th scope="col">First Name</th>
+								  <th scope="col">Last Name</th>
+								  <th scope="col">Email</th>
+								  <th scope="col">Type</th>
+								</tr>
+							  </thead>
+							  <tbody>
+								<tr *ngFor="let employee of allEmployees">
+								  <!--<th scope="row">{{contract.contractId}}</th>-->
+								  <th scope="row">{{employee.firstName}}</th>
+								  <td>{{employee.lastName}}</td>
+								  <td>{{employee.email}}</td>
+								  <td>{{employee.employeeType}}</td>
+								</tr>
+							  </tbody>
+							</table>
+						</div>
 						
 					</div>
 				</div>
 				<div class='row'>
 					<div class='col-md-12'>
-						<!--<button data-toggle="modal" href="#myModal4" class="btn btn-lg btn-block btn-primary buttons2">New Shipment</button>-->
+						<button data-toggle="modal" href="#myModal6" class="btn btn-lg btn-block btn-primary buttons2">New Employee</button>
 					</div>
 				</div>
 			</div>
@@ -256,7 +277,10 @@
 					<input class="form-control" id='nmtamount' type='amount' placeholder='2000'/>
 				</div><div class="form-group">
 					<label for="nmtuom">Measured mL or g:</label>
-					<input class="form-control" id='nmtuom' type='text' placeholder='mL or g'/>
+					<select class="form-control" id='nmtuom' ><!--disabled="true"-->
+					  <option value='mL'>mL</option>
+					  <option value='g'>g</option>
+					</select>
 				</div><div class="form-group">
 					<label for="nmid">Medical ID:</label>
 					<input class="form-control" id='nmtid' type='number' placeholder='Medical ID'/>
@@ -371,6 +395,51 @@
         <div class="modal-footer">
           <button href="#" data-dismiss="modal" class="btn btn-primary" >Close</button>
           <button href="#" data-dismiss="modal" class="btn btn-primary" (click)='aEditContract()' >Edit</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!--New User-->
+<div class="modal fade" id="myModal6" style='margin-left: 300px; margin-top: 70px'>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button style='background-color: transparent !important;' type="button" class="close" data-dismiss="modal" aria-hidden="true"><!--×-->&times;</button>
+          <h4 class="modal-title">Add User:</h4>
+        </div>
+        <div class="modal-body">
+            <form>
+            	<div class='form-group row'>
+					<div class='col-xs-6 col-sm-6 col-md-6 col-lg-6'>
+						<input type="input" id="signupinputEmployeeFName" class="form-control inputs" placeholder="First Name" required>
+					</div>
+					<div class='col-xs-6 col-sm-6 col-md-6 col-lg-6'>
+						<input type="input" id="signupinputEmployeeLName" class="form-control inputs" placeholder="Last Name" required>
+					</div>
+				</div>
+				<label for="signupinputEmail" class="sr-only">Email address</label>
+				<input type="email" id="signupinputEmail" class="form-control inputs" placeholder="Email address" required autofocus>
+				<div class='form-group row'>
+					<div class='col-xs-6 col-sm-6 col-md-6 col-lg-6'>
+						<label for="signupinputPassword" class="sr-only">Password</label>
+						<input type="password" id="signupinputPassword" class="form-control inputs" placeholder="Password" required>
+					</div>
+					<div class='col-xs-6 col-sm-6 col-md-6 col-lg-6'>
+						<label for="signupinputRPassword" class="sr-only">Retype Password</label>
+						<input type="password" id="signupinputRPassword" class="form-control inputs" placeholder="Retype Password" required>
+					</div>
+				</div>
+				<label for="signupinputtype" class="sr-only">Employee Type</label>
+				<select class="form-control inputs" id='signupinputType' required>
+				  <option value='Admin'>Admin</option>
+				  <option value='Regular'>Regular</option>
+				</select>
+        	</form>
+        </div>
+        <div class="modal-footer">
+          <button href="#" data-dismiss="modal" class="btn btn-primary" >Close</button>
+          <button href="#" data-dismiss="modal" class="btn btn-primary" (click)='addUser()' >Add</button>
         </div>
       </div>
     </div>
