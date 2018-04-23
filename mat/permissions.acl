@@ -1,3 +1,11 @@
+rule SystemACL {
+    description:  "System ACL to permit all access"
+    participant: "org.hyperledger.composer.system.Participant"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
 rule NetworkAdminUser
 {
   description:  "Network admin is given business and network permissions"
@@ -76,11 +84,11 @@ rule EmployeeCRUDItem
 //   action: ALLOW
 // }
 
-rule EmployeeCRDContract
+rule EmployeeCRContract
 {
-  description: "Allow ANY employee to CRUD a contract that belongs to their business"
+  description: "Allow ANY employee to CR a contract that belongs to their business"
   participant(e): "org.mat.Employee"
-  operation: CREATE, READ, DELETE
+  operation: CREATE, READ
   resource(c): "org.mat.Contract"
   condition: ((e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId))
   action: ALLOW
@@ -126,7 +134,18 @@ rule AdminEmployeeUPDATEContractViaApproveContractChanges
   operation: UPDATE
   resource(c): "org.mat.Contract"
   transaction: "org.mat.ApproveContractChanges"
-  condition: ((e.employeeType=="Admin") && (e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId))
+  condition: ((e.employeeType=="Admin") && ((e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId)))
+  action: ALLOW
+}
+
+rule AdminEmployeeUPDATEContractViaCancelContract
+{
+  description: "Allow an Admin employee to deny a contract that belongs to their business via the CancelContract transaction"
+  participant(e): "org.mat.Employee"
+  operation: UPDATE
+  resource(c): "org.mat.Contract"
+  transaction: "org.mat.CancelContract"
+  condition: ((e.employeeType=="Admin") && ((e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId)))
   action: ALLOW
 }
 
@@ -210,7 +229,7 @@ rule EmployeeREADBusiness
 
 rule EmployeeUPDATEBusinessViaRemoveItemFromInventory
 {
-  description: "Allow ANY employee to remove from a business's inventory via RemoveItemFromInventory"
+  description: "Allow ANY employee to remove from a business's inventory that belongs to their business via RemoveItemFromInventory"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(b): "org.mat.Business"
@@ -221,7 +240,7 @@ rule EmployeeUPDATEBusinessViaRemoveItemFromInventory
 
 rule EmployeeUPDATEBusinessViaAddItemToInventory
 {
-  description: "Allow ANY employee to UPDATE a business via RemoveItemFromInventory"
+  description: "Allow ANY employee to UPDATE a business that belongs to their business via RemoveItemFromInventory"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(b): "org.mat.Business"
@@ -307,7 +326,7 @@ rule EmployeeUPDATEEmployeeInfo
 
 rule AdminEmployeeUPDATEEmployeeType
 {
-  description: "Allow ANY employee to UPDATE their employee info"
+  description: "Allow ANY employee with type Admin to UPDATE their employee info"
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(oe): "org.mat.Employee"
@@ -315,3 +334,4 @@ rule AdminEmployeeUPDATEEmployeeType
   condition: ((e.employeeType == "Admin") && (e.worksFor == tx.worksFor) && (e.worksFor == oe.worksFor))
   action: ALLOW
 }
+

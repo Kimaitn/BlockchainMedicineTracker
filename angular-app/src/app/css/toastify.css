@@ -1,0 +1,61 @@
+/*!
+ * Toastify js 1.2.0
+ * https://github.com/apvarun/toastify-js
+ * @license MIT licensed
+ *
+ * Copyright (C) 2018 Varun A P
+ */
+:host ::ng-deep .toastify {
+    padding: 12px 20px;
+    color: #ffffff;
+    display: inline-block;
+    box-shadow: 0 3px 6px -1px rgba(0, 0, 0, 0.12), 0 10px 36px -4px rgba(77, 96, 232, 0.3);
+    background: -webkit-linear-gradient(315deg, #73a5ff, #5477f5);
+    background: linear-gradient(135deg, #73a5ff, #5477f5);
+    position: fixed;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+    border-radius: 2px;
+    cursor: pointer;
+    text-decoration: none;
+    max-width: calc(50% - 20px);
+    z-index: 200;
+}
+body ::ng-deep .toastify.on {
+    opacity: 1;
+}
+body ::ng-deep .toast-close {
+    opacity: 0.4;
+    padding: 0 5px;
+}
+body ::ng-deep .right {
+    right: 15px;
+}
+body ::ng-deep .left {
+    left: 15px;
+}
+body ::ng-deep .top {
+    top: -150px;
+}
+body ::ng-deep .bottom {
+    bottom: -150px;
+}
+body ::ng-deep .rounded {
+    border-radius: 25px;
+}
+body ::ng-deep .avatar{
+    width: 1.5em;
+    height: 1.5em;
+    margin: 0 5px;
+    border-radius: 2px;
+}
+@media only screen and (max-width: 360px){
+    body ::ng-deep .right, body ::ng-deep .left{
+        margin-left: auto;
+        margin-right: auto;
+        left: 0;
+        right: 0;
+        max-width: fit-content;
+    }
+}
+

@@ -5,7 +5,6 @@
  * @param {org.mat.contract} contract - contract whose status is to be changed
  */
 function changeContractStatuses(contract) {
-    contract.status = 'WAITING_CONFIRMATION';
     contract.approvalStatusBuyingBusiness = 'WAITING_CONFIRMATION';
     contract.approvalStatusSellingBusiness = 'WAITING_CONFIRMATION';
 }
@@ -26,10 +25,21 @@ async function bulkLoad(bulkLoad){
         itemALL.amountOfMedication = bulkLoad.items[i].amountOfMedication;
         itemALL.currentOwner = bulkLoad.items[i].currentOwner;
         itemALL.itemType = bulkLoad.items[i].itemType;
-        itemALL.locations = bulkLoad.items[i].locations;
+        itemAll.locations = [];
+        if(bulkLoad.items[i].locations.length > 0){
+            itemALL.locations.push(bulkLoad.items[i].locations);
+        }
+        else{
+            itemALL.locations.push(bulkLoad.addingBusiness.address);
+        }
         resources.push(itemALL);
+        bulkLoad.addingBusiness.inventory.push(itemALL);
     }
     await addResources.addAll(resources);
+    return getAssetRegistry('org.mat.Business')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(bulkLoad.addingBusiness);
+        });
 }
 
 /**
@@ -38,11 +48,20 @@ async function bulkLoad(bulkLoad){
  * @transaction
  */
 async function updateItemOwner(updateItemOwner) {
-    updateItemOwner.item.currentOwner = updateItemOwner.newOwner;
-    if(updateItemOwner.address!=null)
+    const businessRegistry = await getAssetRegistry('org.mat.Business');
+    var index = updateItemOwner.currentOwner.inventory.indexOf(updateItemOwner.item);
+    if(index>-1) {
+        updateItemOwner.currentOwner.inventory.splice(index, 1);
+    }
+    updateItemOwner.newOwner.inventory.push(updateItemOwner.item);
+    await businessRegistry.updateAll([updateItemOwner.currentOwner, updateItemOwner.newOwner]);
+    updateItemOwner.item.currentOwner = updateItemOwner.newOwner.businessId;
+    if(updateItemOwner.newAddress != undefined){
         updateItemOwner.item.locations.push(updateItemOwner.newAddress);
-    else
+    }
+    else{
         updateItemOwner.item.locations.push(updateItemOwner.newOwner.address);
+    }
     return getAssetRegistry('org.mat.Item')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateItemOwner.item);
@@ -104,14 +123,14 @@ async function updateItemRequest(updateItemRequest) {
  * @transaction
  */
 async function approveContractChanges(approveContractChanges) {
-    if(approveContractChanges.contract.sellingBusiness.employees.indexOf(approveContractChanges.acceptingEmployee) >= 0) {
+    if(approveContractChanges.contract.sellingBusiness.businessId === approveContractChanges.acceptingEmployee.worksFor) {
         approveContractChanges.contract.approvalStatusSellingBusiness = 'CONFIRMED';
     }
-    else if(approveContractChanges.contract.buyingBusiness.employees.indexOf(approveContractChanges.acceptingEmployee) >= 0) {
+    else if(approveContractChanges.contract.buyingBusiness.businessId === approveContractChanges.acceptingEmployee.worksFor) {
         approveContractChanges.contract.approvalStatusBuyingBusiness = 'CONFIRMED';
     }
     if(approveContractChanges.contract.approvalStatusBuyingBusiness === 'CONFIRMED' &&
-        approveContractChanges.contract.approvalStatusBuyingBusiness === 'CONFIRMED'
+        approveContractChanges.contract.approvalStatusSellingBusiness === 'CONFIRMED'
     )
     {
         approveContractChanges.contract.status = 'CONFIRMED';
@@ -123,40 +142,67 @@ async function approveContractChanges(approveContractChanges) {
 }
 
 /**
+ * Updates status of contract to be denied if employee of the business buying or selling denys it
+ * @param {org.mat.CancelContract} cancelContract - the contractTransaction to be cancelled
+ * @transaction
+ */
+async function cancelContract(cancelContract) {
+    if(cancelContract.contract.status === 'CONFIRMED' || cancelContract.contract.status === 'COMPLETED'){
+        return;
+    }
+    else{
+        if(cancelContract.contract.sellingBusiness.businessId === cancelContract.denyingEmployee.worksFor) {
+            cancelContract.contract.approvalStatusSellingBusiness = 'CANCELLED';
+            cancelContract.contract.status = 'CANCELLED';
+        }
+        else if(cancelContract.contract.sellingBusiness.businessId === cancelContract.denyingEmployee.worksFor) {
+            cancelContract.contract.approvalStatusBuyingBusiness = 'CANCELLED';
+            cancelContract.contract.status = 'CANCELLED';
+        }
+        return getAssetRegistry('org.mat.Contract')
+            .then(function (assetRegistry) {
+                if(cancelContract.contract.approvalStatusBuyingBusiness === 'CANCELLED' &&
+                cancelContract.contract.approvalStatusSellingBusiness === 'CANCELLED'
+                )
+                {
+                    return assetRegistry.remove(cancelContract.contract);
+                }
+                else{
+                    return assetRegistry.update(cancelContract.contract);
+                }
+            });
+    }
+}
+
+/**
  * Confirms a contract's changes
  * @param {org.mat.CompleteContract} completeContract - the contractTransaction to be approved
  * @transaction
  */
 function completeContract(completeContract) {
     const factory = getFactory();
-    if(completeContract.contract.approvalStatusSellingBusiness ===
-        completeContract.contract.approvalStatusBuyingBusiness ===
-        'CONFIRMED')
+    if(completeContract.contract.approvalStatusBuyingBusiness === 'CONFIRMED' &&
+        completeContract.contract.approvalStatusSellingBusiness === 'CONFIRMED'
+    )
     {
-        return;
-    }
-    
-    if(completeContract.contract.shipments.every((shipment) => {
-        return shipment.status === 'ARRIVED';
-    }))
-    {
-        completeContract.contract.status = 'COMPLETED';
-        const shipments = completeContract.contract.shipments;
-          
-        shipments.forEach(function(shipment){
-            var arrayItems = shipment.items;
-            arrayItems.forEach(function(items){
-                items.locations.push(shipment.destinationAddress);
-                items.currentOwner = completeContract.contract.buyingBusiness.businessId;
-                var updateItemOwner = factory.newResource('org.mat', 'UpdateItemOwner',completeContract.contract.contractId);
-                updateItemOwner.item = items;
-                updateItemOwner.newOwner = completeContract.contract.buyingBusiness.businessId;
-                getAssetRegistry('org.mat.Item')
-                    .then(function (assetRegistry) {
-                        return assetRegistry.update(updateItemOwner.item);
+        if(completeContract.contract.shipments.every((shipment) => {
+            return shipment.status === 'ARRIVED';
+        }))
+        {
+            completeContract.contract.status = 'COMPLETED';
+            const shipments = completeContract.contract.shipments;
+            shipments.forEach(function(shipment){
+                var arrayItems = shipment.items;
+                arrayItems.forEach(function(items){
+                    items.locations.push(shipment.destinationAddress);
+                    items.currentOwner = completeContract.contract.buyingBusiness.businessId;
+                    getAssetRegistry('org.mat.Item')
+                        .then(function (assetRegistry) {
+                            return assetRegistry.update(updateItemOwner.item);
+                        });
                 });
             });
-        });
+        }
     }
     else {
         return;
@@ -188,7 +234,8 @@ async function updateContractArrivalDateTime(updateContractArrivalDateTime) {
  * @transaction
  */
 async function addShipmentToShipmentList(addShipmentToShipmentList) {
-    addShipmentToShipmentList.contract.shipmentList.addAll([addShipmentToShipmentList.newShipment]);
+    addShipmentToShipmentList.contract.shipments.push(addShipmentToShipmentList.newShipment);
+    changeContractStatuses(addShipmentToShipmentList.contract);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(addShipmentToShipmentList.contract);
@@ -205,6 +252,7 @@ async function removeShipmentFromShipmentList(removeShipmentFromShipmentList) {
         removeShipmentFromShipmentList.shipmentIndex,
         1
     );
+    changeContractStatuses(removeShipmentFromShipmentList.contract);
     return getAssetRegistry('org.mat.Contract')
         .then(function (assetRegistry) {
             return assetRegistry.update(removeShipmentFromShipmentList.contract);
@@ -252,11 +300,23 @@ async function removeItemRequestsFromRequestedItemsList(removeItemRequestsFromRe
  * @transaction
  */
 async function updateUserEmail(updateUserEmail) {
-    updateUserEmail.user.userEmail = updateUserEmail.newUserEmail;
-    return getAssetRegistry('org.mat.User')
-        .then(function (assetRegistry) {
-            return assetRegistry.update(updateUserEmail.user);
-        });
+    const factory = getFactory();
+    const updateUser = factory.newResource('org.mat', 'User', updateUserEmail.newUserEmail);
+    updateUser.password = updateUserEmail.user.password;
+    updateUser.employeeId = updateUserEmail.user.employeeId;
+    const userRegistry = await getAssetRegistry('org.mat.User');
+    await userRegistry.remove(updateUserEmail.user);
+    await userRegistry.add(updateUser);
+    const employeeRegistry = await getParticipantRegistry('org.mat.Employee');
+    const employee = await employeeRegistry.get(updateUser.employeeId);
+    employee.email = updateUserEmail.newUserEmail;
+    await employeeRegistry.update(employee);
+    const businessRegistry = await getAssetRegistry('org.mat.Business');
+    const business = await businessRegistry.get(employee.worksFor);
+    if(business.PoCEmail === updateUserEmail.user.userEmail){
+        business.PoCEmail = updateUserEmail.newUserEmail;
+        await businessRegistry.update(business);
+    }
 }
 
 /**
@@ -329,6 +389,11 @@ async function removeItemFromInventory(removeItemFromInventory) {
  * @transaction
  */
 async function addItemToInventory(addItemToInventory) {
+    addItemToInventory.addItem.currentOwner = addItemToInventory.business.businessId;
+    getAssetRegistry('org.mat.Item')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(addItemToInventory.addItem);
+        });
     addItemToInventory.business.inventory.push(addItemToInventory.addItem);
     return getAssetRegistry('org.mat.Business')
         .then(function (assetRegistry) {
@@ -342,6 +407,10 @@ async function addItemToInventory(addItemToInventory) {
  * @transaction
  */
 async function removeEmployeeFromBusiness(removeEmployeeFromBusiness) {
+    getParticipantRegistry('org.mat.Employee')
+        .then(function (participantRegistry) {
+            return participantRegistry.remove(removeEmployeeFromBusiness.removeEmployee);
+        });
     var index = removeEmployeeFromBusiness.business.employees.indexOf(removeEmployeeFromBusiness.removeEmployee);
     if(index>-1) {
         removeEmployeeFromBusiness.business.employees.splice(index, 1);
@@ -351,7 +420,6 @@ async function removeEmployeeFromBusiness(removeEmployeeFromBusiness) {
             return assetRegistry.update(removeEmployeeFromBusiness.business);
         });
 }
-//TODO delete employee 
 
 /**
  * Adds an employee to a business
@@ -359,6 +427,11 @@ async function removeEmployeeFromBusiness(removeEmployeeFromBusiness) {
  * @transaction
  */
 async function addEmployeeToBusiness(addEmployeeToBusiness) {
+    addEmployeeToBusiness.addEmployee.worksFor = addEmployeeToBusiness.business.businessId;
+    getParticipantRegistry('org.mat.Employee')
+        .then(function (participantRegistry) {
+            return participantRegistry.update(addEmployeeToBusiness.addEmployee);
+        });
     addEmployeeToBusiness.business.employees.push(addEmployeeToBusiness.addEmployee);
     return getAssetRegistry('org.mat.Business')
         .then(function (assetRegistry) {
@@ -372,11 +445,21 @@ async function addEmployeeToBusiness(addEmployeeToBusiness) {
 * @transaction
 */
 async function updateEmployeeInfo(updateEmployeeInfo) {
-    updateEmployeeInfo.employee.firstName = updateEmployeeInfo.employee.newFirstName;
-    updateEmployeeInfo.employee.lastName = updateEmployeeInfo.employee.newLastName;
-    updateEmployeeInfo.employee.email = updateEmployeeInfo.employee.newEmail;
+    const businessRegistry = await getAssetRegistry('org.mat.Business');
+    const business = await businessRegistry.get(updateEmployeeInfo.employee.worksFor);
+    if(business.PoCName === (updateEmployeeInfo.employee.firstName + ' ' + updateEmployeeInfo.employee.lastName)){
+        business.PoCName = (updateEmployeeInfo.newFirstName + ' ' + updateEmployeeInfo.newLastName);
+        await businessRegistry.update(business);
+    }
+    if(business.PoCEmail === updateEmployeeInfo.employee.email){
+        business.PoCEmail = updateEmployeeInfo.newEmail;
+        await businessRegistry.update(business);
+    }
+    updateEmployeeInfo.employee.firstName = updateEmployeeInfo.newFirstName;
+    updateEmployeeInfo.employee.lastName = updateEmployeeInfo.newLastName;
+    updateEmployeeInfo.employee.email = updateEmployeeInfo.newEmail;
     if(updateEmployeeInfo.hasOwnProperty('newPhoneNumber')) {
-        updateEmployeeInfo.employee.phoneNumber = updateEmployeeInfo.employee.newPhoneNumber;
+        updateEmployeeInfo.employee.phoneNumber = updateEmployeeInfo.newPhoneNumber;
     }
     return getParticipantRegistry('org.mat.Employee')
         .then(function (assetRegistry) {
@@ -390,7 +473,7 @@ async function updateEmployeeInfo(updateEmployeeInfo) {
 * @transaction
 */
 async function updateEmployeeType(updateEmployeeType) {
-    updateEmployeeType.employee.employeeType = updateEmployeeType.employee.newEmployeeType;
+    updateEmployeeType.employee.employeeType = updateEmployeeType.newEmployeeType;
     return getParticipantRegistry('org.mat.Employee')
         .then(function (assetRegistry) {
             return assetRegistry.update(updateEmployeeType.employee);
@@ -420,6 +503,7 @@ async function setupDemo(setupDemo) {
     mAddress.zip = 'D02 Y754';
     manufacturer.address = mAddress;
     manufacturer.accountBalance = 23.03;
+    manufacturer.inventory = [];
 
     // create employee for manufacturer
     const memployee = factory.newResource(org, 'Employee', 'B001_E001');
@@ -482,6 +566,7 @@ async function setupDemo(setupDemo) {
     dAddress.zip = '02895';
     distributor.address = dAddress;
     distributor.accountBalance = 645.64;
+    distributor.inventory = [];
 
     // create employee for distributor
     const demployee = factory.newResource(org, 'Employee', 'B003_E001');
@@ -523,6 +608,9 @@ async function setupDemo(setupDemo) {
     item.currentOwner = manufacturer.businessId;
     item.itemType = factory.newRelationship(org, 'ItemType', 'Adderall');
     item.locations = [manufacturer.address];
+
+    // add the item to the manufacturer's inventory
+    manufacturer.inventory.push(item);
 
     // create the contract
     const contract = factory.newResource(org, 'Contract', 'C001');
@@ -572,6 +660,7 @@ async function setupDemo(setupDemo) {
     // add the item
     const itemRegistry = await getAssetRegistry(org + '.Item');
     await itemRegistry.addAll([item]);
+
 
     // add the itemRequest - are now concepts
     //const itemRequestRegistry = await getAssetRegistry(org + '.ItemRequest');

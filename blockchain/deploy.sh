@@ -5,3 +5,4 @@ KEYSTORE=`find ./composer/crypto-config/peerOrganizations/org1.mat.com/users/Adm
 
 sed -i -e "s|<CA-CERT>|$CACERT|" ./composer/docker-compose-peer0.yml
 sed -i -e "s|<KEYSTORE>|$KEYSTORE|" ./createPeerAdminCard.sh
+

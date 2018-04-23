@@ -14,6 +14,7 @@ enum contractStatus
   o WAITING_CONFIRMATION
   o CONFIRMED
   o COMPLETED
+  o CANCELLED
 }
 
 // Business type
@@ -141,7 +142,8 @@ participant Employee identified by employeeId
 // Allows the owner of an item to be changed
 transaction UpdateItemOwner
 {
-  o String newOwner
+  --> Business newOwner
+  --> Business currentOwner
   --> Item item
   o Address newAddress optional
 }
@@ -180,6 +182,12 @@ transaction ApproveContractChanges extends UpdateContract
   --> Employee acceptingEmployee
 }
 
+// Cancel a contract
+transaction  CancelContract extends UpdateContract
+{
+  --> Employee denyingEmployee
+}
+
 // Complete a contract
 transaction CompleteContract extends UpdateContract
 {
@@ -212,7 +220,7 @@ transaction AddItemRequestsToRequestedItemsList extends UpdateContract
 // Removes an itemRequest from a contract
 transaction RemoveItemRequestsFromRequestedItemsList extends UpdateContract
 {
-  o Integer[] itemRequestindexes
+  o Integer[] itemRequestIndexes
 }
 
 // Updates user 
@@ -259,6 +267,7 @@ transaction UpdateBusinessAccBalance extends UpdateBusiness
 transaction BulkLoad
 {
   o Item[] items
+  -->Business addingBusiness
 }
 
 // Removes an item from a business's inventory

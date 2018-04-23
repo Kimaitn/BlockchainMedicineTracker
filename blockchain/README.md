@@ -9,6 +9,7 @@ When this project was last deployed, it utilized the following:
 * Two t2.medium ec2 Linux instances
 * Fabric v 1.1
 * Composer v 0.19
+* Docker v 18.03.0-ce
 
 ## Important Commands
 Before beginning the tutorial, certain commands will prove to be helpful, and labeling them beforehand will help in readability.
@@ -33,6 +34,9 @@ If there already is an instance of fabric running, run the following commands to
 * `rm -rf composer/crypto-config`
 The `./teardownFabric.sh` command has been modified to remove all docker containers, so be careful when executing this command.
 
+## Sparknotes deployment
+run `./deploy.sh` in the `blockchain` folder and skip to step 3 of the next part of the tutorial.
+
 ## Steps to deploy the Fabric as of 1.1
 Within the `blockchain` folder on machine 1:
 
@@ -44,7 +48,7 @@ Within the `blockchain` folder on machine 1:
   * **createPeerAdminCard.sh**
     - find `<KEYSTORE>` and replace it with the full name of the `_sk` file in  `composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/`.
     - find `<PEER-2-IP>` and replace it with machine two's IP address.  This will specify what IP `peer2` will be at.
-1. Use the `scp` command to copy the `blockchain` folder onto machine two.  Replace `${PEER-IP}` with machine two's IP.  You will probably have the best luck copying from your local computer with the `sshfs` target folder as the source folder.
+1. Use the `scp` command to copy the `blockchain` folder onto machine two.  Replace `${PEER-IP}` in the script with machine two's IP.  You will probably have the best luck copying from your local computer with the `sshfs` target folder as the source folder.
 1. On the first machine: `./startFabric.sh && ./createPeerAdminCard.sh`
 1. On the second machine: `./startFabric-peer2.sh`
 

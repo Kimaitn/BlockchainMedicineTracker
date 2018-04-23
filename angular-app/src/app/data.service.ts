@@ -25,10 +25,13 @@ export class DataService<Type> {
           .catch(this.handleError);
     }
 
-    public getSingle(ns: string, id: string): Observable<Type> {
+    public getSingle(ns: string, id: string, what: string): Observable<Type[]> {
         console.log('GetSingle ' + ns);
 
-        return this.http.get(this.actionUrl + ns + '/' + id + this.resolveSuffix)
+        //return this.http.get(this.actionUrl + ns + '/' + id + this.resolveSuffix)
+        //org.mat.User?filter=%7B%22userEmail%22%3A%20%22c%40c.c%22%7D
+        console.log(this.actionUrl + ns + "?filter=%7B%22where%22%3A%20%7B%22"+what+"%22%3A%20%22" + encodeURIComponent(id) +"%22%7D%7D");
+        return this.http.get(this.actionUrl + ns + "?filter=%7B%22where%22%3A%20%7B%22"+what+"%22%3A%20%22" + encodeURIComponent(id).split('\'').join('\\\\\'') +"%22%7D%7D")
           .map(this.extractData)
           .catch(this.handleError);
     }
@@ -48,7 +51,7 @@ export class DataService<Type> {
         console.log('what is the id?', id);
         console.log('what is the updated item?', itemToUpdate);
         console.log('what is the updated item?', JSON.stringify(itemToUpdate));
-        return this.http.put(`${this.actionUrl}${ns}/${id}`, itemToUpdate)
+        return this.http.put(this.actionUrl + ns+"/"+encodeURIComponent(id), itemToUpdate)
           .map(this.extractData)
           .catch(this.handleError);
     }
