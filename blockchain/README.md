@@ -44,6 +44,7 @@ MACHINE ONE: Within the `blockchain` folder
 
 1. Within the `composer` folder, run `./begin.sh`.  This will generate all the necessary certificates and place them in the `crypto-config` folder.
 1. EDIT THE FOLLOWING THREE FILES:
+
   * **docker-compose.yml**
     - find `<CA_CERT>` and replace it with the full name of the `_sk` file in `composer/crypto-config/peerOrganizations/org1.example.com/ca/`.
     - find `<PEER-1-IP>` and replace it with machine one's IP address.  This will specify what IP `orderer.example.com` will point to.
