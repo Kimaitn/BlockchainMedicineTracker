@@ -101,6 +101,17 @@ rule EmployeeCRUDItem
   action: ALLOW
   }
 
+rule EmployeeReadAcessToItemsPartOfContract
+{
+  description: "Allow buying business employee to APPROVE shipments that that have arrived via the apporveShiipments transaction"
+  participant(e): "org.mat.Employee"
+  operation: READ, UPDATE
+  resource(c): "org.mat.Item"
+  transaction(tx): "org.mat.ApproveShipmentsByBuyingBusiness"
+  condition: (e.worksFor == tx.contract.buyingBusiness.businessId)
+  action: ALLOW
+}
+
 rule EmployeeCREATEItemViaUpdateItemOwner
 {
   description: "Allow ANY employee to CREATE an the transaction updateItemOwner"
@@ -128,7 +139,7 @@ rule EmployeeCRContract
   participant(e): "org.mat.Employee"
   operation: CREATE, READ
   resource(c): "org.mat.Contract"
-  condition: ((e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId)|| (e.worksFor == c.shipments[0].carryingBusiness.businessId))
+  condition: ((e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId) || (e.worksFor == c.shipments[0].carryingBusiness.businessId))
   action: ALLOW
 }
 
@@ -180,6 +191,28 @@ rule EmployeeApproveShipmentStatusViaUpdateShipmentStatusViaCarrierBusiness
   participant(e): "org.mat.Employee"
   operation: UPDATE
   resource(c): "org.mat.Contract"
+  transaction(tx): "org.mat.UpdateShipmentStatusViaCarrierBusiness"
+  condition: (e.worksFor == tx.carrierEmployee.worksFor)
+  action: ALLOW
+}
+
+rule EmployeeApproveShipmentStatusViaUpdateShipmentStatusViaCarrierBusinessUpdateSellingBusinessInvenotry
+{
+  description: "Allow carrying business employee to UPDATE the stuats of the shipment"
+  participant(e): "org.mat.Employee"
+  operation: READ,UPDATE
+  resource(c): "org.mat.Business"
+  transaction(tx): "org.mat.UpdateShipmentStatusViaCarrierBusiness"
+  condition: (e.worksFor == tx.carrierEmployee.worksFor)
+  action: ALLOW
+}
+
+rule EmployeeUseUpdateShipmentStatusViaCarrierBusinessUpdateItemOwner
+{
+  description: "Allow carrying business employee to UPDATE the stuats of the shipment"
+  participant(e): "org.mat.Employee"
+  operation: READ,UPDATE
+  resource(c): "org.mat.Item"
   transaction(tx): "org.mat.UpdateShipmentStatusViaCarrierBusiness"
   condition: (e.worksFor == tx.carrierEmployee.worksFor)
   action: ALLOW
