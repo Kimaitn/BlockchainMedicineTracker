@@ -677,6 +677,7 @@ async function setupDemo(setupDemo) {
 
     // create itemType
     const itemType = factory.newResource(org, 'ItemType', 'Adderall');
+    const itemType = factory.newResource(org, 'ItemType', 'Xagrid');
 
     // create item
     const item = factory.newResource(org, 'Item', 'I00001');
