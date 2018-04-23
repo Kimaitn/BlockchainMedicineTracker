@@ -128,17 +128,7 @@ rule EmployeeCRContract
   participant(e): "org.mat.Employee"
   operation: CREATE, READ
   resource(c): "org.mat.Contract"
-  condition: ((e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId))
-  action: ALLOW
-}
-
-rule EmployeeREADContrat
-{
-  description: "Allow ANY employee to Read a contract that belongs to their business"
-  participant(e): "org.mat.Employee"
-  operation: READ
-  resource(c): "org.mat.Contract"
-  condition: (e.worksFor == c.carryingBusiness.businessId)
+  condition: ((e.worksFor == c.sellingBusiness.businessId) || (e.worksFor == c.buyingBusiness.businessId)|| (e.worksFor == c.shipments[0].carryingBusiness.businessId))
   action: ALLOW
 }
 
