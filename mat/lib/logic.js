@@ -565,8 +565,7 @@ async function setupDemo(setupDemo) {
     memployee.employeeType = 'Admin';
     memployee.phoneNumber = '407-999-9999';
     memployee.worksFor = manufacturer.businessId;
-    manufacturer.employees = [];
-    manufacturer.employees.push(memployee);
+    manufacturer.employees = [memployee];
 
     // create user for manufacturer employee
     const muser = factory.newResource(org, 'User', 'flemmingornskov@gmail.com');
@@ -595,8 +594,7 @@ async function setupDemo(setupDemo) {
     cemployee.employeeType = 'Admin';
     cemployee.phoneNumber = '407-999-9991';
     cemployee.worksFor = carrier.businessId;
-    carrier.employees = [];
-    carrier.employees.push(cemployee);
+    carrier.employees = [cemployee];
 
     // create user for carrier employee
     const cuser = factory.newResource(org, 'User', 'johnhammergren@gmail.com');
@@ -608,8 +606,8 @@ async function setupDemo(setupDemo) {
     const dAddress = factory.newConcept(org, 'Address');
     distributor.name = 'CVS Pharmacy';
     distributor.businessType = 'Distributor';
-    distributor.PoCName = 'Bob DDos';
-    distributor.PoCEmail = 'BobDDos@gmail.com';
+    distributor.PoCName = 'Larry J. Merlo';
+    distributor.PoCEmail = 'larrymerlo@gmail.com';
     dAddress.street = 'One CVS Drive';
     dAddress.city = 'Woonsocket';
     dAddress.state = 'RI';
@@ -618,51 +616,64 @@ async function setupDemo(setupDemo) {
     distributor.address = dAddress;
     distributor.inventory = [];
 
-    // create employee for distributor
+    // create admin employee for distributor
     const demployee = factory.newResource(org, 'Employee', 'B003_E001');
-    demployee.firstName = 'Bob';
-    demployee.lastName = 'DDoss';
-    demployee.email = 'BobDDoss@gmail.com';
+    demployee.firstName = 'Larry';
+    demployee.lastName = 'Merlo';
+    demployee.email = 'larrymerlo@gmail.com';
     demployee.employeeType = 'Admin';
     demployee.phoneNumber = '407-999-9992';
     demployee.worksFor = distributor.businessId;
 
-    // create user for distributor employee
-    const duser = factory.newResource(org, 'User', 'BobDDoss@gmail.com');
-    duser.password = 'BobDDoss';
+    // create user for admin distributor employee
+    const duser = factory.newResource(org, 'User', 'larrymerlo@gmail.com');
+    duser.password = 'larrymerlo';
     duser.employeeId = demployee.employeeId;
 
     // create regular employee for distributor
     const demployee2 = factory.newResource(org, 'Employee', 'B003_E002');
-    demployee2.firstName = 'Bob';
-    demployee2.lastName = 'Zoss';
-    demployee2.email = 'BobZoss@gmail.com';
+    demployee2.firstName = 'Paulina';
+    demployee2.lastName = 'Dylan';
+    demployee2.email = 'paulinadylan@gmail.com';
     demployee2.employeeType = 'Regular';
     demployee2.phoneNumber = '407-999-9993';
     demployee2.worksFor = distributor.businessId;
-
     distributor.employees = [demployee, demployee2];
 
-    // create user for distributor employee
-    const duser2 = factory.newResource(org, 'User', 'BobZoss@gmail.com');
-    duser2.password = 'BobZoss';
+    // create user for regular distributor employee
+    const duser2 = factory.newResource(org, 'User', 'paulinadylan@gmail.com');
+    duser2.password = 'paulinadylan';
     duser2.employeeId = demployee2.employeeId;
 
-
-    // create the distributor
+    // create the second distributor
     const distributor2 = factory.newResource(org, 'Business', 'B004');
     const dAddress2 = factory.newConcept(org, 'Address');
     distributor2.name = 'CVS-2 Pharmacy';
     distributor2.businessType = 'Distributor';
-    distributor2.PoCName = 'Bob DDos 2';
-    distributor2.PoCEmail = 'BobDDos2@gmail.com';
-    dAddress2.street = 'One CVS-2 Drive';
+    distributor2.PoCName = 'Josh Merlo';
+    distributor2.PoCEmail = 'joshmerlo@gmail.com';
+    dAddress2.street = 'Two CVS-2 Drive';
     dAddress2.city = 'Woonsocket';
     dAddress2.state = 'RI';
     dAddress2.country = 'USA';
     dAddress2.zip = '02896';
     distributor2.address = dAddress;
     distributor2.inventory = [];
+
+    // create admin employee for distributor-2
+    const demployeed2 = factory.newResource(org, 'Employee', 'B003_E001');
+    demployeed2.firstName = 'Josh';
+    demployeed2.lastName = 'Merlo';
+    demployeed2.email = 'joshmerlo@gmail.com';
+    demployeed2.employeeType = 'Admin';
+    demployeed2.phoneNumber = '407-999-9992';
+    demployeed2.worksFor = distributor.businessId;
+    distributor2.employees = [demployeed2];
+
+    // create user for admin distributor-2 employee
+    const duser = factory.newResource(org, 'User', 'joshmerlo@gmail.com');
+    duser.password = 'joshmerlo';
+    duser.employeeId = demployeed2.employeeId;
 
     // create itemType
     const itemType = factory.newResource(org, 'ItemType', 'Adderall');
