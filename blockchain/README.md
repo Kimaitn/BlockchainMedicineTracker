@@ -7,6 +7,7 @@ Additionally, pre-reqs for fabric must have been installed as well from the `cur
 Ensure that you have set the path to the platform-specific binaries using a command _like_ `export PATH=$HOME/fabric-samples/bin:$PATH`.
 When this project was last deployed, it utilized the following:
 * Two t2.medium ec2 Linux instances
+  * These instances must have its security settings to allow all ports to be open
 * Fabric v 1.1
 * Composer v 0.19
 * Docker v 18.03.0-ce
