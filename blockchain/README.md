@@ -94,7 +94,7 @@ Now it's time to test if jdoe@mat-network is sucessfully able to submit a transa
 
 1. MACHINE TWO - `composer transaction submit --card jdoe@mat-network -d '{"$class": "org.hyperledger.composer.system.AddAsset","registryType": "Asset","registryId": "org.mat.ItemType", "targetRegistry" : "resource:org.hyperledger.composer.system.AssetRegistry#org.mat.ItemType", "resources": [{"$class": "org.mat.ItemType","itemTypeName": "0768"}]}'`
 
-1. REPEAT STEPS 22 and 23.  Both the states will be updated with the item type.
+1. REPEAT the `composer network list` steps.  Both the states will be updated with the item type.
 
 ## How `x` # of Peers Works
 Within `./createPeerAdminCard.sh`, the following `cat` file is created to start the network:
@@ -189,10 +189,10 @@ PeerOrgs:
       Count: 0
 ```
 
+The `deploy.sh` script will have to be reconfigured for the additional peers that are added.
 Finally, there must be as many `startFabric.sh` and `docker-compose.yml` files as there are hosts in the network.  Ports will have to be changed, and any reference to `peer2` will be changed to `peer#`, where # is the number of the peer.  
 
 ## What's Next
-* Importing a card for the second peer
 * Deploying for multiple organizations
 * Setting up the angular project
 
