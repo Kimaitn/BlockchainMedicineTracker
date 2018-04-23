@@ -561,16 +561,15 @@ async function setupDemo(setupDemo) {
     const memployee = factory.newResource(org, 'Employee', 'B001_E001');
     memployee.firstName = 'Flemming';
     memployee.lastName = 'Ornskov';
-    memployee.email = 'BobRoss@gmail.com';
+    memployee.email = 'flemmingornskov@gmail.com';
     memployee.employeeType = 'Admin';
     memployee.phoneNumber = '407-999-9999';
     memployee.worksFor = manufacturer.businessId;
-
     manufacturer.employees = [memployee];
 
     // create user for manufacturer employee
-    const muser = factory.newResource(org, 'User', 'BobRoss@gmail.com');
-    muser.password = 'BobRoss';
+    const muser = factory.newResource(org, 'User', 'flemmingornskov@gmail.com');
+    muser.password = 'flemmingornskov';
     muser.employeeId = memployee.employeeId;
 
     // create the carrier
@@ -578,8 +577,8 @@ async function setupDemo(setupDemo) {
     const cAddress = factory.newConcept(org, 'Address');
     carrier.name = 'McKesson';
     carrier.businessType = 'Carrier';
-    carrier.PoCName = 'Bob Loss';
-    carrier.PoCEmail = 'BobLoss@gmail.com';
+    carrier.PoCName = 'John H. Hammergren';
+    carrier.PoCEmail = 'johnhammergren@gmail.com';
     cAddress.street = 'One Post Street';
     cAddress.city = 'San Francisco';
     cAddress.state = 'CA';
@@ -589,18 +588,17 @@ async function setupDemo(setupDemo) {
 
     // create employee for carrier
     const cemployee = factory.newResource(org, 'Employee', 'B002_E001');
-    cemployee.firstName = 'Bob';
-    cemployee.lastName = 'Loss';
-    cemployee.email = 'BobLoss@gmail.com';
+    cemployee.firstName = 'John';
+    cemployee.lastName = 'Hammergren';
+    cemployee.email = 'johnhammergren@gmail.com';
     cemployee.employeeType = 'Admin';
     cemployee.phoneNumber = '407-999-9991';
     cemployee.worksFor = carrier.businessId;
-
     carrier.employees = [cemployee];
 
     // create user for carrier employee
-    const cuser = factory.newResource(org, 'User', 'BobLoss@gmail.com');
-    cuser.password = 'BobLoss';
+    const cuser = factory.newResource(org, 'User', 'johnhammergren@gmail.com');
+    cuser.password = 'johnhammergren';
     cuser.employeeId = cemployee.employeeId;
 
     // create the distributor
@@ -608,8 +606,8 @@ async function setupDemo(setupDemo) {
     const dAddress = factory.newConcept(org, 'Address');
     distributor.name = 'CVS Pharmacy';
     distributor.businessType = 'Distributor';
-    distributor.PoCName = 'Bob DDos';
-    distributor.PoCEmail = 'BobDDos@gmail.com';
+    distributor.PoCName = 'Larry J. Merlo';
+    distributor.PoCEmail = 'larrymerlo@gmail.com';
     dAddress.street = 'One CVS Drive';
     dAddress.city = 'Woonsocket';
     dAddress.state = 'RI';
@@ -618,54 +616,68 @@ async function setupDemo(setupDemo) {
     distributor.address = dAddress;
     distributor.inventory = [];
 
-    // create employee for distributor
+    // create admin employee for distributor
     const demployee = factory.newResource(org, 'Employee', 'B003_E001');
-    demployee.firstName = 'Bob';
-    demployee.lastName = 'DDoss';
-    demployee.email = 'BobDDoss@gmail.com';
+    demployee.firstName = 'Larry';
+    demployee.lastName = 'Merlo';
+    demployee.email = 'larrymerlo@gmail.com';
     demployee.employeeType = 'Admin';
     demployee.phoneNumber = '407-999-9992';
     demployee.worksFor = distributor.businessId;
 
-    // create user for distributor employee
-    const duser = factory.newResource(org, 'User', 'BobDDoss@gmail.com');
-    duser.password = 'BobDDoss';
+    // create user for admin distributor employee
+    const duser = factory.newResource(org, 'User', 'larrymerlo@gmail.com');
+    duser.password = 'larrymerlo';
     duser.employeeId = demployee.employeeId;
 
     // create regular employee for distributor
     const demployee2 = factory.newResource(org, 'Employee', 'B003_E002');
-    demployee2.firstName = 'Bob';
-    demployee2.lastName = 'Zoss';
-    demployee2.email = 'BobZoss@gmail.com';
+    demployee2.firstName = 'Paulina';
+    demployee2.lastName = 'Dylan';
+    demployee2.email = 'paulinadylan@gmail.com';
     demployee2.employeeType = 'Regular';
     demployee2.phoneNumber = '407-999-9993';
     demployee2.worksFor = distributor.businessId;
-
     distributor.employees = [demployee, demployee2];
 
-    // create user for distributor employee
-    const duser2 = factory.newResource(org, 'User', 'BobZoss@gmail.com');
-    duser2.password = 'BobZoss';
+    // create user for regular distributor employee
+    const duser2 = factory.newResource(org, 'User', 'paulinadylan@gmail.com');
+    duser2.password = 'paulinadylan';
     duser2.employeeId = demployee2.employeeId;
 
-
-    // create the distributor
+    // create the second distributor
     const distributor2 = factory.newResource(org, 'Business', 'B004');
     const dAddress2 = factory.newConcept(org, 'Address');
     distributor2.name = 'CVS-2 Pharmacy';
     distributor2.businessType = 'Distributor';
-    distributor2.PoCName = 'Bob DDos 2';
-    distributor2.PoCEmail = 'BobDDos2@gmail.com';
-    dAddress2.street = 'One CVS-2 Drive';
-    dAddress2.city = 'Woonsocket';
-    dAddress2.state = 'RI';
+    distributor2.PoCName = 'Josh Merlo';
+    distributor2.PoCEmail = 'joshmerlo@gmail.com';
+    dAddress2.street = '4974 N Alafaya Trail';
+    dAddress2.city = 'Orlando';
+    dAddress2.state = 'FL';
     dAddress2.country = 'USA';
-    dAddress2.zip = '02896';
+    dAddress2.zip = '32826';
     distributor2.address = dAddress;
     distributor2.inventory = [];
 
+    // create admin employee for distributor-2
+    const demployeed2 = factory.newResource(org, 'Employee', 'B003_E001');
+    demployeed2.firstName = 'Josh';
+    demployeed2.lastName = 'Merlo';
+    demployeed2.email = 'joshmerlo@gmail.com';
+    demployeed2.employeeType = 'Admin';
+    demployeed2.phoneNumber = '407-999-9992';
+    demployeed2.worksFor = distributor.businessId;
+    distributor2.employees = [demployeed2];
+
+    // create user for admin distributor-2 employee
+    const duser = factory.newResource(org, 'User', 'joshmerlo@gmail.com');
+    duser.password = 'joshmerlo';
+    duser.employeeId = demployeed2.employeeId;
+
     // create itemType
     const itemType = factory.newResource(org, 'ItemType', 'Adderall');
+    const itemType = factory.newResource(org, 'ItemType', 'Xagrid');
 
     // create item
     const item = factory.newResource(org, 'Item', 'I00001');
