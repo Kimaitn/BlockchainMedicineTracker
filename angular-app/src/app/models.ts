@@ -42,6 +42,7 @@ export class Shipment {
 	carryingBusiness: string;
 	destinationAddress: Address;
 	sourceAddress: Address;
+	approvalStatusReceivingBusiness: string;
 	//contract: string;
 	items: string[];
 }

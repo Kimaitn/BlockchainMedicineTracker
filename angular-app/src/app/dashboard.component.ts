@@ -34,6 +34,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 	itemtypes;
 	newcontractitems;
 	allbusinesses;
+	carriers;
 	actualname;
 	type: string;
 	currentbusiness;
@@ -57,6 +58,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 	  this.itemtypes = new Array();
 	  this.newcontractitems = new Array();
 	  this.type = localStorage.getItem('type');
+	  this.carriers = new Array();
 	  if(this.type=="Manufacturer")
 		  this.isManufacturer = true;
 	  else
@@ -97,7 +99,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		contract = JSON.parse(contract);
 		//console.log(contract.requestedItems[0]);
 		document.getElementById("item2").innerHTML = contract.requestedItems[0].requestedItem.split("#")[1].split("%20").join(" ");
-		(<HTMLInputElement>document.getElementById("UnitPrice2")).value = contract.requestedItems[0].unitPrice;
+		//(<HTMLInputElement>document.getElementById("UnitPrice2")).value = contract.requestedItems[0].unitPrice;
 		(<HTMLInputElement>document.getElementById("Quantity2")).value = contract.requestedItems[0].quantity;
 	}
 
@@ -106,10 +108,10 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		//console.log(contract.requestedItems[0]);
 		//document.getElementById("item2").innerHTML = contract.requestedItems[0].requestedItem.split("#")[1].split("%20").join(" ");
 		
-		var unitprice = contract.requestedItems[0].unitPrice;
+		//var unitprice = contract.requestedItems[0].unitPrice;
 		var quantity = contract.requestedItems[0].quantity;
 		contract.requestedItems[0].quantity = (<HTMLInputElement>document.getElementById("Quantity2")).value;
-		contract.requestedItems[0].unitprice = (<HTMLInputElement>document.getElementById("UnitPrice2")).value;
+		//contract.requestedItems[0].unitprice = (<HTMLInputElement>document.getElementById("UnitPrice2")).value;
 
 		//console.log(contract.approvalStatusSellingBusiness);
 		//console.log(contract.approvalStatusBuyingBusiness);
@@ -128,45 +130,35 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 
 	updateShipment(contract, bool){
 		contract = JSON.parse(contract);
-		if(bool){
+		if(bool&&contract.shipments[0].status =="WAITING_CONFIRMATION"){
+			contract.shipments[0].status = "IN_TRANSIT";
+		} else if(bool){
 			contract.shipments[0].status = "ARRIVED";
 			contract.status = "COMPLETED";
-		} else {
-			contract.shipments[0].status = "CANCELLED";
-		}
-		this.updateContractS(contract);
-	}
-
-	updateContract(contract, bool){
-		contract = JSON.parse(contract);
-		if(bool){
-
-			contract.status="CONFIRMED";
-			contract.approvalStatusSellingBusiness="CONFIRMED";
-			contract.approvalStatusBuyingBusiness="CONFIRMED";
-			//console.log("add");
-			//contract.status="CONFIRMED";
-			//console.log(contract);
-
-			//		console.log("here5");
-
 			for(var y = 0; y<contract.requestedItems.length; y++){
 				var possibleitems = new Array();
 				var totalhave = 0;
 				var quantity = contract.requestedItems[y].quantity;
-				var unitprice = contract.requestedItems[y].unitPrice;
+				//var unitprice = contract.requestedItems[y].unitPrice;
 				
-			//		console.log("here6");
-			//		console.log(this.allItems);
+					//console.log("here6");
+					//console.log(this.allItems);
 				for(var i = 0; i<this.allItems.length; i++){
-			//		console.log(this.allItems[i].itemType+" - "+contract.requestedItems[y].requestedItem);
-			//		console.log(contract.sellingBusiness+" - "+this.allItems[i].currentOwner);
+					//console.log(this.allItems[i].itemType+" - "+contract.requestedItems[y].requestedItem);
+					//console.log(contract.sellingBusiness+" - "+this.allItems[i].currentOwner);
 					if(this.eq(this.allItems[i].itemType,contract.requestedItems[y].requestedItem)&&
-						this.eq(contract.sellingBusiness,"resource:org.mat.Business#"+this.allItems[i].currentOwner)){
+						this.eq(contract.sellingBusiness,this.allItems[i].currentOwner)){
 						totalhave += this.allItems[i].amountOfMedication;
 			//			console.log("hizzle");
 						possibleitems.push(this.allItems[i]);
 					}
+				}
+			}
+
+			var biz = new Address();
+			for(var y = 0; y<this.allbusinesses.length; y++){
+				if(this.eq(this.allbusinesses[y].businessId, contract.buyingBusiness)){
+					biz = this.allbusinesses[y].address;
 				}
 			}
 
@@ -201,11 +193,12 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 
 					var item: Item; 
 					item = new Item();
-					item.itemId = possibleitems[i].itemId+"-2"; //fill out these fields correctly
+					item.itemId = possibleitems[i].itemId+"-"+Math.floor(Math.random()*1000); //fill out these fields correctly
 					item.itemType = possibleitems[i].itemType;
 					item.itemTypeUoM = possibleitems[i].itemTypeUoM;
 					item.amountOfMedication = quantity;
 					item.locations = possibleitems[i].locations;
+					item.locations.push(biz);
 					item.currentOwner = contract.buyingBusiness;
 					
 					var addItemToInv: AddItemToInventory;
@@ -220,6 +213,26 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 					this.items.push(item);
 				}
 			}
+		} else {
+			contract.shipments[0].status = "CANCELLED";
+		}
+		this.updateContractS(contract);
+	}
+
+	updateContract(contract, bool){
+		contract = JSON.parse(contract);
+		if(bool){
+
+			contract.status="CONFIRMED";
+			contract.approvalStatusSellingBusiness="CONFIRMED";
+			contract.approvalStatusBuyingBusiness="CONFIRMED";
+			//console.log("add");
+			//contract.status="CONFIRMED";
+			//console.log(contract);
+
+			//		console.log("here5");
+
+			
 
 			this.updateContractS(contract);
 		} else {
@@ -420,15 +433,16 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 
 		var shipment: Shipment;
 		shipment = new Shipment();
-		shipment.status = "IN_TRANSIT";
+		shipment.status = "WAITING_CONFIRMATION";
 		
 		shipment.carryingBusiness = JSON.parse((<HTMLInputElement>document.getElementById("CarryingBusiness")).value).businessId;
 		shipment.items = ["resource:org.mat.Item#"+contract.requestedItems[0].requestedItem.split("#")[1]];
+		shipment.approvalStatusReceivingBusiness = "NOT_ARRIVED";
 
 		for(var i = 0; i<this.allbusinesses.length; i++){
-			if(this.eq("org.mat.Business#"+this.allbusinesses[i].businessId, contract.sellingBusiness)){
+			if(this.eq(this.allbusinesses[i].businessId, contract.sellingBusiness)){
 				shipment.sourceAddress = this.allbusinesses[i].address;
-			} else if(this.eq("org.mat.Business#"+this.allbusinesses[i].businessId, contract.buyingBusiness)){	
+			} else if(this.eq(this.allbusinesses[i].businessId, contract.buyingBusiness)){	
 				shipment.destinationAddress = this.allbusinesses[i].address;
 			}
 		}
@@ -446,7 +460,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		var sellingbusiness = (<HTMLInputElement>document.getElementById("SellingBusiness")).value;
 		var buyingbusiness = (<HTMLInputElement>document.getElementById("BuyingBusiness")).value;
 		var itembuy = (<HTMLInputElement>document.getElementById("ItemBuy")).value;
-		var unitprice = (<HTMLInputElement>document.getElementById("UnitPrice")).value;
+		//var unitprice = (<HTMLInputElement>document.getElementById("UnitPrice")).value;
 		var quantity = (<HTMLInputElement>document.getElementById("Quantity")).value;
 		
 		var today = new Date();
@@ -480,7 +494,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		var itemRequest: ItemRequest;
 		itemRequest = new ItemRequest();
 		itemRequest.requestedItem = possibleitems[0].itemType; 
-		itemRequest.unitPrice = parseFloat(unitprice);
+		//itemRequest.unitPrice = parseFloat(unitprice);
 		itemRequest.quantity = parseInt(quantity);	
 		itemrequests.push(itemRequest);
 		//remItemFromInv = new removeItemFromInventory();
@@ -762,6 +776,9 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 				//	console.log("hizzle");
 				//	console.log(this.currentbusiness);
 				}// else {
+				if(item.businessType=="Carrier")
+					this.carriers.push(item);
+
 					itemsList.push(item);
 					//currentbusiness.push(item);
 				//}
@@ -805,8 +822,8 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 		.then(() => {
 
 		  for (let contract of contractsList) {
-		  	//console.log(contract.sellingBusiness+" vs "+name);
-			if(this.eq(contract.sellingBusiness,name)||this.eq(contract.buyingBusiness,name)){
+		  	//console.log(contract.shipments[0].carryingBusiness+" vs "+name);
+			if(this.eq(contract.sellingBusiness,name)||this.eq(contract.buyingBusiness,name)||(contract.shipments.length>0&&this.eq(contract.shipments[0].carryingBusiness,name))){
 				contract.str = JSON.stringify(contract);
 				if(contract.status=="CANCELLED"){
 
@@ -816,7 +833,7 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 						if(contract.shipments[0].status=="ARRIVED"){
 							this.shipments.push(contract);
 						}
-						if(contract.shipments[0].status=="IN_TRANSIT"){
+						if(contract.shipments[0].status=="IN_TRANSIT"||contract.shipments[0].status=="WAITING_CONFIRMATION"){
 							this.shipments.push(contract);						
 						}
 					}
@@ -826,8 +843,12 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 						if(contract.shipments[0].status=="ARRIVED"){
 							this.shipments.push(contract);
 						}
-						if(contract.shipments[0].status=="IN_TRANSIT"){
-							this.pendingshipments.push(contract);						
+						if(contract.shipments[0].status=="IN_TRANSIT"||contract.shipments[0].status=="WAITING_CONFIRMATION"){
+							if(this.eq(contract.shipments[0].carryingBusiness, this.currentBusinessId)){
+								this.pendingshipments.push(contract);
+							} else {
+								this.shipments.push(contract);
+							}					
 						}
 					}
 					this.pendingcontracts.push(contract);
@@ -835,6 +856,18 @@ export class DashboardComponent implements AfterViewInit, AfterViewChecked  {
 					if(contract.shipments.length>0){
 						if(contract.shipments[0].status=="ARRIVED"){
 							this.shipments.push(contract);
+						} else if(contract.shipments[0].status=="WAITING_CONFIRMATION") {
+							if(this.eq(contract.shipments[0].carryingBusiness, this.currentBusinessId)){
+								this.pendingshipments.push(contract);
+							} else {
+								this.shipments.push(contract);
+							}
+						} else {
+							if(this.eq(contract.buyingBusiness, this.currentBusinessId)){
+								this.pendingshipments.push(contract);
+							} else {
+								this.shipments.push(contract);
+							}
 						}
 					}
 					this.contracts.push(contract);

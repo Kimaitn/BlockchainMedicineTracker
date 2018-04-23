@@ -146,6 +146,10 @@ export class LoginService {
       return this.residentService.getSingle(this.EMPLOYEE, id, "employeeId");
     }
 
+    public getAllEmployees(): Observable<Employee[]> {
+        return this.residentService.getAll(this.EMPLOYEE);
+    }
+
     public addItemToInventory(itemToAdd: any): Observable<AddItemToInventory> {
       return this.residentService.add(this.ADDITEMTOINVENTORY, itemToAdd);
     }

@@ -431,25 +431,33 @@ export class LoginComponent implements AfterViewInit  {
 
 	  loadInfo(_id): Promise<any>  {
     	let usersList = [];
-		return this.serviceLogin.getEmployee(_id)
+		return this.serviceLogin.getAllEmployees()
 		.toPromise()
 		.then((result) => {
 			this.errorMessage = null;
 			//result.forEach(user => {
 			//	usersList.push(user);
 			//});
-			usersList.push(result[0]);     
+			result.forEach(user => {
+			 	usersList.push(user);
+			  });
+			//usersList.push(result[0]);     
 		})
 		.then(() => {	
 			for (let user of usersList) {
-				//console.log("wow");
 				//console.log(user);
-				localStorage.setItem('employeetype', user.employeeType);
-				localStorage.setItem('actualname', user.firstName+" "+user.lastName); //TO-FIX make this less ghetto
-				//TO-FIX make this less ghetto
-				//console.log(decodeURIComponent(user.worksFor.split("#")[1]));
-				this.loadBusinessInfo(decodeURIComponent(user.worksFor.split("#")[1]));
-				break;
+				console.log("wow");
+				//console.log(user.employeeId);
+				console.log(user.employeeId);
+				console.log(_id);
+				if(this.eq(user.employeeId, _id)){
+					localStorage.setItem('employeetype', user.employeeType);
+					localStorage.setItem('actualname', user.firstName+" "+user.lastName); //TO-FIX make this less ghetto
+					//TO-FIX make this less ghetto
+					//console.log(decodeURIComponent(user.worksFor.split("#")[1]));
+					this.loadBusinessInfo(decodeURIComponent(user.worksFor.split("#")[1]));
+					break;
+				}
 			}
 		}).catch((error) => {
 			if(error == 'Server error'){
@@ -468,28 +476,37 @@ export class LoginComponent implements AfterViewInit  {
 
 	loadBusinessInfo(_id): Promise<any>  {
     	let usersList = [];
-		return this.serviceLogin.getBusiness(_id)
+		return this.serviceLogin.getAllBusinesses()
 		.toPromise()
 		.then((result) => {
 			this.errorMessage = null;
 			//result.forEach(user => {
 			//	usersList.push(user);
-				usersList.push(result[0]);
+				//usersList.push(result[0]);
 				//console.log(result);
-			//});     
+			//}); 
+			result.forEach(user => {
+			 	usersList.push(user);
+			  });    
 		})
 		.then(() => {	
 			for (let user of usersList) {
 				//console.log("wow2");
 				//console.log(user);
-				localStorage.setItem('type', user.businessType);
-				localStorage.setItem('businessName', user.name);
-				localStorage.setItem('name', user.name);
-				localStorage.setItem('businessid', user.businessId);
-				//console.log("sup");
-				//console.log(user); 
-				this.router.navigate(['/dashboard']);
-				break;
+				console.log("wow2");
+				console.log(user.businessId);
+				console.log(_id);
+				
+				if(this.eq(user.businessId, _id)){
+					localStorage.setItem('type', user.businessType);
+					localStorage.setItem('businessName', user.name);
+					localStorage.setItem('name', user.name);
+					localStorage.setItem('businessid', user.businessId);
+					//console.log("sup");
+					//console.log(user); 
+					this.router.navigate(['/dashboard']);
+					break;
+				}
 			}
 		}).catch((error) => {
 			if(error == 'Server error'){

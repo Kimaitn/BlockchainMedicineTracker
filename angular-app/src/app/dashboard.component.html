@@ -130,7 +130,6 @@
 								  <th scope="col">Seller</th>
 								  <th scope="col">Buyer</th>
 								  <th scope="col">Medicine</th>
-								  <th scope="col">UnitPrice</th>
 								  <th scope="col">Quantity</th>
 								</tr>
 							  </thead>
@@ -141,7 +140,6 @@
 								  <td>{{contract.sellingBusiness.split("#")[1].split("%20").join(" ")}}</td>
 								  <td>{{contract.buyingBusiness.split("#")[1].split("%20").join(" ")}}</td>
 								  <td>{{contract.requestedItems[0].requestedItem.split("#")[1].split("%20").join(" ")}}</td> <!--TO-DO make it add multiple items -->
-								  <td>{{contract.requestedItems[0].unitPrice}}</td>
 								  <td>{{contract.requestedItems[0].quantity}}</td>
 								</tr>
 								<tr *ngFor="let contract of pendingcontracts">
@@ -153,7 +151,6 @@
 								  <td>{{contract.sellingBusiness.split("#")[1].split("%20").join(" ")}}</td>
 								  <td>{{contract.buyingBusiness.split("#")[1].split("%20").join(" ")}}</td>
 								  <td>{{contract.requestedItems[0].requestedItem.split("#")[1].split("%20").join(" ")}}</td> <!--TO-DO make it add multiple items -->
-								  <td>{{contract.requestedItems[0].unitPrice}}</td>
 								  <td>{{contract.requestedItems[0].quantity}}</td>
 								</tr>
 							  </tbody>
@@ -303,9 +300,6 @@
 					  <option *ngFor="let i of itemtypes" value='{{i.itemTypeName}}'>{{i.itemTypeName}}</option>
 					</select>
 				</div><div class="form-group">
-					<label for="UnitPrice">Unit Price:</label>
-					<input class="form-control" id='UnitPrice' type='number' placeholder='Unit Price'/>
-				</div><div class="form-group">
 					<label for="Quantity">Quantity:</label>
 					<input class="form-control" id='Quantity' type='number' placeholder='Quantity'/>
 				</div>
@@ -340,7 +334,7 @@
 					<label for="CarryingBusiness">Carrying Business:</label>
 					<!--<input class="form-control" id='BuyingBusiness' type='text' placeholder='Buying Business'/>-->
 					<select class="form-control" id='CarryingBusiness'>
-					  <option *ngFor="let b of allbusinesses" value='{{b.str}}'>{{b.name.split("%20").join(" ")}}</option>
+					  <option *ngFor="let b of carriers" value='{{b.str}}'>{{b.name.split("%20").join(" ")}}</option>
 					</select>
 				</div>
         	</form>
@@ -369,9 +363,6 @@
 					<!--<input class="form-control" id='ItemBuy' type='text' placeholder='Item'/>-->
 					<p id='item2'>Item</p>
 				</div><div class="form-group">
-					<label for="UnitPrice">Unit Price:</label>
-					<input class="form-control" id='UnitPrice2' type='number' placeholder='Unit Price'/>
-				</div><div class="form-group">
 					<label for="Quantity">Quantity:</label>
 					<input class="form-control" id='Quantity2' type='number' placeholder='Quantity'/>
 				</div>
@@ -379,7 +370,7 @@
         </div>
         <div class="modal-footer">
           <button href="#" data-dismiss="modal" class="btn btn-primary" >Close</button>
-          <button href="#" class="btn btn-primary" (click)='aEditContract()' >Edit</button>
+          <button href="#" data-dismiss="modal" class="btn btn-primary" (click)='aEditContract()' >Edit</button>
         </div>
       </div>
     </div>
