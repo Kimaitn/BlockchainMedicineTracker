@@ -38,7 +38,7 @@ The `./teardownFabric.sh` command has been modified to remove all docker contain
 run `./deploy.sh` in the `blockchain` folder and skip to step 3 of the next part of the tutorial.
 
 ## Steps to deploy the Fabric as of 1.1
-Within the `blockchain` folder on machine 1:
+MACHINE ONE: Within the `blockchain` folder
 
 1. Within the `composer` folder, run `./begin.sh`.  This will generate all the necessary certificates and place them in the `cryto-config` folder.
 1. EDIT THE FOLLOWING TWO FILES:
@@ -49,11 +49,11 @@ Within the `blockchain` folder on machine 1:
     - find `<KEYSTORE>` and replace it with the full name of the `_sk` file in  `composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/`.
     - find `<PEER-2-IP>` and replace it with machine two's IP address.  This will specify what IP `peer2` will be at.
 1. Use the `scp` command to copy the `blockchain` folder onto machine two.  Replace `${PEER-IP}` in the script with machine two's IP.  You will probably have the best luck copying from your local computer with the `sshfs` target folder as the source folder.
-1. On the first machine: `./startFabric.sh && ./createPeerAdminCard.sh`
-1. On the second machine: `./startFabric-peer2.sh`
+1. MACHINE ONE - `./startFabric.sh && ./createPeerAdminCard.sh`
+1. MACHINE TWO - `./startFabric-peer2.sh`
 
 ## Using Composer to deploy a business network on Fabric
-You will need to add `mat-network.bna` (or whatever `.bna` file you will be using) in the current working directory. The directory doesn't matter, but `networkadmin.card` will be saved in it, so doing this in `blockchain` would probably be best.
+You will need to add `mat-network.bna` (or whatever `.bna` file you will be using) in the current working directory. The directory doesn't matter, but `networkadmin.card` will be saved in it, so doing this in `blockchain` would probably be best.  Run these commands on MACHINE ONE.
 
 1. `composer network install --card PeerAdmin@hlfv1 --archiveFile mat-network.bna`
 1. `composer network start -n mat-network -V 0.0.1 -A admin -S adminpw --card PeerAdmin@hlfv1 -f networkadmin.card`
@@ -62,6 +62,38 @@ You will need to add `mat-network.bna` (or whatever `.bna` file you will be usin
 You did it! From here you can:
 * `composer network ping --card admin@mat-network` to ping the network
 * `composer-rest-server --card admin@mat-network` to deploy the rest server
+
+## Deploying the Business Network on the Second Machine
+
+The mat-network is now running. If necessary, more business network admins can be created.  In this tutorial, alice will be established as another admin.
+
+1. `composer identity request -c PeerAdmin@hlfv1 -u admin -s adminpw -d alice`
+
+1. `composer card create -p ./DevServer_connection.json -u alice -n mat-network -c alice/admin-pub.pem -k alice/admin-priv.pem`
+
+1. `composer card import -f alice@mat-network.card`
+
+We have now made alice a business network admin in our mat-network.  From here, you can create participants within the business network and have them be identities for peer nodes.  Having participant identity network cards is useful for situations like running up the `composer-rest-server`.  Feel free to do this using the `composer-playground` or using your own specifications for your network, but here are the commands used to run it for the mat-network.
+
+(In the mat-network, the business should be created before creating this employee........but this is just a tutorial to start up the network on the other machine)
+
+1. `composer participant add -c alice@trade-network -d '{"$class": "org.mat.Employee", "employeeId": "1", "firstName": "John", "lastName": "Doe","email": "jdoe@gmail.com", "employeeType": "Admin", "worksFor": "1111" }'`
+
+1. `composer identity issue -c admin@mat-network -f jo.card -u jdoe -a "resource:org.mat.Employee#1"`
+
+From here, deploying `scp` jo.card from MACHINE ONE to MACHINE TWO.  Feel free to put it anywhere, but the `blockchain` folder would be preferable.
+
+1. MACHINE TWO - `composer card import -f jo.card`
+
+(These steps are just so show the current state of the blockchain)
+1. MACHINE ONE - `composer network list -c alice@mat-network`
+1. MACHINE TWO - `composer network list -c jdoe@mat-network`
+
+Now it's time to test if jdoe@mat-network is sucessfully able to submit a transaction.
+
+1. MACHINE ONE - `composer transaction submit --card jdoe@mat-network -d '{"$class": "org.hyperledger.composer.system.AddAsset","registryType": "Asset","registryId": "org.mat.ItemType", "targetRegistry" : "resource:org.hyperledger.composer.system.AssetRegistry#org.mat.ItemType", "resources": [{"$class": "org.mat.ItemType","itemTypeName": "0768"}]}'`
+
+1. REPEAT STEPS 22 and 23.  Both the states will be updated with the item type.
 
 ## How `x` # of Peers Works
 Within `./createPeerAdminCard.sh`, the following `cat` file is created to start the network:
