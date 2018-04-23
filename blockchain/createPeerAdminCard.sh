@@ -113,34 +113,34 @@ cat << EOF > connection.json
     },
     "orderers": {
         "orderer.mat.com": {
-            "url": "grpc://18.188.189.121:7050"
+            "url": "grpc://<PUBLIC-IP-1>:7050"
         }
     },
     "peers": {
         "peer0.org1.mat.com": {
-            "url": "grpc://18.188.189.121:7051",
-            "eventUrl": "grpc://18.188.189.121:7053"
+            "url": "grpc://<PUBLIC-IP-1>:7051",
+            "eventUrl": "grpc://<PUBLIC-IP-1>:7053"
         },
         "peer1.org1.mat.com": {
-            "url": "grpc://18.217.37.105:8051",
-            "eventUrl": "grpc://18.217.37.105:8053"
+            "url": "grpc://<PUBLIC-IP-2>:8051",
+            "eventUrl": "grpc://<PUBLIC-IP-2>:8053"
         },
         "peer2.org1.mat.com": {
-            "url": "grpc://18.216.31.113:9051",
-            "eventUrl": "grpc://18.216.31.113:9053"
+            "url": "grpc://<PUBLIC-IP-3>:9051",
+            "eventUrl": "grpc://<PUBLIC-IP-3>:9053"
         },
          "peer3.org1.mat.com": {
-            "url": "grpc://52.15.217.214:10051",
-            "eventUrl": "grpc://52.15.217.214:10053"
+            "url": "grpc://<PUBLIC-IP-4>:10051",
+            "eventUrl": "grpc://<PUBLIC-IP-4>:10053"
         },
          "peer4.org1.mat.com": {
-            "url": "grpc://18.221.81.20:11051",
-            "eventUrl": "grpc://18.221.81.20:11053"
+            "url": "grpc://<PUBLIC-IP-5>:11051",
+            "eventUrl": "grpc://<PUBLIC-IP-5>:11053"
         }
     },
     "certificateAuthorities": {
         "ca.org1.mat.com": {
-            "url": "http://18.188.189.121:7054",
+            "url": "http://<PUBLIC-IP-1>:7054",
             "caName": "ca.org1.mat.com"
         }
     }

@@ -4,7 +4,7 @@ services:
     container_name: peer3.org1.mat.com
     image: hyperledger/fabric-peer:$ARCH-1.1.0
     extra_hosts: 
-      - "orderer.mat.com:18.188.189.121"
+      - "orderer.mat.com:<PUBLIC-IP-1>"
     environment:
       - CORE_LOGGING_LEVEL=debug
       - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
