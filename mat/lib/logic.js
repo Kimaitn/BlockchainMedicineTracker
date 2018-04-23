@@ -677,7 +677,7 @@ async function setupDemo(setupDemo) {
 
     // create itemType
     const itemType = factory.newResource(org, 'ItemType', 'Adderall');
-    const itemType = factory.newResource(org, 'ItemType', 'Xagrid');
+    const itemType2 = factory.newResource(org, 'ItemType', 'Xagrid');
 
     // create item
     const item = factory.newResource(org, 'Item', 'I00001');
@@ -734,7 +734,7 @@ async function setupDemo(setupDemo) {
 
     // add the itemType
     const itemTypeRegistry = await getAssetRegistry(org + '.ItemType');
-    await itemTypeRegistry.addAll([itemType]);
+    await itemTypeRegistry.addAll([itemType, itemType2]);
 
     // add the item
     const itemRegistry = await getAssetRegistry(org + '.Item');
